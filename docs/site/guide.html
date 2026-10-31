@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Conso Token guide</title>
+<meta name="description" content="How to read the Conso Token window in 5 seconds, card by card.">
+<link rel="stylesheet" href="shared.css">
+<style>
+.q h3 { color: var(--gold2); }
+.q .num { font-size: 40px; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 22px 0 34px; }
+.crop { width: 100%; aspect-ratio: 615 / 725; background-repeat: no-repeat; background-size: 179.2% auto; background-position: 8.2% 71.4%; border: 1px solid var(--line2); border-radius: 10px; background-color: #000; }
+.cmp figcaption { margin-top: 10px; color: var(--muted); font-size: 16px; }
+.cmp figcaption b { color: var(--text); font-weight: 500; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 10px; vertical-align: -1px; }
+.cols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 26px; }
+.cols div { display: flex; align-items: center; }
+details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 22px; margin-bottom: 12px; }
+summary { cursor: pointer; padding: 14px 0; font-weight: 500; }
+details p { color: var(--muted); }
+details img { width: 100%; max-width: 640px; height: 230px; object-fit: cover; object-position: top; border: 1px solid var(--line2); border-radius: 8px; margin-bottom: 14px; }
+.vers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 6px 0 16px; }
+.crop2 { position: relative; width: 100%; background-repeat: no-repeat; background-color: #000; border: 1px solid var(--line2); border-radius: 8px; }
+.crop2 i { position: absolute; border: 2px solid var(--gold2); border-radius: 6px; box-shadow: 0 0 0 3px rgba(230,201,135,.25); }
+/* haut droite de la fenêtre : le bouton « À propos » (zone 540..1060 x 55..115 de la capture 1102 x 872) */
+.crop2.a { aspect-ratio: 520 / 60; background-size: 211.9% auto; background-position: 92.8% 6.8%; }
+.crop2.a i { left: 79.4%; top: 21.7%; width: 18.5%; height: 50%; }
+/* écran « À propos » : la ligne de version (zone 50..700 x 80..215) */
+.crop2.b { aspect-ratio: 650 / 135; background-size: 169.5% auto; background-position: 11.1% 10.9%; }
+.crop2.b i { left: 2.2%; top: 49%; width: 20%; height: 15%; }
+@media (max-width: 860px) { .cmp, .cols, .vers { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="index.html">Conso Token</a>
+    <nav class="links" aria-label="Sections">
+      <a href="index.html" data-i="nav_home">Presentation</a>
+      <a href="#tour" data-i="nav_tour">The window</a>
+      <a href="guide.html" aria-current="page" data-i="nav_guide">Reading guide</a>
+    </nav>
+    <select id="lang" aria-label="Language">
+      <option value="en" lang="en">English</option>
+      <option value="fr" lang="fr">Français</option>
+      <option value="es" lang="es">Español</option>
+      <option value="de" lang="de">Deutsch</option>
+      <option value="pt" lang="pt-BR">Português (BR)</option>
+      <option value="it" lang="it">Italiano</option>
+      <option value="zh" lang="zh-CN">中文</option>
+      <option value="ja" lang="ja">日本語</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge" data-i="nav_guide">Reading guide</span>
+      <h1 data-i="g_h1">Read your window in 5 seconds</h1>
+      <p class="lead muted" style="max-width:56ch;font-size:21px" data-i="g_lead"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="q_t">Three questions, three places</h2>
+      <div class="grid3 q">
+        <div class="card"><div class="num">1</div><h3 data-i="q1_t"></h3><p data-i="q1_d"></p></div>
+        <div class="card"><div class="num">2</div><h3 data-i="q2_t"></h3><p data-i="q2_d"></p></div>
+        <div class="card"><div class="num">3</div><h3 data-i="q3_t"></h3><p data-i="q3_d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tourbloc">
+    <div class="wrap">
+      <h2 data-i="tour_t_g">Your window, card by card</h2>
+      <div class="tour" id="tour"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="ad_places_t">Where advance and delay show up</h2>
+      <figure class="cmp" style="margin-inline:0">
+        <div><div class="crop" id="cropA" role="img"></div><figcaption data-i="cmp_a"></figcaption></div>
+        <div><div class="crop" id="cropB" role="img"></div><figcaption data-i="cmp_b"></figcaption></div>
+      </figure>
+      <ul class="note">
+        <li data-i="p1"></li><li data-i="p2"></li><li data-i="p3"></li><li data-i="p4"></li>
+      </ul>
+      <p class="muted" style="margin-top:22px" data-i="adapt_d"></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="col_t">The colours, once and for all</h2>
+      <div class="cols">
+        <div><span class="sw" style="background:var(--ok2)"></span><span data-i="c_green"></span></div>
+        <div><span class="sw" style="background:var(--bad)"></span><span data-i="c_pink"></span></div>
+        <div><span class="sw" style="background:var(--gold)"></span><span data-i="c_gold"></span></div>
+        <div><span class="sw" style="background:#6b6252"></span><span data-i="c_grey"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="faq_t">Questions you may have</h2>
+      <details><summary data-i="f1_q"></summary><p data-i="f1_a"></p></details>
+      <details><summary data-i="f2_q"></summary><p data-i="f2_a"></p></details>
+      <details><summary data-i="f3_q"></summary><p data-i="f3_a"></p></details>
+      <details><summary data-i="f4_q"></summary><p data-i="f4_a"></p></details>
+      <details><summary data-i="f5_q"></summary><p data-i="f5_a"></p></details>
+      <details id="version"><summary data-i="f7_q"></summary>
+        <div class="vers">
+          <div class="v1"><div class="crop2 a" id="vA" role="img"><i></i></div></div>
+          <div class="v1"><div class="crop2 b" id="vB" role="img"><i></i></div></div>
+        </div>
+        <p data-i="f7_a"></p>
+      </details>
+      <details><summary data-i="f6_q"></summary><img id="premiere" alt="" width="560"><p data-i="f6_a"></p></details>
+      <details><summary data-i="f8_q"></summary><p data-i="f8_a"></p></details>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><p data-i="disc"></p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+add("g_h1", ["Read your window in 5 seconds", "Lis ta fenêtre en 5 secondes", "Lee tu ventana en 5 segundos", "Lies dein Fenster in 5 Sekunden", "Leia sua janela em 5 segundos", "Leggi la tua finestra in 5 secondi", "5 秒读懂你的窗口", "5秒でウィンドウを読む"]);
+add("g_lead", ["Lots of numbers, one idea: your week is cut into seven days of 24 hours, and your plan is shared between them. Everything you see is that idea, shown in different ways. This guide tells you where to look first.", "Beaucoup de chiffres, une seule idée : ta semaine est coupée en sept jours de 24 h, et ton forfait est partagé entre eux. Tout ce que tu vois est cette idée, montrée de plusieurs façons. Ce guide te dit où regarder d’abord.", "Muchas cifras, una sola idea: tu semana se divide en siete días de 24 h y tu plan se reparte entre ellos. Todo lo que ves es esa idea, mostrada de varias formas. Esta guía te dice dónde mirar primero.", "Viele Zahlen, ein einziger Gedanke: Deine Woche ist in sieben Tage zu je 24 Stunden geteilt, und dein Kontingent wird auf sie verteilt. Alles, was du siehst, ist dieser Gedanke in verschiedenen Darstellungen. Diese Lesehilfe sagt dir, wohin du zuerst schaust.", "Muitos números, uma só ideia: sua semana é dividida em sete dias de 24 h, e seu plano é repartido entre eles. Tudo o que você vê é essa ideia, mostrada de vários jeitos. Este guia diz onde olhar primeiro.", "Tanti numeri, una sola idea: la tua settimana è divisa in sette giorni da 24 ore e il tuo piano è ripartito tra loro. Tutto ciò che vedi è quell’idea, mostrata in modi diversi. Questa guida ti dice dove guardare per prima cosa.", "数字很多，想法只有一个：你的一周被分成七个 24 小时的日子，你的额度分摊在这些日子里。你看到的一切，都是这个想法的不同呈现。本指南告诉你先看哪里。", "数字はたくさんありますが、考え方は一つです。一週間を24時間ずつ7日に分け、プランをその7日で分け合います。画面にあるものはすべて、その考え方を別の形で見せているだけです。まずどこを見ればよいかをご案内します。"]);
+add("q_t", ["Three questions, three places", "Trois questions, trois endroits", "Tres preguntas, tres lugares", "Drei Fragen, drei Stellen", "Três perguntas, três lugares", "Tre domande, tre posti", "三个问题，三个位置", "3つの疑問、3つの場所"]);
+add("q1_t", ["Am I going too fast?", "Est-ce que je vais trop vite ?", "¿Voy demasiado rápido?", "Bin ich zu schnell?", "Estou indo rápido demais?", "Sto andando troppo in fretta?", "我是不是用得太快？", "ペースが速すぎない？"]);
+add("q1_d", ["Look at the card “Your pace” (top left). Green “to spare”: no worry. Pink “over”: slow down.", "Regarde la carte « Ton rythme » (en haut à gauche). Vert « d’avance » : aucun souci. Rose « de trop » : ralentis.", "Mira la tarjeta «Tu ritmo» (arriba a la izquierda). Verde «de margen»: tranquilo. Rosa «de más»: frena.", "Schau auf die Karte „Dein Tempo“ (oben links). Grün „Spielraum“: alles gut. Rosa „zu viel“: bremse.", "Veja o cartão “Seu ritmo” (no alto, à esquerda). Verde “de folga”: sem problema. Rosa “a mais”: desacelere.", "Guarda la scheda «Il tuo ritmo» (in alto a sinistra). Verde «di margine»: nessun problema. Rosa «in più»: rallenta.", "看左上角的“你的节奏”卡片。绿色“富余”：没问题。粉色“超出”：放慢一点。", "左上の「あなたのペース」カードを見ます。緑の「余裕」なら安心、ピンクの「オーバー」なら控えめに。"]);
+add("q2_t", ["What can I use today?", "Que puis-je consommer aujourd’hui ?", "¿Cuánto puedo consumir hoy?", "Was kann ich heute verbrauchen?", "Quanto posso consumir hoje?", "Quanto posso consumare oggi?", "我今天能用多少？", "今日はどれだけ使える？"]);
+add("q2_d", ["Look at “What you have left to use” (bottom right): the first bar is for the rest of today. The “Today” view of the day card says the same in one big number.", "Regarde « Ce qu’il te reste à consommer » (en bas à droite) : la première barre, c’est le reste d’aujourd’hui. La vue « Aujourd’hui » de la carte jour par jour le dit en un grand chiffre.", "Mira «Lo que te queda por consumir» (abajo a la derecha): la primera barra es lo que queda de hoy. La vista «Hoy» de la tarjeta día a día lo dice con una cifra grande.", "Schau auf „Was du noch verbrauchen kannst“ (unten rechts): Der erste Balken ist der Rest von heute. Die Ansicht „Heute“ der Tageskarte sagt es mit einer großen Zahl.", "Veja “O que resta para consumir” (embaixo, à direita): a primeira barra é o que sobra de hoje. A vista “Hoje” do cartão dia a dia diz isso com um número grande.", "Guarda «Quello che ti resta da consumare» (in basso a destra): la prima barra è ciò che resta di oggi. La vista «Oggi» della scheda giorno per giorno lo dice con un numero grande.", "看右下角的“剩余可用额度”：第一条就是今天还剩的部分。每日卡片里的“今天”视图用一个大数字告诉你。", "右下の「残りの使用可能量」を見ます。1本目のバーが今日の残りです。日ごとのカードの「今日」表示では、大きな数字で同じことが分かります。"]);
+add("q3_t", ["When does it start over?", "Quand est-ce que ça repart ?", "¿Cuándo se reinicia?", "Wann geht es von vorn los?", "Quando recomeça?", "Quando riparte?", "什么时候重新开始？", "いつリセットされる？"]);
+add("q3_d", ["Look at “Your plan resets to 100% in” (top right): the countdown, with the real day and hour.", "Regarde « Ton forfait revient à 100 % dans » (en haut à droite) : le compte à rebours, avec le vrai jour et la vraie heure.", "Mira «Tu plan vuelve al 100 % en» (arriba a la derecha): la cuenta atrás, con el día y la hora reales.", "Schau auf „Dein Abo ist wieder voll in“ (oben rechts): der Countdown mit echtem Tag und echter Uhrzeit.", "Veja “Seu plano volta a 100% em” (no alto, à direita): a contagem regressiva, com o dia e a hora reais.", "Guarda «Il tuo piano torna al 100% tra» (in alto a destra): il conto alla rovescia, con giorno e ora reali.", "看右上角的“额度恢复至 100% 还需”：倒计时，并显示真实的日期和时间。", "右上の「100%に戻るまで」を見ます。実際の曜日と時刻つきのカウントダウンです。"]);
+add("tour_t_g", ["Your window, card by card", "Ta fenêtre, carte par carte", "Tu ventana, tarjeta por tarjeta", "Dein Fenster, Karte für Karte", "Sua janela, cartão por cartão", "La tua finestra, scheda per scheda", "逐张卡片看你的窗口", "ウィンドウをカードごとに"]);
+add("ad_places_t", ["Where advance and delay show up", "Où l’avance et le retard apparaissent", "Dónde aparecen el margen y el exceso", "Wo Spielraum und Überschreitung erscheinen", "Onde aparecem a folga e o excesso", "Dove compaiono margine e superamento", "富余与超出出现在哪里", "余裕とオーバーが現れる場所"]);
+add("cmp_a", ["<b>Ahead</b>: green + on every day, the pace card says “to spare”.", "<b>En avance</b> : des + verts sur chaque jour, la carte du rythme dit « d’avance ».", "<b>Con margen</b>: + verdes en cada día, la tarjeta del ritmo dice «de margen».", "<b>Mit Spielraum</b>: grüne + an jedem Tag, die Tempo-Karte sagt „Spielraum“.", "<b>Com folga</b>: + verdes em cada dia, o cartão do ritmo diz “de folga”.", "<b>Con margine</b>: + verdi in ogni giorno, la scheda del ritmo dice «di margine».", "<b>有富余</b>：每天都是绿色 +，节奏卡片显示“富余”。", "<b>余裕あり</b>：毎日が緑の＋で、ペースのカードには「余裕」と出ます。"]);
+add("cmp_b", ["<b>Over</b>: pink − on the days that went over, the pace card says “over”.", "<b>En retard</b> : des − roses sur les jours dépassés, la carte du rythme dit « de trop ».", "<b>Pasada</b>: − rosas en los días que se pasaron, la tarjeta del ritmo dice «de más».", "<b>Darüber</b>: rosa − an den überzogenen Tagen, die Tempo-Karte sagt „zu viel“.", "<b>Acima</b>: − rosa nos dias que excederam, o cartão do ritmo diz “a mais”.", "<b>In più</b>: − rosa nei giorni sforati, la scheda del ritmo dice «in più».", "<b>超出</b>：超出的日子是粉色 −，节奏卡片显示“超出”。", "<b>オーバー</b>：超えた日はピンクの−で、ペースのカードには「オーバー」と出ます。"]);
+add("p1", ["“Your pace”: the total, in words (“to spare” or “over”).", "« Ton rythme » : le total, en toutes lettres (« d’avance » ou « de trop »).", "«Tu ritmo»: el total, en palabras («de margen» o «de más»).", "„Dein Tempo“: die Summe in Worten („Spielraum“ oder „zu viel“).", "“Seu ritmo”: o total, em palavras (“de folga” ou “a mais”).", "«Il tuo ritmo»: il totale, a parole («di margine» o «in più»).", "“你的节奏”：用文字表示的总数（“富余”或“超出”）。", "「あなたのペース」：合計を言葉で（「余裕」または「オーバー」）。"]);
+add("p2", ["The day tiles and batteries: + (green) for a day under budget, − (pink) for a day over.", "Les pastilles et les batteries : + (vert) pour un jour sous le budget, − (rose) pour un jour au-dessus.", "Las casillas y las baterías: + (verde) para un día por debajo del presupuesto, − (rosa) para uno por encima.", "Kacheln und Batterien: + (grün) für einen Tag unter dem Budget, − (rosa) für einen Tag darüber.", "As pastilhas e as baterias: + (verde) para um dia abaixo do orçamento, − (rosa) para um dia acima.", "Le tessere e le batterie: + (verde) per un giorno sotto il budget, − (rosa) per un giorno sopra.", "色块和电池：低于预算的日子显示 +（绿色），高于预算的日子显示 −（粉色）。", "タイルとバッテリー：予算より少ない日は＋（緑）、超えた日は−（ピンク）。"]);
+add("p3", ["The Trajectory view: the area between “exactly on pace” and your curve is green when you are ahead, pink when you are over.", "La vue Trajectoire : la zone entre « pile au rythme » et ta courbe est verte quand tu es en avance, rose quand tu es en retard.", "La vista Trayectoria: el área entre «justo al ritmo» y tu curva es verde con margen y rosa si te pasas.", "Die Ansicht Verlauf: Die Fläche zwischen „genau im Soll“ und deiner Kurve ist grün bei Spielraum, rosa bei Überschreitung.", "A vista Trajetória: a área entre “exatamente no ritmo” e sua curva é verde com folga, rosa quando excede.", "La vista Traiettoria: l’area tra «esattamente in linea» e la tua curva è verde con margine, rosa quando superi.", "“轨迹”视图：“恰好符合节奏”线与你的曲线之间的区域，有富余时为绿色，超出时为粉色。", "「推移」表示：「ちょうどペース通り」の線とあなたの曲線の間は、余裕があれば緑、オーバーならピンクです。"]);
+add("p4", ["The “What you have left to use” card: the next days’ shares grow when you save, and shrink when you go over.", "La carte « Ce qu’il te reste à consommer » : la part des jours suivants grandit quand tu économises, et rétrécit quand tu dépasses.", "La tarjeta «Lo que te queda por consumir»: la parte de los días siguientes crece si ahorras y se reduce si te pasas.", "Die Karte „Was du noch verbrauchen kannst“: Der Anteil der folgenden Tage wächst, wenn du sparst, und schrumpft, wenn du überziehst.", "O cartão “O que resta para consumir”: a parte dos dias seguintes cresce quando você economiza e diminui quando excede.", "La scheda «Quello che ti resta da consumare»: la quota dei giorni successivi cresce se risparmi e si riduce se sfori.", "“剩余可用额度”卡片：你节省时，之后每天的份额变大；你超出时，份额变小。", "「残りの使用可能量」カード：節約すると以降の各日の配分が増え、超過すると減ります。"]);
+add("col_t", ["The colours, once and for all", "Les couleurs, une fois pour toutes", "Los colores, de una vez por todas", "Die Farben, ein für alle Mal", "As cores, de uma vez por todas", "I colori, una volta per tutte", "颜色含义，一次说清", "色の意味をまとめて"]);
+add("c_green", ["Green: saved / to spare", "Vert : mis de côté / d’avance", "Verde: ahorrado / de margen", "Grün: übrig / Spielraum", "Verde: guardado / de folga", "Verde: risparmiato / di margine", "绿色：有结余 / 有富余", "緑：余り／余裕"]);
+add("c_pink", ["Pink: exceeded / over", "Rose : dépassé / de trop", "Rosa: superado / de más", "Rosa: überschritten / zu viel", "Rosa: excedido / a mais", "Rosa: superato / in più", "粉色：已超出 / 超出", "ピンク：超過／オーバー"]);
+add("c_gold", ["Gold: used, or today", "Doré : consommé, ou aujourd’hui", "Dorado: consumido, o hoy", "Gold: verbraucht, oder heute", "Dourado: consumido, ou hoje", "Oro: consumato, oppure oggi", "金色：已用，或今天", "金色：使用済み、または今日"]);
+add("c_grey", ["Grey: days still to come", "Gris : jours à venir", "Gris: días por venir", "Grau: kommende Tage", "Cinza: dias por vir", "Grigio: giorni a venire", "灰色：未来的日子", "グレー：これからの日"]);
+add("faq_t", ["Questions you may have", "Les questions qu’on se pose", "Preguntas frecuentes", "Fragen, die du haben könntest", "Perguntas frequentes", "Domande frequenti", "你可能会问", "よくある疑問"]);
+add("f1_q", ["What is a “day” here?", "C’est quoi un « jour » ici ?", "¿Qué es un «día» aquí?", "Was ist hier ein „Tag“?", "O que é um “dia” aqui?", "Che cos’è un «giorno» qui?", "这里的“一天”是什么？", "ここでの「1日」とは？"]);
+add("f1_a", ["24 hours counted from the hour your plan resets, not midnight to midnight. If your plan resets Thursday at 1 pm, every day runs from 1 pm to 1 pm.", "24 heures comptées à partir de l’heure où ton forfait se remet à zéro, pas de minuit à minuit. Si ton forfait se remet à zéro le jeudi à 13 h, chaque jour va de 13 h à 13 h.", "24 horas contadas desde la hora en que tu plan se reinicia, no de medianoche a medianoche. Si tu plan se reinicia el jueves a las 13 h, cada día va de 13 h a 13 h.", "24 Stunden, gezählt ab der Uhrzeit, zu der dein Abo zurückgesetzt wird, nicht von Mitternacht bis Mitternacht. Wird dein Abo donnerstags um 13 Uhr zurückgesetzt, läuft jeder Tag von 13 bis 13 Uhr.", "24 horas contadas a partir da hora em que seu plano reinicia, não da meia-noite à meia-noite. Se seu plano reinicia na quinta às 13 h, cada dia vai das 13 h às 13 h.", "24 ore contate dall’ora in cui il tuo piano si azzera, non da mezzanotte a mezzanotte. Se il tuo piano si azzera il giovedì alle 13, ogni giorno va dalle 13 alle 13.", "从你的额度重置时刻开始算的 24 小时，而不是从午夜到午夜。如果你的额度在周四 13:00 重置，那么每一天都是从 13:00 到次日 13:00。", "プランがリセットされる時刻から数える24時間で、午前0時から午前0時ではありません。木曜13時にリセットされるなら、毎日13時から翌13時までです。"]);
+add("f2_q", ["Why does my reset day or hour differ from a friend’s?", "Pourquoi mon jour ou mon heure de remise à zéro diffère de celle d’un ami ?", "¿Por qué mi día u hora de reinicio difiere de los de un amigo?", "Warum weicht mein Reset-Tag oder meine Uhrzeit von der eines Freundes ab?", "Por que meu dia ou hora de reinicialização é diferente do de um amigo?", "Perché il mio giorno o la mia ora di reset sono diversi da quelli di un amico?", "为什么我的重置日期或时间和朋友的不一样？", "なぜリセットの曜日や時刻が友人と違うのですか？"]);
+add("f2_a", ["Because it belongs to your plan, not to the app. Conso Token reads your own reset at every update and adapts all the days to it. That is why you never have to set anything.", "Parce qu’il appartient à ton forfait, pas à l’appli. Conso Token relit ta propre remise à zéro à chaque mise à jour et cale tous les jours dessus. C’est pour ça que tu n’as rien à régler.", "Porque pertenece a tu plan, no a la app. Conso Token lee tu propio reinicio en cada actualización y ajusta todos los días a él. Por eso no tienes que configurar nada.", "Weil er zu deinem Abo gehört, nicht zur App. Conso Token liest dein eigenes Zurücksetzen bei jeder Aktualisierung neu und richtet alle Tage danach aus. Darum musst du nichts einstellen.", "Porque pertence ao seu plano, não ao app. O Conso Token lê a sua própria reinicialização a cada atualização e ajusta todos os dias a ela. Por isso você não precisa configurar nada.", "Perché appartiene al tuo piano, non all’app. Conso Token legge il tuo reset a ogni aggiornamento e adatta tutti i giorni a esso. Per questo non devi impostare nulla.", "因为它属于你的套餐，而不是应用。Conso Token 每次更新都会读取你自己的重置时间，并让所有日子都以它为准。所以你不需要设置任何东西。", "リセットはアプリではなくあなたのプランに属するからです。Conso Token は更新のたびにあなた自身のリセットを読み直し、すべての日をそれに合わせます。設定は不要です。"]);
+add("f3_q", ["The reset hour changed. Is it a bug?", "L’heure de remise à zéro a changé. C’est un bug ?", "La hora de reinicio ha cambiado. ¿Es un error?", "Die Reset-Uhrzeit hat sich geändert. Ist das ein Fehler?", "A hora de reinicialização mudou. É um erro?", "L’ora del reset è cambiata. È un errore?", "重置时间变了，是出错了吗？", "リセット時刻が変わりました。不具合ですか？"]);
+add("f3_a", ["No. The hour is read again at every update, so the card follows your plan if it moves. In the week of a clock change (summer or winter time), a line under the card says so in plain words.", "Non. L’heure est relue à chaque mise à jour, la carte suit donc ton forfait s’il bouge. La semaine d’un changement d’heure (été ou hiver), une ligne sous la carte le dit en clair.", "No. La hora se vuelve a leer en cada actualización, así que la tarjeta sigue a tu plan si cambia. La semana de un cambio de hora (verano o invierno), una línea bajo la tarjeta lo dice claramente.", "Nein. Die Uhrzeit wird bei jeder Aktualisierung neu gelesen, die Karte folgt also deinem Abo, wenn es sich verschiebt. In der Woche einer Zeitumstellung (Sommer- oder Winterzeit) sagt es eine Zeile unter der Karte im Klartext.", "Não. O horário é relido a cada atualização, então o cartão acompanha o seu plano se ele mudar. Na semana de uma mudança de horário (verão ou inverno), uma linha sob o cartão avisa com clareza.", "No. L’orario viene riletto a ogni aggiornamento, quindi la scheda segue il tuo piano se si sposta. Nella settimana di un cambio d’ora (legale o solare), una riga sotto la scheda lo dice in chiaro.", "不是。时间在每次更新时重新读取，所以如果你的套餐有变动，卡片会跟着变。遇到夏令时或冬令时切换的那一周，卡片下方会用一行字明确说明。", "いいえ。時刻は更新のたびに読み直されるため、プラン側が動けばカードも追従します。時刻切り替え（夏時間・冬時間）のある週は、カードの下に説明が出ます。"]);
+add("f4_q", ["What does “—” mean?", "Que veut dire « — » ?", "¿Qué significa «—»?", "Was bedeutet „—“?", "O que significa “—”?", "Che cosa significa «—»?", "“—”是什么意思？", "「—」の意味は？"]);
+add("f4_a", ["No reading yet for that day: the app only knows what happened after its first reading.", "Pas encore de lecture pour ce jour : l’appli ne connaît que ce qui s’est passé après sa première lecture.", "Aún no hay lectura para ese día: la app solo conoce lo ocurrido después de su primera lectura.", "Für diesen Tag gibt es noch keine Messung: Die App kennt nur, was nach ihrer ersten Messung geschah.", "Ainda não há leitura para esse dia: o app só conhece o que aconteceu depois da primeira leitura.", "Per quel giorno non c’è ancora una lettura: l’app conosce solo ciò che è accaduto dopo la sua prima lettura.", "那一天还没有读数：应用只知道第一次读取之后发生的事。", "その日はまだ数値がありません。アプリが知っているのは、初回の取得以降のことだけです。"]);
+add("f5_q", ["What are tokens?", "Les tokens, c’est quoi ?", "¿Qué son los tokens?", "Was sind Tokens?", "O que são tokens?", "Cosa sono i token?", "什么是 token？", "トークンとは？"]);
+add("f5_a", ["Small pieces of text exchanged with Claude. They are a detail: what decides is the percentage of your plan.", "Petits morceaux de texte échangés avec Claude. C’est un détail : ce qui compte, c’est le pourcentage de ton forfait.", "Pequeños fragmentos de texto intercambiados con Claude. Es un detalle: lo que cuenta es el porcentaje de tu plan.", "Kleine Textbausteine, die mit Claude ausgetauscht werden. Sie sind ein Detail: Entscheidend ist der Prozentsatz deines Abos.", "Pequenos pedaços de texto trocados com o Claude. É um detalhe: o que importa é a porcentagem do seu plano.", "Piccoli frammenti di testo scambiati con Claude. È un dettaglio: ciò che conta è la percentuale del tuo piano.", "与 Claude 往来的小段文本。这只是补充信息：真正重要的是你套餐的百分比。", "Claude とやり取りするテキストの小さな断片です。補足情報で、大事なのはプランのパーセントです。"]);
+add("f6_q", ["The window shows a welcome page instead of numbers", "La fenêtre montre une page d’accueil au lieu des chiffres", "La ventana muestra una página de bienvenida en lugar de cifras", "Das Fenster zeigt eine Willkommensseite statt Zahlen", "A janela mostra uma página de boas-vindas em vez de números", "La finestra mostra una pagina di benvenuto invece dei dati", "窗口显示欢迎页而不是数字", "ウィンドウに数字ではなく案内ページが出ます"]);
+add("f6_a", ["Normal until the first figures arrive after setup. The page tells you what to do. If it stays for long, see “If nothing arrives” in the installation notes.", "Normal tant que les premiers chiffres ne sont pas arrivés après l’installation. La page te dit quoi faire. Si elle reste longtemps, lis « Si rien n’arrive » dans la notice d’installation.", "Es normal hasta que llegan las primeras cifras tras la instalación. La página te dice qué hacer. Si se queda mucho tiempo, mira «Si no llega nada» en la guía de instalación.", "Normal, bis nach der Einrichtung die ersten Zahlen eintreffen. Die Seite sagt dir, was zu tun ist. Bleibt sie lange, lies „Wenn nichts ankommt“ in der Installationsanleitung.", "Normal até chegarem os primeiros números depois da instalação. A página diz o que fazer. Se ficar muito tempo, veja “Se nada chegar” no guia de instalação.", "Normale finché non arrivano i primi dati dopo l’installazione. La pagina ti dice cosa fare. Se resta a lungo, leggi «Se non arriva nulla» nella guida all’installazione.", "安装后，在第一批数字到达之前这是正常的。页面会告诉你下一步怎么做。如果长时间不消失，请查看安装说明里的“如果什么都没有收到”。", "セットアップ後、最初の数値が届くまでは正常です。ページに次にすることが表示されます。長く続く場合は、導入手順の「何も届かないとき」を見てください。"]);
+add("f8_q", ["Is Conso Token really free?", "Conso Token est-il vraiment gratuit ?", "¿Conso Token es realmente gratuito?", "Ist Conso Token wirklich kostenlos?", "O Conso Token é mesmo gratuito?", "Conso Token è davvero gratuito?", "Conso Token 真的免费吗？", "Conso Token は本当に無料ですか？"]);
+add("f8_a", ["Yes. Nothing to buy, no account, no subscription. It is open source under the MIT licence: you may use, copy, modify and share it. The texts of the licences (MIT, Slint, fonts) are in the package and in the repository.", "Oui. Rien à acheter, aucun compte, aucun abonnement. Le code est ouvert sous licence MIT : tu peux l’utiliser, le copier, le modifier et le partager. Les textes des licences (MIT, Slint, polices) sont dans le paquet et dans le dépôt.", "Sí. Nada que comprar, sin cuenta, sin suscripción. El código es abierto bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y compartirlo. Los textos de las licencias (MIT, Slint, tipografías) están en el paquete y en el repositorio.", "Ja. Nichts zu kaufen, kein Konto, keine Gebühren. Der Code ist unter der MIT-Lizenz offen: Du darfst ihn nutzen, kopieren, ändern und weitergeben. Die Lizenztexte (MIT, Slint, Schriften) liegen im Paket und im Repository.", "Sim. Nada para comprar, sem conta, sem assinatura. O código é aberto sob a licença MIT: você pode usar, copiar, modificar e compartilhar. Os textos das licenças (MIT, Slint, fontes) estão no pacote e no repositório.", "Sì. Niente da comprare, nessun account, nessun abbonamento. Il codice è aperto con licenza MIT: puoi usarlo, copiarlo, modificarlo e condividerlo. I testi delle licenze (MIT, Slint, font) sono nel pacchetto e nel repository.", "是的。无需购买，无需账号，无需订阅。代码以 MIT 许可开源：你可以使用、复制、修改和分享。各项许可文本（MIT、Slint、字体）都在软件包和代码仓库中。", "はい。購入、アカウント、サブスクリプションは不要です。コードは MIT ライセンスで公開されており、使用・コピー・改変・共有が自由です。ライセンス全文（MIT、Slint、フォント）はパッケージとリポジトリにあります。"]);
+add("f7_q", ["Where do I find the version number?", "Où trouver le numéro de version ?", "¿Dónde veo el número de versión?", "Wo finde ich die Versionsnummer?", "Onde vejo o número da versão?", "Dove trovo il numero di versione?", "在哪里能看到版本号？", "バージョン番号はどこで見られますか？"]);
+add("f7_a", ["Click “ABOUT” (top right of the window): the first line gives the version number. Handy when you report a problem or compare with a friend’s copy.", "Clique sur « À PROPOS » (en haut à droite de la fenêtre) : la première ligne donne le numéro de version. Pratique pour signaler un problème ou comparer avec la copie d’un ami.", "Haz clic en «ACERCA DE» (arriba a la derecha de la ventana): la primera línea indica el número de versión. Útil para informar de un problema o comparar con la copia de un amigo.", "Klicke auf „INFO“ (oben rechts im Fenster): Die erste Zeile nennt die Versionsnummer. Praktisch, wenn du ein Problem meldest oder mit der Kopie eines Freundes vergleichst.", "Clique em “SOBRE” (no alto, à direita da janela): a primeira linha mostra o número da versão. Útil para relatar um problema ou comparar com a cópia de um amigo.", "Fai clic su «INFO» (in alto a destra nella finestra): la prima riga indica il numero di versione. Utile per segnalare un problema o confrontare con la copia di un amico.", "点击窗口右上角的“关于”：第一行就是版本号。报告问题或与朋友的版本对比时很有用。", "ウィンドウ右上の「概要」をクリックすると、最初の行にバージョン番号が表示されます。不具合を報告するときや、友人のものと比べるときに便利です。"]);
+add("disc", ["Independent project, not affiliated with or endorsed by Anthropic. “Claude” belongs to its owner.", "Projet indépendant, non affilié à Anthropic ni approuvé par Anthropic. « Claude » appartient à son propriétaire.", "Proyecto independiente, sin afiliación ni respaldo de Anthropic. «Claude» pertenece a su propietario.", "Unabhängiges Projekt, weder mit Anthropic verbunden noch von Anthropic unterstützt. „Claude“ gehört seinem Inhaber.", "Projeto independente, sem afiliação nem aprovação da Anthropic. “Claude” pertence ao seu proprietário.", "Progetto indipendente, non affiliato né approvato da Anthropic. «Claude» appartiene al suo proprietario.", "独立项目，与 Anthropic 无隶属关系，也未获 Anthropic 认可。“Claude”归其所有者所有。", "独立したプロジェクトであり、Anthropic とは無関係で、Anthropic の承認も受けていません。「Claude」はその所有者に帰属します。"]);
+
+// textes avec un mot en gras : posés avec innerHTML UNIQUEMENT à partir de ces chaînes écrites ici (jamais de texte venu d'ailleurs)
+function crops() {
+  const a = $("cropA"), b = $("cropB");
+  a.style.backgroundImage = `url("img/app_${lang}_3.png")`;
+  b.style.backgroundImage = `url("img/retard_${lang}_3.png")`;
+  a.setAttribute("aria-label", t("cmp_a").replace(/<\/?b>/g, ""));
+  b.setAttribute("aria-label", t("cmp_b").replace(/<\/?b>/g, ""));
+  document.querySelectorAll("figcaption[data-i]").forEach(f => { f.innerHTML = t(f.dataset.i); });
+  $("premiere").src = `img/app_${lang}_premiere.png`;
+  $("vA").style.backgroundImage = `url("img/app_${lang}_3.png")`;
+  $("vB").style.backgroundImage = `url("img/app_${lang}_apropos.png")`;
+  $("vA").setAttribute("aria-label", t("f7_q"));
+  $("vB").setAttribute("aria-label", t("f7_q"));
+}
+demarrer(crops);
+</script>
+</body>
+</html>

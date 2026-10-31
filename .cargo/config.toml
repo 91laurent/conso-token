@@ -1,0 +1,10 @@
+# Bibliothèque C d'exécution liée dans le programme : le .exe n'a pas besoin du
+# redistribuable Visual C++ sur le PC de l'utilisateur.
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+# Les tests écrivent des heures de Paris (jeu 13h…) : ils se jouent en fuseau de Paris, quelle que soit la machine.
+[env]
+CONSO_TOKEN_TZ = "Europe/Paris"
+# Les tests de textes attendent du français par défaut ; ceux des autres langues le disent eux-mêmes (`langue::avec`).
+CONSO_TOKEN_LANGUE = "fr"

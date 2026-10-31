@@ -1,0 +1,58 @@
+CONSO TOKEN — mode d'emploi en une page
+
+Conso Token est gratuit : libre d'usage, de copie, de modification et de partage (licence MIT, voir LICENSE.txt).
+
+À QUOI ÇA SERT
+Une petite fenêtre qui montre où tu en es de ton forfait Claude : combien tu as utilisé, ce qu'il te
+reste jour par jour, et si tu as de l'avance ou du retard. Elle ne prédit rien, ne se connecte à
+aucun site et ne demande aucun mot de passe.
+
+CE QU'IL TE FAUT
+- Windows 10 ou 11. Rien d'autre à installer.
+- L'appli Claude de bureau (celle où tu utilises Claude Code) avec un forfait Pro ou Max : les
+  chiffres du forfait n'existent pas pour les autres forfaits.
+
+INSTALLATION (10 minutes, une seule fois)
+1. Mets le dossier « Conso Token » reçu sur un disque de ton ordinateur (par exemple H:). S'il est
+   arrivé en fichier zip : clic droit sur le zip, « Extraire tout ». Garde le dossier ENTIER :
+   conso_token.exe, le dossier « outils », le dossier « licences » et les fichiers texte. Évite
+   une clé USB et un disque réseau. Évite une apostrophe dans le nom du dossier.
+2. Dans l'appli Claude de bureau, ouvre une nouvelle session Claude Code et écris cette phrase en
+   remplaçant le chemin par celui de ton dossier :
+       Lis le fichier PASTE_INTO_CLAUDE.txt qui est dans le dossier « H:\Conso Token »
+       et fais exactement ce qu'il dit.
+   Claude crée une tâche qui envoie tes chiffres à la fenêtre toutes les 15 minutes, l'essaie une
+   fois devant toi et te dit si ça a marché. Réponds « oui » ou « toujours autoriser » quand
+   l'appli te demande l'autorisation pour PowerShell : c'est normal, c'est pour envoyer les chiffres.
+3. Double-clique sur conso_token.exe. Si Windows affiche « Windows a protégé votre ordinateur »
+   (éditeur inconnu), clique sur « Informations complémentaires » puis « Exécuter quand même ».
+   Ce n'est pas un virus : Conso Token est un petit programme fait maison, qui n'est pas signé par
+   un éditeur payant, donc Windows le signale la première fois. Il n'utilise aucune fonction
+   réseau. Si l'étape 2 a marché, la fenêtre montre déjà tes chiffres. Sinon elle dit « Aucun
+   chiffre reçu pour l’instant » : dis-le à la personne qui t'a donné l'appli.
+
+À SAVOIR
+- La fenêtre lit toute seule l'heure à laquelle ta semaine se remet à zéro et montre ton propre
+  fuseau horaire et tes changements d'heure (heure d'été/d'hiver). La semaine d'un changement
+  d'heure, une ligne sous la carte du compte à rebours l'explique (par exemple « Une heure plus
+  tôt : passage à l’heure d’hiver le dimanche 25/10. ») : c'est normal, rien à régler.
+- Un « jour » dans la fenêtre = 24 h à partir de cette remise à zéro, comme le dit la phrase
+  au-dessus du graphique.
+- L'appli Claude de bureau doit être ouverte (pas forcément devant toi) pour que les chiffres se
+  mettent à jour. La fenêtre de Conso Token, elle, peut être fermée : rouvre-la par un double-clic
+  sur conso_token.exe.
+- Si tu déplaces le dossier plus tard, la tâche ne retrouvera plus le programme : redonne à Claude
+  la phrase de l'étape 2 avec le nouveau chemin.
+- La tâche « conso-token-feed » (section « Planifié » de la barre de gauche) fait elle-même un peu
+  consommer ton forfait, comme toute tâche : c'est compris dans les chiffres affichés. Si tu la
+  supprimes, les chiffres ne se mettent plus à jour. Chaque passage s'archive tout seul à la fin :
+  tu peux voir des sessions « Conso Token feed » dans les archives, c'est normal.
+- Pour tout arrêter : supprime cette tâche, puis le dossier Conso Token.
+- Les données vont dans C:\Users\<ton nom>\AppData\Local\ConsoToken.
+- Tu peux changer la langue avec le bouton en haut à droite de la fenêtre.
+- Les licences (polices et Slint) sont dans le dossier « licences ».
+
+SI RIEN N'ARRIVE
+Ouvre « outils\dernier_envoi.txt » (dans le dossier Conso Token) avec le Bloc-notes et dis à la
+personne qui t'a donné l'appli ce qu'il contient (ou qu'il n'existe pas), avec une capture de la
+fenêtre.

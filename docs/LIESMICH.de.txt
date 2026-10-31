@@ -1,0 +1,55 @@
+CONSO TOKEN — Anleitung auf einer Seite
+
+Conso Token ist kostenlos: frei nutzbar, kopierbar, veränderbar und weitergebbar (MIT-Lizenz, siehe LICENSE.txt).
+
+WOFÜR ES DA IST
+Ein kleines Fenster, das zeigt, wo du bei deinem Claude-Abo stehst: wie viel du verbraucht hast,
+was dir Tag für Tag bleibt und ob du vorn oder hinten liegst. Es sagt nichts voraus, verbindet
+sich mit keiner Website und fragt nach keinem Passwort.
+
+WAS DU BRAUCHST
+- Windows 10 oder 11. Nichts weiter zu installieren.
+- Die Claude-Desktop-App (in der du Claude Code nutzt) mit einem Pro- oder Max-Abo: für andere
+  Abos gibt es die Zahlen nicht.
+
+EINRICHTUNG (10 Minuten, einmalig)
+1. Lege den erhaltenen Ordner „Conso Token“ auf ein Laufwerk deines Computers (zum Beispiel H:).
+   Kam er als Zip-Datei: Rechtsklick auf die Zip, „Alle extrahieren“. Behalte den GANZEN Ordner:
+   conso_token.exe, den Ordner „outils“, den Ordner „licences“ und die Textdateien. Vermeide
+   einen USB-Stick und ein Netzlaufwerk. Vermeide auch ein Apostroph im Ordnernamen.
+2. Öffne in der Claude-Desktop-App eine neue Claude-Code-Sitzung und schreibe diesen Satz, mit dem
+   Pfad deines Ordners:
+       Lies die Datei PASTE_INTO_CLAUDE.txt im Ordner „H:\Conso Token“ und tue
+       genau, was darin steht.
+   Claude erstellt eine Aufgabe, die alle 15 Minuten deine Zahlen an das Fenster schickt,
+   probiert sie einmal vor deinen Augen aus und sagt dir, ob es geklappt hat. Antworte „Ja“ oder
+   „Immer erlauben“, wenn die App um Erlaubnis für PowerShell bittet: das ist normal, es dient
+   dem Senden der Zahlen.
+3. Doppelklicke auf conso_token.exe. Zeigt Windows „Der Computer wurde durch Windows geschützt“
+   (unbekannter Herausgeber), klicke auf „Weitere Informationen“ und dann „Trotzdem ausführen“.
+   Das ist kein Virus: Conso Token ist ein kleines selbstgemachtes Programm ohne Signatur eines
+   kostenpflichtigen Herausgebers, daher meldet Windows es beim ersten Mal. Es nutzt keine
+   Netzwerkfunktion. Hat Schritt 2 geklappt, zeigt das Fenster schon deine Zahlen. Sonst steht
+   dort „Noch keine Zahlen erhalten“: sag es der Person, die dir die App gegeben hat.
+
+GUT ZU WISSEN
+- Das Fenster liest die Uhrzeit des Wochenwechsels selbst und nutzt deine Zeitzone und deine
+  Zeitumstellungen. In der Woche der Zeitumstellung erklärt eine Zeile unter dem Countdown den
+  Unterschied (z. B. „Eine Stunde früher: Umstellung auf Winterzeit am Sonntag, 25.10.“): Das ist
+  normal, du musst nichts einstellen.
+- Ein „Tag“ im Fenster = 24 Std. ab diesem Wochenwechsel, wie über dem Diagramm steht.
+- Die Claude-App muss geöffnet sein (nicht unbedingt im Vordergrund), damit sich die Zahlen
+  aktualisieren. Das Conso-Token-Fenster darf geschlossen sein: per Doppelklick wieder öffnen.
+- Verschiebst du den Ordner später, findet die Aufgabe das Programm nicht mehr: gib Claude den Satz
+  aus Schritt 2 erneut mit dem neuen Pfad.
+- Die Aufgabe „conso-token-feed“ (Bereich „Geplant“) verbraucht selbst etwas von deinem Abo, wie
+  jede Aufgabe: das ist in den Zahlen enthalten. Löschst du sie, werden die Zahlen nicht mehr
+  aktualisiert. Jeder Lauf archiviert sich selbst: „Conso Token feed“-Sitzungen im Archiv sind normal.
+- Zum Beenden: diese Aufgabe löschen, dann den Ordner Conso Token.
+- Die Daten liegen in C:\Users\<dein Name>\AppData\Local\ConsoToken.
+- Die Sprache änderst du mit der Schaltfläche oben rechts im Fenster.
+- Die Lizenzen (Schriften und Slint) liegen im Ordner „licences“.
+
+WENN NICHTS ANKOMMT
+Öffne „outils\dernier_envoi.txt“ (im Ordner Conso Token) mit dem Editor und sag der Person, die dir
+die App gegeben hat, was darin steht (oder dass es fehlt), mit einem Screenshot des Fensters.

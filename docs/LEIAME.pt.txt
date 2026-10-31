@@ -1,0 +1,56 @@
+CONSO TOKEN — guia de uma página
+
+O Conso Token é gratuito: uso, cópia, modificação e compartilhamento livres (licença MIT, veja LICENSE.txt).
+
+PARA QUE SERVE
+Uma pequena janela que mostra como você está com o seu plano do Claude: quanto usou, o que resta
+dia a dia e se está adiantado ou atrasado. Ela não prevê nada, não se conecta a nenhum site e não
+pede nenhuma senha.
+
+DO QUE VOCÊ PRECISA
+- Windows 10 ou 11. Nada mais para instalar.
+- O aplicativo de computador do Claude (onde você usa o Claude Code) com um plano Pro ou Max:
+  os números do plano não existem para os outros planos.
+
+INSTALAÇÃO (10 minutos, uma única vez)
+1. Coloque a pasta "Conso Token" que você recebeu em uma unidade do seu computador (por exemplo
+   H:). Se ela veio em um arquivo zip: clique com o botão direito no zip e em "Extrair tudo".
+   Mantenha a pasta INTEIRA: conso_token.exe, a pasta "outils", a pasta "licences" e os arquivos
+   de texto. Evite um pen drive e uma unidade de rede. Evite também um apóstrofo no nome da pasta.
+2. No aplicativo de computador do Claude, abra uma nova sessão do Claude Code e escreva esta
+   frase, trocando o caminho pelo da sua pasta:
+       Leia o arquivo PASTE_INTO_CLAUDE.txt que está na pasta "H:\Conso Token" e
+       faça exatamente o que ele diz.
+   O Claude cria uma tarefa que envia os seus números para a janela a cada 15 minutos, testa-a
+   uma vez na sua frente e diz se funcionou. Responda "sim" ou "permitir sempre" quando o
+   aplicativo pedir autorização para o PowerShell: é normal, serve para enviar os números.
+3. Dê um clique duplo em conso_token.exe. Se o Windows mostrar "O Windows protegeu o seu
+   computador" (editor desconhecido), clique em "Mais informações" e depois em "Executar assim
+   mesmo". Não é um vírus: o Conso Token é um programa pequeno, feito à mão, sem assinatura de um
+   editor pago, por isso o Windows o sinaliza na primeira vez. Ele não usa nenhuma função de
+   rede. Se o passo 2 funcionou, a janela já mostra os seus números. Se não, ela diz "Nenhum
+   número recebido ainda": avise quem lhe deu o aplicativo.
+
+BOM SABER
+- A janela lê sozinha a hora em que a sua semana recomeça e usa o seu fuso horário e as suas
+  mudanças de horário. Na semana da mudança de horário, uma linha sob o cartão da contagem
+  regressiva explica (por exemplo "Uma hora mais cedo: mudança para o horário de inverno
+  (domingo 25/10)."): é normal, não há nada a ajustar.
+- Um "dia" na janela = 24 h a partir dessa reinicialização, como diz a frase acima do gráfico.
+- O aplicativo do Claude precisa estar aberto (não necessariamente na frente) para os números
+  serem atualizados. A janela do Conso Token pode ficar fechada: reabra-a com um clique duplo em
+  conso_token.exe.
+- Se você mudar a pasta de lugar, a tarefa deixa de encontrar o programa: dê ao Claude de novo a
+  frase do passo 2 com o novo caminho.
+- A tarefa "conso-token-feed" (seção "Agendadas" da barra lateral esquerda) gasta ela mesma um
+  pouco do plano, como qualquer tarefa: isso já está incluído nos números. Se você a apagar, os
+  números deixam de ser atualizados. Cada execução se arquiva sozinha no fim: é normal ver sessões
+  "Conso Token feed" nos arquivos.
+- Para parar tudo: apague essa tarefa e depois a pasta Conso Token.
+- Os dados ficam em C:\Users\<seu nome>\AppData\Local\ConsoToken.
+- Você pode trocar o idioma com o botão no canto superior direito da janela.
+- As licenças (fontes e Slint) estão na pasta "licences".
+
+SE NADA CHEGAR
+Abra "outils\dernier_envoi.txt" (na pasta Conso Token) com o Bloco de Notas e diga a quem lhe deu
+o aplicativo o que ele contém (ou que não existe), com uma captura da janela.

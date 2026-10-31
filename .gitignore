@@ -1,0 +1,7 @@
+/target/
+*.exe
+*.zip
+dernier_envoi.txt
+entree.json
+erreur.txt
+*.avant_*

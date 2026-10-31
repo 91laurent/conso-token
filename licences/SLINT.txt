@@ -1,0 +1,13 @@
+Conso Token est construit avec Slint (https://slint.dev), utilise sous la licence
+"Slint Royalty-free 2.0" (champ de licence de la bibliotheque : GPL-3.0-only OR
+LicenseRef-Slint-Royalty-free-2.0 OR LicenseRef-Slint-Software-3.0).
+
+Cette licence demande une attribution : l'ecran "A propos" du programme (bouton en haut a
+droite de la fenetre) affiche le widget officiel AboutSlint avec cette attribution.
+
+Texte complet de la licence : LicenseRef-Slint-Royalty-free-2.0.md (dans ce dossier ; copie
+du fichier fourni avec la bibliotheque slint 1.18.1).
+Conditions en ligne : https://slint.dev/terms-and-conditions
+
+Les deux polices embarquees (Cormorant Garamond et Jost) sont sous licence SIL OFL 1.1 :
+voir OFL_CormorantGaramond.txt et OFL_Jost.txt dans ce dossier.

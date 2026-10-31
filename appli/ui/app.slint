@@ -1,0 +1,1284 @@
+// Conso Token : interface (style 14 « Luxury / Premium » du catalogue, thème sombre uniquement).
+// Polices embarquées : Cormorant Garamond (titres) et Jost (chiffres et texte), polices variables
+// sous licence SIL OFL 1.1 (voir fonts/OFL_*.txt). Poids mesurés le 14/10 : Slint applique font-weight
+// aux deux ; Cormorant donne des chiffres « à l'ancienne », Jost des chiffres alignés, d'où les
+// chiffres en Jost 400.
+import "../fonts/CormorantGaramond-Variable.ttf";
+import "../fonts/Jost-Variable.ttf";
+import { AboutSlint, TextEdit } from "std-widgets.slint";
+
+global Palette {
+    out property <color> noir: #0a0a0a;
+    out property <color> noir2: #121110;
+    out property <color> or: #c9a45c;
+    out property <color> or-clair: #e6c987;
+    out property <color> creme: #f1e9d8;
+    out property <color> attenue: #b3a78c;
+    out property <color> ok: #9ccfae;
+    out property <color> pause: #e0bd75;
+    out property <color> erreur: #e49a9a;
+    out property <color> piste: #2a2418;
+    out property <color> filet: rgba(201, 164, 92, 0.55);
+    out property <color> filet-fin: rgba(201, 164, 92, 0.45);
+    out property <brush> dore: @linear-gradient(90deg, #b8893c 0%, #e6c987 100%);
+}
+
+// Un jour de la semaine, déjà mis en forme par le programme (voir noyau/src/vues.rs).
+// nom = les deux jours que son bloc de 24 h chevauche (« jeu→ven »). genre : 0 = passé, 1 = passé et
+// dépassé, 2 = en cours, 3 = à venir, 4 = avant la première lecture. Les parts (conso, excès, repère)
+// sont sur une échelle commune aux sept lignes (0 à 1) ; niveau = part du budget encore intacte.
+export struct JourVue {
+    nom: string,
+    genre: int,
+    depasse: bool,
+    valeur: string,
+    court: string,
+    sous: string,
+    ligne: string,
+    tokens: string,
+    niveau: float,
+    conso-part: float,
+    exces-part: float,
+    repere: float,
+}
+
+// Un morceau de la barre « la semaine en une barre » : début et largeur en part de la barre (0 à 1).
+// genre : 0 = passé, 1 = passé et dépassé, 2 = aujourd'hui déjà, 3 = permis aujourd'hui,
+// 4 = jour à venir, 5 = avant la première lecture.
+export struct SegVue {
+    debut: float,
+    part: float,
+    genre: int,
+    texte: string,
+    etiquette: string,
+}
+
+global Couleurs {
+    // couleur du chiffre d'un jour : vert (sous le budget), rose (dépassé), or (aujourd'hui), gris (à venir)
+    pure public function valeur(genre: int, depasse: bool) -> color {
+        genre == 0 ? Palette.ok : (genre == 1 ? Palette.erreur : (genre == 2 ? (depasse ? Palette.erreur : Palette.or-clair) : Palette.attenue))
+    }
+}
+
+// Les textes fixes de l'interface : le programme les pousse dans la langue en cours (table de
+// noyau/src/textes.rs). Aucun texte à traduire n'est écrit en dur dans ce fichier.
+export global Textes {
+    // Polices : Jost et Cormorant Garamond n'ont pas de caractères chinois ni japonais ; pour ces deux
+    // langues le programme met la police de Windows (Microsoft YaHei, Yu Gothic) à leur place.
+    in property <string> police-texte: "Jost";
+    in property <string> police-titre: "Cormorant Garamond";
+    in property <string> bouton-apropos;
+    in property <string> carte-rythme;
+    in property <string> carte-reste;
+    in property <string> carte-reset;
+    in property <string> semaine-titre;
+    in property <string> titre-jours;
+    in property <string> onglet-aujourdhui;
+    in property <string> onglet-lignes;
+    in property <string> onglet-trajectoire;
+    in property <string> onglet-batteries;
+    in property <string> onglet-semaine;
+    in property <string> a-venir;
+    in property <string> mot-tokens;
+    in property <string> titre-reste;
+    in property <string> sous-reste;
+    in property <string> branche-etape1;
+    in property <string> branche-etape2;
+    in property <string> branche-etape3;
+    in property <string> apropos-titre;
+    in property <string> apropos-corps;
+    in property <string> apropos-slint;
+    in property <string> apropos-polices;
+    in property <string> bouton-retour;
+}
+
+// Fines diagonales dorées à 45 degrés, comme la texture du style 14.
+component Hatch inherits Rectangle {
+    in property <color> trait: rgba(201, 164, 92, 0.06);
+    clip: true;
+    for i in Math.ceil((root.width + root.height) / 7px) : Path {
+        x: i * 7px - root.height;
+        y: 0px;
+        width: root.height;
+        height: root.height;
+        viewbox-width: 100;
+        viewbox-height: 100;
+        stroke: root.trait;
+        stroke-width: 1px;
+        MoveTo { x: 0; y: 100; }
+        LineTo { x: 100; y: 0; }
+    }
+}
+
+component Carte inherits Rectangle {
+    in property <string> etiquette;
+    in property <string> valeur;
+    in property <string> detail;
+    in property <string> tag;
+    in property <string> avis;
+    in property <color> couleur-valeur: Palette.or-clair;
+    background: rgba(18, 17, 16, 0.6);
+    border-width: 1px;
+    border-color: Palette.filet;
+    clip: true;
+    Hatch { width: parent.width; height: parent.height; }
+    Text {
+        x: 18px; y: 14px;
+        width: parent.width - 36px;
+        text: root.etiquette;
+        color: Palette.attenue;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 1.2px;
+        wrap: word-wrap;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: 18px; y: 36px;
+        text: root.valeur;
+        color: root.couleur-valeur;
+        font-size: 40px;
+        font-weight: 400;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: 18px; y: 96px;
+        width: parent.width - 36px;
+        text: root.detail;
+        color: Palette.attenue;
+        font-size: 13px;
+        wrap: word-wrap;
+        font-family: Textes.police-texte;
+    }
+    if root.tag != "" : Text {
+        x: 18px; y: parent.height - 30px;
+        width: parent.width - 36px;
+        text: root.tag;
+        color: root.couleur-valeur;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: Textes.police-texte;
+    }
+    // l'avis (changement d'heure dans la semaine), sur sa propre ligne, seulement s'il y en a un
+    if root.avis != "" : Rectangle {
+        x: 18px; y: parent.height - 46px;
+        width: parent.width - 36px;
+        height: 36px;
+        background: rgba(201, 164, 92, 0.10);
+        Rectangle { x: 0px; y: 0px; width: 2px; height: parent.height; background: Palette.or; }
+        Rectangle {
+            x: 10px; y: 12px;
+            width: 12px; height: 12px;
+            border-radius: 6px;
+            border-width: 1.2px;
+            border-color: Palette.or-clair;
+            Path {
+                width: parent.width; height: parent.height;
+                viewbox-width: 100; viewbox-height: 100;
+                stroke: Palette.or-clair;
+                stroke-width: 1px;
+                MoveTo { x: 50; y: 22; }
+                LineTo { x: 50; y: 50; }
+                LineTo { x: 70; y: 62; }
+            }
+        }
+        Text {
+            x: 28px; y: 0px;
+            width: parent.width - 34px;
+            height: parent.height;
+            text: root.avis;
+            color: Palette.or-clair;
+            font-size: 12px;
+            font-weight: 500;
+            wrap: word-wrap;
+            vertical-alignment: center;
+            font-family: Textes.police-texte;
+        }
+    }
+}
+
+// ---------- les cinq vues de la carte « Ta conso jour par jour » ----------
+
+component Onglet inherits Rectangle {
+    in property <string> texte;
+    in property <bool> actif;
+    callback clique();
+    border-width: 1px;
+    border-color: root.actif ? Palette.or : Palette.filet-fin;
+    background: root.actif ? Palette.or : (ta.has-hover ? rgba(201, 164, 92, 0.18) : transparent);
+    Text {
+        text: root.texte;
+        color: root.actif ? Palette.noir : Palette.or-clair;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: Textes.police-texte;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clique(); }
+    }
+}
+
+// 4. Les batteries : une pile par jour, pleine = tout le budget du jour est encore disponible.
+component Batteries inherits Rectangle {
+    in property <[JourVue]> jours;
+    property <length> haut-pile: min(150px, max(60px, self.height - 34px - 68px));
+
+    for j[i] in root.jours : Rectangle {
+        x: i * root.width / 7;
+        y: 0px;
+        width: root.width / 7;
+        height: root.height;
+        Text {
+            y: 0px;
+            width: parent.width;
+            horizontal-alignment: center;
+            text: j.nom;
+            color: j.genre == 2 ? Palette.or-clair : Palette.attenue;
+            font-size: 12px;
+            font-weight: j.genre == 2 ? 600 : 400;
+            font-family: Textes.police-texte;
+        }
+        Rectangle {
+            x: parent.width * 0.22;
+            y: 34px;
+            width: parent.width * 0.56;
+            height: root.haut-pile;
+            if j.genre != 3 && j.genre != 4 : Rectangle { background: Palette.piste; }
+            // jour à venir : sa pile est pleine (budget intact), en or éteint pour la distinguer d'aujourd'hui
+            if j.genre == 3 : Rectangle {
+                x: 0px;
+                width: parent.width;
+                height: parent.height * j.niveau;
+                y: parent.height - self.height;
+                background: @linear-gradient(0deg, rgba(184, 145, 63, 0.50) 0%, rgba(230, 201, 135, 0.38) 100%);
+            }
+            // ce qui reste du budget du jour : vert (jour passé), or (aujourd'hui)
+            if j.genre == 0 : Rectangle {
+                x: 0px;
+                width: parent.width;
+                height: parent.height * j.niveau;
+                y: parent.height - self.height;
+                background: @linear-gradient(0deg, #6fae88 0%, #9ccfae 100%);
+            }
+            if j.genre == 2 && !j.depasse : Rectangle {
+                x: 0px;
+                width: parent.width;
+                height: parent.height * j.niveau;
+                y: parent.height - self.height;
+                background: @linear-gradient(0deg, #b8913f 0%, #e6c987 100%);
+            }
+            // jour dépassé : pile vide, remplie de rose
+            if j.genre == 1 || (j.genre == 2 && j.depasse) : Rectangle { background: rgba(228, 154, 154, 0.55); }
+            Rectangle {
+                border-width: 2px;
+                border-color: j.genre == 4 ? rgba(201, 164, 92, 0.4) : (j.genre == 3 ? rgba(201, 164, 92, 0.6) : rgba(201, 164, 92, 0.75));
+            }
+            // le bout de la pile
+            Rectangle {
+                x: parent.width * 0.3;
+                y: -7px;
+                width: parent.width * 0.4;
+                height: 6px;
+                background: (j.genre == 3 || j.genre == 4) ? rgba(201, 164, 92, 0.4) : rgba(201, 164, 92, 0.75);
+            }
+        }
+        Text {
+            y: 34px + root.haut-pile + 6px;
+            width: parent.width;
+            horizontal-alignment: center;
+            text: j.valeur;
+            color: Couleurs.valeur(j.genre, j.depasse);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: Textes.police-texte;
+        }
+        Text {
+            y: 34px + root.haut-pile + 24px;
+            width: parent.width;
+            horizontal-alignment: center;
+            text: j.tokens != "" ? j.sous + "\n" + j.tokens : j.sous;
+            color: Palette.attenue;
+            font-size: 11px;
+            wrap: word-wrap;
+            font-family: Textes.police-texte;
+        }
+    }
+}
+
+// 2. Les lignes : un jour par ligne, la barre se remplit, le repère clair est le budget du jour.
+component Lignes inherits Rectangle {
+    in property <[JourVue]> jours;
+    property <length> haut: min(36px, self.height / 7);
+    property <length> piste-x: 78px;
+    property <length> droite-l: 226px;
+    property <length> piste-l: self.width - self.piste-x - 12px - self.droite-l;
+
+    for j[i] in root.jours : Rectangle {
+        x: 0px;
+        y: i * root.haut;
+        width: root.width;
+        height: root.haut;
+        if i > 0 : Rectangle { y: 0px; height: 1px; background: rgba(201, 164, 92, 0.14); }
+        Text {
+            x: 0px;
+            height: parent.height;
+            vertical-alignment: center;
+            text: j.nom;
+            color: j.genre == 2 ? Palette.or-clair : Palette.attenue;
+            font-size: 13px;
+            font-weight: j.genre == 2 ? 600 : 400;
+            font-family: Textes.police-texte;
+        }
+        Rectangle {
+            x: root.piste-x;
+            y: (parent.height - 16px) / 2;
+            width: root.piste-l;
+            height: 16px;
+            if j.genre != 3 : Rectangle { background: Palette.piste; }
+            if j.genre == 3 : Rectangle { border-width: 1px; border-color: rgba(201, 164, 92, 0.4); }
+            Rectangle { x: 0px; width: parent.width * j.conso-part; height: parent.height; background: Palette.dore; }
+            Rectangle { x: parent.width * j.conso-part; width: parent.width * j.exces-part; height: parent.height; background: rgba(228, 154, 154, 0.85); }
+            if j.genre != 4 : Rectangle { x: parent.width * j.repere - 1px; y: -4px; width: 2px; height: parent.height + 8px; background: Palette.creme; }
+        }
+        Text {
+            x: root.piste-x + root.piste-l + 12px;
+            y: 2px;
+            width: j.genre == 4 ? root.droite-l : 138px;
+            text: j.ligne;
+            color: j.genre == 3 ? Palette.attenue : Palette.creme;
+            font-size: 12px;
+            overflow: elide;
+            font-family: Textes.police-texte;
+        }
+        Text {
+            x: root.piste-x + root.piste-l + 12px + 138px;
+            y: 2px;
+            width: root.droite-l - 138px;
+            horizontal-alignment: right;
+            text: j.genre == 3 ? Textes.a-venir : (j.genre == 4 ? "" : j.valeur);
+            color: Couleurs.valeur(j.genre, j.depasse);
+            font-size: 12px;
+            font-weight: 500;
+            font-family: Textes.police-texte;
+        }
+        Text {
+            x: root.piste-x + root.piste-l + 12px;
+            y: 18px;
+            width: root.droite-l;
+            text: j.tokens != "" ? j.tokens + " " + Textes.mot-tokens : "";
+            color: Palette.attenue;
+            font-size: 10px;
+            font-family: Textes.police-texte;
+        }
+    }
+}
+
+// 1. Aujourd'hui d'abord : une jauge ronde pour la seule question utile, la semaine en sept pastilles.
+component Aujourdhui inherits Rectangle {
+    in property <[JourVue]> jours;
+    in property <string> arc;
+    in property <bool> depasse;
+    in property <string> etiquette;
+    in property <string> valeur;
+    in property <string> sous;
+    in property <string> resume;
+    property <length> d: min(self.height, 140px);
+    property <length> gy: (self.height - self.d) / 2;
+    property <length> colonne-x: self.d + 18px;
+    property <length> colonne-l: self.width - self.colonne-x;
+    property <length> pastille-l: (self.colonne-l - 6 * 6px) / 7;
+    property <length> colonne-y: max(0px, (self.height - 56px - 12px - 52px) / 2);
+
+    Path {
+        x: 0px; y: root.gy;
+        width: root.d; height: root.d;
+        viewbox-width: 200; viewbox-height: 200;
+        stroke: Palette.piste;
+        stroke-width: 12px;
+        commands: "M 100 22 A 78 78 0 1 1 100 178 A 78 78 0 1 1 100 22";
+    }
+    Path {
+        x: 0px; y: root.gy;
+        width: root.d; height: root.d;
+        viewbox-width: 200; viewbox-height: 200;
+        stroke: root.depasse ? Palette.erreur : Palette.or-clair;
+        stroke-width: 12px;
+        stroke-line-cap: round;
+        commands: root.arc;
+    }
+    Text {
+        x: 0px; y: root.gy + root.d * 0.27;
+        width: root.d;
+        horizontal-alignment: center;
+        text: root.etiquette;
+        color: Palette.attenue;
+        font-size: 9px;
+        letter-spacing: 0.3px;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: 0px; y: root.gy + root.d * 0.35;
+        width: root.d;
+        horizontal-alignment: center;
+        text: root.valeur + " %";
+        color: root.depasse ? Palette.erreur : Palette.creme;
+        font-size: 30px;
+        font-weight: 500;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: 0px; y: root.gy + root.d * 0.65;
+        width: root.d;
+        horizontal-alignment: center;
+        text: root.sous;
+        color: Palette.attenue;
+        font-size: 10px;
+        font-family: Textes.police-texte;
+    }
+    for j[i] in root.jours : Rectangle {
+        x: root.colonne-x + i * (root.pastille-l + 6px);
+        y: root.colonne-y;
+        width: root.pastille-l;
+        height: 56px;
+        border-width: 1px;
+        border-color: j.genre == 2 ? Palette.or-clair : (j.genre == 3 ? rgba(201, 164, 92, 0.3) : Palette.filet);
+        background: j.genre == 2 ? rgba(201, 164, 92, 0.14) : rgba(255, 255, 255, 0.02);
+        Text {
+            y: 8px;
+            width: parent.width;
+            horizontal-alignment: center;
+            text: j.nom;
+            color: j.genre == 2 ? Palette.or-clair : Palette.attenue;
+            font-size: 10px;
+            font-family: Textes.police-texte;
+        }
+        Text {
+            y: 28px;
+            width: parent.width;
+            horizontal-alignment: center;
+            text: j.court;
+            color: Couleurs.valeur(j.genre, j.depasse);
+            font-size: 15px;
+            font-weight: 500;
+            font-family: Textes.police-texte;
+        }
+    }
+    Text {
+        x: root.colonne-x;
+        y: root.colonne-y + 56px + 12px;
+        width: root.colonne-l;
+        text: root.resume;
+        color: Palette.creme;
+        font-size: 14px;
+        wrap: word-wrap;
+        font-family: Textes.police-texte;
+    }
+}
+
+// 3. La trajectoire : la conso cumulée contre la ligne « pile au rythme ». Les tracés arrivent du
+// programme dans une boîte de 700 × 300 (7 jours, 0 à 100 %).
+component Trajectoire inherits Rectangle {
+    in property <[JourVue]> jours;
+    in property <string> aire-avance;
+    in property <string> aire-retard;
+    in property <string> rythme;
+    in property <string> cumul;
+    in property <string> permis;
+    in property <string> texte;
+    in property <string> en-ce-moment;
+    in property <float> now-x;
+    in property <float> now-y;
+    property <length> gauche: 42px;
+    property <length> haut: 8px;
+    property <length> bas: 22px;
+    property <length> droite: 10px;
+    property <length> pw: self.width - self.gauche - self.droite;
+    property <length> ph: self.height - self.haut - self.bas;
+    property <length> mx: self.gauche + self.pw * self.now-x;
+    property <length> my: self.haut + self.ph * self.now-y;
+
+    for p in [0, 25, 50, 75, 100] : Rectangle {
+        x: root.gauche;
+        width: root.pw;
+        height: 1px;
+        y: root.haut + root.ph * (1 - p / 100);
+        background: rgba(201, 164, 92, 0.16);
+        Text {
+            x: -root.gauche; y: -8px;
+            width: root.gauche - 6px;
+            horizontal-alignment: right;
+            text: "\{p} %";
+            color: Palette.attenue;
+            font-size: 11px;
+            font-family: Textes.police-texte;
+        }
+    }
+    for j[i] in root.jours : Rectangle {
+        x: root.gauche + root.pw * i / 7;
+        y: root.haut;
+        width: root.pw / 7;
+        height: root.ph + root.bas;
+        Rectangle { x: 0px; width: 1px; height: root.ph; background: rgba(201, 164, 92, 0.10); }
+        Text {
+            y: root.ph + 4px;
+            width: parent.width;
+            horizontal-alignment: center;
+            text: j.nom;
+            color: j.genre == 2 ? Palette.or-clair : Palette.attenue;
+            font-size: 11px;
+            font-weight: j.genre == 2 ? 600 : 400;
+            font-family: Textes.police-texte;
+        }
+    }
+    Path { x: root.gauche; y: root.haut; width: root.pw; height: root.ph; viewbox-width: 700; viewbox-height: 300; fill: rgba(156, 207, 174, 0.40); commands: root.aire-avance; }
+    Path { x: root.gauche; y: root.haut; width: root.pw; height: root.ph; viewbox-width: 700; viewbox-height: 300; fill: rgba(228, 154, 154, 0.45); commands: root.aire-retard; }
+    Path { x: root.gauche; y: root.haut; width: root.pw; height: root.ph; viewbox-width: 700; viewbox-height: 300; stroke: rgba(241, 233, 216, 0.75); stroke-width: 1.5px; commands: root.rythme; }
+    Path { x: root.gauche; y: root.haut; width: root.pw; height: root.ph; viewbox-width: 700; viewbox-height: 300; stroke: rgba(230, 201, 135, 0.5); stroke-width: 2px; commands: root.permis; }
+    Path { x: root.gauche; y: root.haut; width: root.pw; height: root.ph; viewbox-width: 700; viewbox-height: 300; stroke: Palette.or-clair; stroke-width: 3px; stroke-line-join: round; commands: root.cumul; }
+    Text {
+        x: root.gauche + 10px; y: root.haut + 2px;
+        text: root.en-ce-moment;
+        color: Palette.or-clair;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: Textes.police-texte;
+    }
+    Rectangle {
+        x: root.mx - 6px; y: root.my - 6px;
+        width: 12px; height: 12px;
+        border-radius: 6px;
+        border-width: 3px;
+        border-color: Palette.or-clair;
+        background: Palette.noir;
+    }
+    Text {
+        x: root.now-x > 0.3 ? root.mx - 138px : root.mx + 12px;
+        y: max(root.haut + 20px, root.my - 26px);
+        width: 126px;
+        horizontal-alignment: root.now-x > 0.3 ? TextHorizontalAlignment.right : TextHorizontalAlignment.left;
+        text: root.texte;
+        color: Palette.creme;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: Textes.police-texte;
+    }
+}
+
+// 5. La semaine en une barre : toute la semaine = 100 % du forfait ; chaque morceau est un jour.
+component SemaineBarre inherits Rectangle {
+    in property <[SegVue]> segments;
+    in property <float> repere;
+    in property <string> repere-texte;
+    in property <string> resume;
+    property <length> barre-y: 44px;
+    property <length> barre-h: min(76px, self.height - 110px);
+
+    for s in root.segments : Rectangle {
+        x: root.width * s.debut;
+        y: root.barre-y;
+        width: root.width * s.part;
+        height: root.barre-h;
+        background: s.genre == 0 ? #c9a45c : (s.genre == 1 ? #e49a9a : (s.genre == 2 ? #f0d28b : (s.genre == 3 ? rgba(201, 164, 92, 0.25) : (s.genre == 4 ? Palette.piste : #4a4030))));
+        clip: true;
+        if s.genre == 3 : Hatch { width: parent.width; height: parent.height; trait: rgba(201, 164, 92, 0.45); }
+        if s.genre == 3 || s.genre == 4 : Rectangle { border-width: 1px; border-color: rgba(201, 164, 92, 0.4); }
+        Rectangle { x: parent.width - 1px; width: 1px; background: Palette.noir2; }
+        Text {
+            width: parent.width;
+            height: parent.height;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            text: s.texte;
+            color: s.genre <= 2 ? Palette.noir : Palette.creme;
+            font-size: 12px;
+            font-weight: 500;
+            overflow: elide;
+            font-family: Textes.police-texte;
+        }
+    }
+    for s in root.segments : Text {
+        x: root.width * s.debut;
+        y: root.barre-y + root.barre-h + 6px;
+        width: root.width * s.part;
+        horizontal-alignment: center;
+        text: s.part > 0.05 ? s.etiquette : "";
+        color: Palette.attenue;
+        font-size: 11px;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+    Rectangle { x: root.width * root.repere - 1px; y: root.barre-y - 8px; width: 2px; height: root.barre-h + 16px; background: Palette.creme; }
+    Text {
+        x: max(0px, min(root.width - 160px, root.width * root.repere - 80px));
+        y: root.barre-y - 28px;
+        width: 160px;
+        horizontal-alignment: center;
+        text: root.repere-texte;
+        color: Palette.creme;
+        font-size: 12px;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: 0px;
+        y: root.barre-y + root.barre-h + 34px;
+        width: root.width;
+        text: root.resume;
+        color: Palette.creme;
+        font-size: 15px;
+        font-family: Textes.police-texte;
+    }
+}
+
+component BarreReste inherits Rectangle {
+    in property <string> nom;
+    in property <string> texte;
+    in property <float> valeur;
+    in property <float> maxi: 25;
+    height: 80px;
+    Text {
+        x: 0px; y: 0px;
+        width: parent.width;
+        height: 38px;
+        text: root.nom;
+        color: Palette.creme;
+        font-size: 13px;
+        wrap: word-wrap;
+        font-family: Textes.police-texte;
+    }
+    Rectangle {
+        x: 0px; y: 44px;
+        width: parent.width - 70px;
+        height: 20px;
+        background: Palette.piste;
+        Rectangle {
+            x: 0px; y: 0px;
+            width: max(2px, parent.width * min(1.0, root.valeur / root.maxi));
+            height: parent.height;
+            background: Palette.dore;
+        }
+    }
+    Text {
+        x: parent.width - 62px; y: 45px;
+        text: root.texte;
+        color: Palette.creme;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: Textes.police-texte;
+    }
+}
+
+component Bouton inherits Rectangle {
+    in property <string> texte;
+    in property <string> police: Textes.police-texte;
+    callback clique();
+    border-width: 1px;
+    border-color: Palette.or;
+    background: ta.has-hover ? rgba(201, 164, 92, 0.18) : transparent;
+    Text {
+        text: root.texte;
+        color: Palette.or-clair;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        font-family: root.police;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clique(); }
+    }
+}
+
+export component App inherits Window {
+    title: "Conso Token";
+    icon: @image-url("../icone/icone.png");
+    preferred-width: 1100px;
+    preferred-height: 840px;
+    min-width: 1000px;
+    min-height: 800px;
+    background: Palette.noir;
+
+    // 0 = chiffres de la semaine, 1 = première ouverture ou attente de chiffres
+    in property <int> page: 0;
+    in-out property <bool> apropos: false;
+    in property <string> version: "0.1";
+
+    // la langue (indice dans noyau::langue::TOUTES) et son sélecteur dans l'en-tête
+    in-out property <int> langue-index: 1;
+    in-out property <bool> langue-ouverte: false;
+    callback langue-choisie(int);
+
+    // en-tête
+    in property <string> source-texte;
+    in property <color> source-couleur: Palette.ok;
+
+    // trois cartes
+    in property <string> rythme-valeur;
+    in property <string> rythme-detail;
+    in property <string> rythme-tag;
+    in property <color> rythme-couleur: Palette.or-clair;
+    in property <string> reste-valeur;
+    in property <string> reste-detail;
+    in property <string> reset-valeur;
+    in property <string> reset-detail;
+    in property <string> reset-avis;
+
+    // la semaine d'un coup d'œil
+    in property <float> utilise: 0;
+    in property <float> ecoule: 0;
+    in property <string> semaine-texte;
+
+    // jour par jour : cinq vues au choix (0 = aujourd'hui d'abord, 1 = lignes, 2 = trajectoire,
+    // 3 = batteries, 4 = la semaine en une barre) ; la vue choisie est gardée par le programme
+    in-out property <int> vue: 3;
+    callback vue-choisie(int);
+    in property <string> puce;
+    in property <[string]> aides;
+    in property <[JourVue]> jours;
+    // vue 1
+    in property <string> v1-arc;
+    in property <bool> v1-depasse;
+    in property <string> v1-etiquette;
+    in property <string> v1-valeur;
+    in property <string> v1-sous;
+    in property <string> v1-resume;
+    // vue 3
+    in property <string> v3-aire-avance;
+    in property <string> v3-aire-retard;
+    in property <string> v3-rythme;
+    in property <string> v3-cumul;
+    in property <string> v3-permis;
+    in property <string> v3-texte;
+    in property <string> v3-en-ce-moment;
+    in property <float> v3-x;
+    in property <float> v3-y;
+    // vue 5
+    in property <[SegVue]> segments;
+    in property <float> repere-semaine;
+    in property <string> repere-semaine-texte;
+    in property <string> semaine-resume;
+
+    // ce qu'il reste à consommer
+    in property <string> reste1-nom;
+    in property <string> reste1-texte;
+    in property <float> reste1: 0;
+    in property <bool> reste2-visible: false;
+    in property <string> reste2-nom;
+    in property <string> reste2-texte;
+    in property <float> reste2: 0;
+    in property <float> reste-maxi: 25;
+    in property <string> reste-resume;
+
+    // première ouverture
+    in property <string> accueil-titre;
+    in property <string> accueil-message;
+    in property <bool> montrer-branchement: false;
+    in property <string> chemin-reglages;
+    in property <string> extrait-reglages;
+    in property <string> avertissement-chemin;
+
+    // lueur dorée en haut de la fenêtre
+    Rectangle {
+        x: 0px; y: 0px;
+        width: root.width; height: 380px;
+        background: @radial-gradient(circle, rgba(31, 26, 16, 1) 0%, rgba(10, 10, 10, 0) 70%);
+    }
+
+    // panneau principal : double filet doré + texture
+    panneau := Rectangle {
+        x: 20px; y: 20px;
+        width: root.width - 40px;
+        height: root.height - 40px;
+        background: Palette.noir2;
+        border-width: 1px;
+        border-color: Palette.or;
+        clip: true;
+
+        Hatch { width: parent.width; height: parent.height; }
+        Rectangle {
+            x: 5px; y: 5px;
+            width: parent.width - 10px;
+            height: parent.height - 10px;
+            border-width: 1px;
+            border-color: Palette.filet-fin;
+        }
+
+        Text {
+            x: 32px; y: 22px;
+            text: "CONSO TOKEN";
+            color: Palette.or-clair;
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: 5px;
+            font-family: Textes.police-titre;
+        }
+        bouton-apropos := Bouton {
+            x: parent.width - 32px - 96px; y: 18px;
+            width: 96px; height: 28px;
+            texte: Textes.bouton-apropos;
+            clique => { root.apropos = true; root.langue-ouverte = false; }
+        }
+        // le sélecteur de langue : le nom de la langue en cours, dans cette langue ; un clic ouvre la liste
+        bouton-langue := Bouton {
+            x: bouton-apropos.x - 12px - 124px; y: 18px;
+            width: 124px; height: 28px;
+            texte: ["English", "Français", "Español", "Deutsch", "Português", "Italiano", "简体中文", "日本語"][root.langue-index];
+            police: root.langue-index == 6 ? "Microsoft YaHei" : (root.langue-index == 7 ? "Yu Gothic" : Textes.police-texte);
+            clique => { root.langue-ouverte = !root.langue-ouverte; }
+        }
+        statut := Text {
+            x: bouton-langue.x - 24px - self.width; y: 25px;
+            text: root.source-texte;
+            color: Palette.attenue;
+            font-size: 13px;
+            font-family: Textes.police-texte;
+        }
+        Rectangle {
+            x: statut.x - 16px; y: 29px;
+            width: 8px; height: 8px;
+            border-radius: 4px;
+            background: root.source-couleur;
+        }
+
+        // ---------- page 0 : les chiffres de la semaine ----------
+        if root.page == 0 : Rectangle {
+            x: 0px; y: 0px;
+            width: parent.width; height: parent.height;
+
+            HorizontalLayout {
+                x: 32px; y: 62px;
+                width: parent.width - 64px;
+                height: 184px;
+                spacing: 14px;
+                Carte {
+                    etiquette: Textes.carte-rythme;
+                    valeur: root.rythme-valeur;
+                    couleur-valeur: root.rythme-couleur;
+                    detail: root.rythme-detail;
+                    tag: root.rythme-tag;
+                }
+                Carte {
+                    etiquette: Textes.carte-reste;
+                    valeur: root.reste-valeur;
+                    detail: root.reste-detail;
+                }
+                Carte {
+                    etiquette: Textes.carte-reset;
+                    valeur: root.reset-valeur;
+                    detail: root.reset-detail;
+                    avis: root.reset-avis;
+                }
+            }
+
+            // la semaine d'un coup d'œil
+            Rectangle {
+                x: 32px; y: 260px;
+                width: parent.width - 64px;
+                height: 104px;
+                background: rgba(18, 17, 16, 0.6);
+                border-width: 1px;
+                border-color: Palette.filet;
+                clip: true;
+                Hatch { width: parent.width; height: parent.height; }
+                Text {
+                    x: 18px; y: 10px;
+                    text: Textes.semaine-titre;
+                    color: Palette.or-clair;
+                    font-size: 20px;
+                    font-weight: 600;
+                    font-family: Textes.police-titre;
+                }
+                Rectangle {
+                    x: 18px; y: 52px;
+                    width: parent.width - 36px;
+                    height: 20px;
+                    background: Palette.piste;
+                    // l'écart entre ce qui est utilisé et ce qui est passé
+                    Rectangle {
+                        x: parent.width * (min(100.0, min(root.utilise, root.ecoule)) / 100);
+                        y: 0px;
+                        width: parent.width * ((min(100.0, max(root.utilise, root.ecoule)) - min(100.0, min(root.utilise, root.ecoule))) / 100);
+                        height: parent.height;
+                        background: rgba(138, 111, 58, 0.5);
+                    }
+                    Rectangle {
+                        x: 0px; y: 0px;
+                        width: parent.width * min(1.0, root.utilise / 100);
+                        height: parent.height;
+                        background: Palette.dore;
+                    }
+                    Rectangle {
+                        x: parent.width * (root.ecoule / 100) - 1px;
+                        y: -6px;
+                        width: 2px;
+                        height: parent.height + 12px;
+                        background: Palette.creme;
+                    }
+                }
+                Text {
+                    x: 18px; y: 78px;
+                    width: parent.width - 36px;
+                    text: root.semaine-texte;
+                    color: Palette.attenue;
+                    font-size: 12px;
+                    font-family: Textes.police-texte;
+                }
+            }
+
+            // jour par jour : cinq vues au choix (le choix est gardé dans vue.txt, voir main.rs)
+            Rectangle {
+                x: 32px; y: 380px;
+                width: (parent.width - 64px - 14px) * 0.6;
+                height: parent.height - 380px - 28px;
+                background: rgba(18, 17, 16, 0.6);
+                border-width: 1px;
+                border-color: Palette.filet;
+                clip: true;
+                Hatch { width: parent.width; height: parent.height; }
+                HorizontalLayout {
+                    x: 18px; y: 8px;
+                    height: 32px;
+                    alignment: start;
+                    Text {
+                        text: Textes.titre-jours;
+                        color: Palette.or-clair;
+                        font-size: 20px;
+                        font-weight: 600;
+                        vertical-alignment: center;
+                        font-family: Textes.police-titre;
+                    }
+                    // l'heure de la remise à zéro, dite une seule fois, à côté du titre
+                    Rectangle {
+                        width: puce-t.preferred-width + 34px;
+                        Rectangle {
+                            x: 14px; y: 5px;
+                            width: parent.width - 14px;
+                            height: 22px;
+                            border-width: 1px;
+                            border-color: Palette.filet;
+                            border-radius: 11px;
+                            background: rgba(201, 164, 92, 0.10);
+                            puce-t := Text {
+                                text: root.puce;
+                                color: Palette.creme;
+                                font-size: 12px;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                                font-family: Textes.police-texte;
+                            }
+                        }
+                    }
+                }
+                for nom[i] in [Textes.onglet-aujourdhui, Textes.onglet-lignes, Textes.onglet-trajectoire, Textes.onglet-batteries, Textes.onglet-semaine] : Onglet {
+                    x: 18px + i * ((parent.width - 36px - 4 * 6px) / 5 + 6px);
+                    y: 46px;
+                    width: (parent.width - 36px - 4 * 6px) / 5;
+                    height: 24px;
+                    texte: nom;
+                    actif: root.vue == i;
+                    clique => {
+                        root.vue = i;
+                        root.vue-choisie(i);
+                    }
+                }
+                Rectangle {
+                    x: 18px; y: 82px;
+                    width: parent.width - 36px;
+                    height: parent.height - 82px - 44px;
+                    if root.vue == 0 : Aujourdhui {
+                        jours: root.jours;
+                        arc: root.v1-arc;
+                        depasse: root.v1-depasse;
+                        etiquette: root.v1-etiquette;
+                        valeur: root.v1-valeur;
+                        sous: root.v1-sous;
+                        resume: root.v1-resume;
+                    }
+                    if root.vue == 1 : Lignes { jours: root.jours; }
+                    if root.vue == 2 : Trajectoire {
+                        jours: root.jours;
+                        aire-avance: root.v3-aire-avance;
+                        aire-retard: root.v3-aire-retard;
+                        rythme: root.v3-rythme;
+                        cumul: root.v3-cumul;
+                        permis: root.v3-permis;
+                        texte: root.v3-texte;
+                        en-ce-moment: root.v3-en-ce-moment;
+                        now-x: root.v3-x;
+                        now-y: root.v3-y;
+                    }
+                    if root.vue == 3 : Batteries { jours: root.jours; }
+                    if root.vue == 4 : SemaineBarre {
+                        segments: root.segments;
+                        repere: root.repere-semaine;
+                        repere-texte: root.repere-semaine-texte;
+                        resume: root.semaine-resume;
+                    }
+                }
+                Text {
+                    x: 18px; y: parent.height - 40px;
+                    width: parent.width - 36px;
+                    height: 32px;
+                    text: root.aides[root.vue];
+                    color: Palette.attenue;
+                    font-size: 11px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+            }
+
+            // ce qu'il reste à consommer
+            Rectangle {
+                x: 32px + (parent.width - 64px - 14px) * 0.6 + 14px; y: 380px;
+                width: (parent.width - 64px - 14px) * 0.4;
+                height: parent.height - 380px - 28px;
+                background: rgba(18, 17, 16, 0.6);
+                border-width: 1px;
+                border-color: Palette.filet;
+                clip: true;
+                Hatch { width: parent.width; height: parent.height; }
+                Text {
+                    x: 18px; y: 10px;
+                    width: parent.width - 36px;
+                    text: Textes.titre-reste;
+                    color: Palette.or-clair;
+                    font-size: 20px;
+                    font-weight: 600;
+                    font-family: Textes.police-titre;
+                }
+                Text {
+                    x: 18px; y: 42px;
+                    width: parent.width - 36px;
+                    text: Textes.sous-reste;
+                    color: Palette.attenue;
+                    font-size: 12px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+                BarreReste {
+                    x: 18px; y: 86px;
+                    width: parent.width - 36px;
+                    nom: root.reste1-nom;
+                    texte: root.reste1-texte;
+                    valeur: root.reste1;
+                    maxi: root.reste-maxi;
+                }
+                if root.reste2-visible : BarreReste {
+                    x: 18px; y: 168px;
+                    width: parent.width - 36px;
+                    nom: root.reste2-nom;
+                    texte: root.reste2-texte;
+                    valeur: root.reste2;
+                    maxi: root.reste-maxi;
+                }
+                Text {
+                    x: 18px; y: 256px;
+                    width: parent.width - 36px;
+                    height: parent.height - 256px - 12px;
+                    text: root.reste-resume;
+                    color: Palette.attenue;
+                    font-size: 13px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+            }
+        }
+
+        // ---------- page 1 : première ouverture, ou en attente de chiffres ----------
+        if root.page == 1 : Rectangle {
+            x: 32px; y: 62px;
+            width: parent.width - 64px;
+            height: parent.height - 62px - 28px;
+            background: rgba(18, 17, 16, 0.6);
+            border-width: 1px;
+            border-color: Palette.filet;
+            clip: true;
+            Hatch { width: parent.width; height: parent.height; }
+            Text {
+                x: 28px; y: 22px;
+                width: parent.width - 56px;
+                text: root.accueil-titre;
+                color: Palette.or-clair;
+                font-size: 30px;
+                font-weight: 600;
+                font-family: Textes.police-titre;
+            }
+            Rectangle { x: 28px; y: 66px; width: 48px; height: 1px; background: Palette.or; }
+            Text {
+                x: 28px; y: 80px;
+                width: parent.width - 56px;
+                text: root.accueil-message;
+                color: Palette.creme;
+                font-size: 15px;
+                wrap: word-wrap;
+                font-family: Textes.police-texte;
+            }
+            if root.montrer-branchement : Rectangle {
+                x: 28px; y: 150px;
+                width: parent.width - 56px;
+                height: parent.height - 150px - 16px;
+                Text {
+                    x: 0px; y: 0px;
+                    width: parent.width;
+                    text: Textes.branche-etape1;
+                    color: Palette.creme;
+                    font-size: 14px;
+                    font-family: Textes.police-texte;
+                }
+                TextEdit {
+                    x: 0px; y: 24px;
+                    width: parent.width;
+                    height: 56px;
+                    read-only: true;
+                    wrap: word-wrap;
+                    font-size: 13px;
+                    text: root.chemin-reglages;
+                }
+                Text {
+                    x: 0px; y: 96px;
+                    width: parent.width;
+                    text: Textes.branche-etape2;
+                    color: Palette.creme;
+                    font-size: 14px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+                TextEdit {
+                    x: 0px; y: 138px;
+                    width: parent.width;
+                    height: 136px;
+                    read-only: true;
+                    wrap: word-wrap;
+                    font-size: 13px;
+                    text: root.extrait-reglages;
+                }
+                Text {
+                    x: 0px; y: 290px;
+                    width: parent.width;
+                    text: Textes.branche-etape3;
+                    color: Palette.creme;
+                    font-size: 14px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+                Text {
+                    x: 0px; y: 330px;
+                    width: parent.width;
+                    text: root.avertissement-chemin;
+                    color: Palette.pause;
+                    font-size: 13px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+            }
+        }
+
+        // ---------- la liste des langues (sous le bouton de l'en-tête) ----------
+        if root.langue-ouverte : Rectangle {
+            x: 0px; y: 0px;
+            width: parent.width; height: parent.height;
+            // un clic ailleurs referme la liste
+            TouchArea { clicked => { root.langue-ouverte = false; } }
+            Rectangle {
+                x: bouton-langue.x;
+                y: bouton-langue.y + bouton-langue.height + 4px;
+                width: bouton-langue.width;
+                height: 8 * 32px + 2px;
+                background: Palette.noir2;
+                border-width: 1px;
+                border-color: Palette.or;
+                for nom[i] in ["English", "Français", "Español", "Deutsch", "Português", "Italiano", "简体中文", "日本語"] : Rectangle {
+                    x: 1px;
+                    y: 1px + i * 32px;
+                    width: parent.width - 2px;
+                    height: 32px;
+                    background: i == root.langue-index ? Palette.or : (ta-langue.has-hover ? rgba(201, 164, 92, 0.18) : transparent);
+                    Text {
+                        text: nom;
+                        color: i == root.langue-index ? Palette.noir : Palette.or-clair;
+                        font-size: 14px;
+                        font-weight: 500;
+                        font-family: i == 6 ? "Microsoft YaHei" : (i == 7 ? "Yu Gothic" : Textes.police-texte);
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                    ta-langue := TouchArea {
+                        mouse-cursor: pointer;
+                        clicked => {
+                            root.langue-index = i;
+                            root.langue-ouverte = false;
+                            root.langue-choisie(i);
+                        }
+                    }
+                }
+            }
+        }
+
+        // ---------- écran « À propos » (attribution de la licence Slint) ----------
+        if root.apropos : Rectangle {
+            x: 0px; y: 0px;
+            width: parent.width; height: parent.height;
+            background: Palette.noir2;
+            // bloque les clics : sans cela ils passent aux éléments cachés dessous (champs de texte)
+            TouchArea { }
+            Hatch { width: parent.width; height: parent.height; }
+            Rectangle {
+                x: 5px; y: 5px;
+                width: parent.width - 10px;
+                height: parent.height - 10px;
+                border-width: 1px;
+                border-color: Palette.filet-fin;
+            }
+            Text {
+                x: 48px; y: 36px;
+                text: Textes.apropos-titre;
+                color: Palette.or-clair;
+                font-size: 30px;
+                font-weight: 600;
+                font-family: Textes.police-titre;
+            }
+            Rectangle { x: 48px; y: 80px; width: 48px; height: 1px; background: Palette.or; }
+            Text {
+                x: 48px; y: 94px;
+                width: parent.width - 96px;
+                text: Textes.apropos-corps;
+                color: Palette.creme;
+                font-size: 15px;
+                wrap: word-wrap;
+                font-family: Textes.police-texte;
+            }
+            Text {
+                x: 48px; y: 190px;
+                width: parent.width - 96px;
+                text: Textes.apropos-slint;
+                color: Palette.attenue;
+                font-size: 14px;
+                wrap: word-wrap;
+                font-family: Textes.police-texte;
+            }
+            AboutSlint {
+                x: 48px; y: 214px;
+                width: 420px; height: 210px;
+            }
+            Text {
+                x: 48px; y: 448px;
+                width: parent.width - 96px;
+                text: Textes.apropos-polices;
+                color: Palette.attenue;
+                font-size: 14px;
+                wrap: word-wrap;
+                font-family: Textes.police-texte;
+            }
+            Bouton {
+                x: 48px; y: parent.height - 28px - 56px;
+                width: 120px; height: 34px;
+                texte: Textes.bouton-retour;
+                clique => { root.apropos = false; }
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+CONSO TOKEN — guida di una pagina
+
+Conso Token è gratuito: puoi usarlo, copiarlo, modificarlo e condividerlo liberamente (licenza MIT, vedi LICENSE.txt).
+
+A COSA SERVE
+Una piccola finestra che mostra a che punto sei con il tuo piano Claude: quanto hai usato, cosa ti
+resta giorno per giorno e se sei in anticipo o in ritardo. Non prevede nulla, non si collega a
+nessun sito e non chiede nessuna password.
+
+COSA TI SERVE
+- Windows 10 o 11. Nient'altro da installare.
+- L'app Claude per il desktop (quella in cui usi Claude Code) con un piano Pro o Max: i numeri del
+  piano non esistono per gli altri piani.
+
+INSTALLAZIONE (10 minuti, una sola volta)
+1. Metti la cartella «Conso Token» ricevuta su un disco del tuo computer (per esempio H:). Se è
+   arrivata come file zip: clic destro sullo zip, «Estrai tutto». Tieni la cartella INTERA:
+   conso_token.exe, la cartella «outils», la cartella «licences» e i file di testo. Evita una
+   chiavetta USB e un disco di rete. Evita anche un apostrofo nel nome della cartella.
+2. Nell'app Claude per il desktop, apri una nuova sessione di Claude Code e scrivi questa frase,
+   sostituendo il percorso con quello della tua cartella:
+       Leggi il file PASTE_INTO_CLAUDE.txt nella cartella «H:\Conso Token» e fai
+       esattamente ciò che dice.
+   Claude crea un'attività che invia i tuoi numeri alla finestra ogni 15 minuti, la prova una volta
+   davanti a te e ti dice se ha funzionato. Rispondi «sì» o «consenti sempre» quando l'app chiede
+   il permesso per PowerShell: è normale, serve a inviare i numeri.
+3. Fai doppio clic su conso_token.exe. Se Windows mostra «Windows ha protetto il PC» (editore
+   sconosciuto), clicca «Ulteriori informazioni» e poi «Esegui comunque». Non è un virus: Conso
+   Token è un piccolo programma fatto in casa, senza la firma di un editore a pagamento, per
+   questo Windows lo segnala la prima volta. Non usa alcuna funzione di rete. Se il passaggio 2 ha
+   funzionato, la finestra mostra già i tuoi numeri. Altrimenti dice «Nessun numero ricevuto»:
+   dillo a chi ti ha dato l'app.
+
+DA SAPERE
+- La finestra legge da sola l'ora in cui si azzera la tua settimana e usa il tuo fuso orario e i
+  tuoi cambi d'ora. Nella settimana del cambio d'ora una riga sotto il conto alla rovescia lo
+  spiega (ad esempio «Un’ora prima: passaggio all’ora solare, domenica 25/10.»): è normale, non
+  c'è nulla da regolare.
+- Un «giorno» nella finestra = 24 ore da quell'azzeramento, come dice la frase sopra il grafico.
+- L'app Claude deve essere aperta (non per forza in primo piano) perché i numeri si aggiornino. La
+  finestra di Conso Token può essere chiusa: riaprila con doppio clic su conso_token.exe.
+- Se sposti la cartella, l'attività non troverà più il programma: ridai a Claude la frase del
+  passaggio 2 con il nuovo percorso.
+- L'attività «conso-token-feed» (sezione «Pianificate») consuma un po' del tuo piano, come ogni
+  attività: è compreso nei numeri. Se la elimini, i numeri non si aggiornano più. Ogni esecuzione
+  si archivia da sola: vedere sessioni «Conso Token feed» negli archivi è normale.
+- Per fermare tutto: elimina quell'attività, poi la cartella Conso Token.
+- I dati sono in C:\Users\<il tuo nome>\AppData\Local\ConsoToken.
+- Puoi cambiare lingua con il pulsante in alto a destra nella finestra.
+- Le licenze (caratteri e Slint) sono nella cartella «licences».
+
+SE NON ARRIVA NULLA
+Apri «outils\dernier_envoi.txt» (nella cartella Conso Token) con il Blocco note e di' a chi ti ha
+dato l'app cosa contiene (o che non esiste), con una schermata della finestra.

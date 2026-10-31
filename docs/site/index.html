@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Conso Token</title>
+<meta name="description" content="A small Windows window that shows where you stand on your Claude plan. Free, open source, no network.">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="logo" href="#top">Conso Token</a>
+    <nav class="links" aria-label="Sections">
+      <a href="#tourbloc" data-i="nav_tour">The window</a>
+      <a href="#how" data-i="nav_how">Install</a>
+      <a href="#trust" data-i="nav_trust">Trust</a>
+      <a href="guide.html" data-i="nav_guide">Reading guide</a>
+    </nav>
+    <select id="lang" aria-label="Language">
+      <option value="en" lang="en">English</option>
+      <option value="fr" lang="fr">Français</option>
+      <option value="es" lang="es">Español</option>
+      <option value="de" lang="de">Deutsch</option>
+      <option value="pt" lang="pt-BR">Português (BR)</option>
+      <option value="it" lang="it">Italiano</option>
+      <option value="zh" lang="zh-CN">中文</option>
+      <option value="ja" lang="ja">日本語</option>
+    </select>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <span class="badge" data-i="badge">Free · Open source · Windows 10 / 11</span>
+      <h1 data-i="h1">Know exactly where you stand on your Claude plan.</h1>
+      <p class="lead" data-i="lead"></p>
+      <div class="btns">
+        <a class="btn primary" id="dl" href="#how" data-i="cta_dl">Get Conso Token</a>
+        <a class="btn ghost" href="#tourbloc" data-i="cta_see">See the window</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap grid3">
+      <div class="card"><div class="num">±</div><h3 data-i="k_rythme"></h3><p data-i="hf1_d"></p></div>
+      <div class="card"><div class="num">÷</div><h3 data-i="k_jours"></h3><p data-i="hf2_d"></p></div>
+      <div class="card"><div class="num">→</div><h3 data-i="k_reste2"></h3><p data-i="hf3_d"></p></div>
+    </div>
+  </section>
+
+  <section id="free" style="padding-top:0">
+    <div class="wrap">
+      <h2 data-i="free_t">Free and open source</h2>
+      <div class="grid3">
+        <div class="card"><div class="num">0</div><h3 data-i="fc1_t"></h3><p data-i="fc1_d"></p></div>
+        <div class="card"><div class="num">MIT</div><h3 data-i="fc2_t"></h3><p data-i="fc2_d"></p></div>
+        <div class="card"><div class="num">+</div><h3 data-i="fc3_t"></h3><p data-i="fc3_d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tourbloc">
+    <div class="wrap">
+      <h2 data-i="tour_t_h">See the real window</h2>
+      <div class="tour" id="tour"></div>
+      <p style="margin-top:26px"><a href="guide.html" data-i="guide_cta"></a></p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2 data-i="ap_t">Adapts to your plan, by itself</h2>
+      <p class="muted" data-i="ap_d"></p>
+      <div class="grid3" style="margin-top:22px">
+        <div class="card"><h3 data-i="ap1_t"></h3><p data-i="ap1_d"></p></div>
+        <div class="card"><h3 data-i="ap2_t"></h3><p data-i="ap2_d"></p></div>
+        <div class="card"><h3 data-i="ap3_t"></h3><p data-i="ap3_d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <h2 data-i="how_t">Ready in about 10 minutes, once</h2>
+      <div class="steps">
+        <div class="card"><h3 data-i="s1_t">Unzip</h3><p data-i="s1_d"></p></div>
+        <div class="card"><h3 data-i="s2_t">Ask Claude</h3><p data-i="s2_d"></p></div>
+        <div class="card"><h3 data-i="s3_t">Double-click</h3><p data-i="s3_d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="trust">
+    <div class="wrap two">
+      <div class="card">
+        <h2 data-i="trust_t">What it never does</h2>
+        <ul class="tick">
+          <li data-i="t1"></li><li data-i="t2"></li><li data-i="t3"></li><li data-i="t4"></li><li data-i="t5"></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2 data-i="lim_t">Good to know</h2>
+        <ul class="note">
+          <li data-i="l1"></li><li data-i="l2"></li><li data-i="l3"></li><li data-i="l4"></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap two">
+      <div>
+        <h2 data-i="lang_t">Speaks your language</h2>
+        <div class="langs"><span lang="en">English</span><span lang="fr">Français</span><span lang="es">Español</span><span lang="de">Deutsch</span><span lang="pt-BR">Português (BR)</span><span lang="it">Italiano</span><span lang="zh-CN">中文</span><span lang="ja">日本語</span></div>
+        <p class="muted" data-i="lang_d"></p>
+      </div>
+      <div>
+        <h2 data-i="open_t">Open source, MIT</h2>
+        <p class="muted" data-i="open_d"></p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><p data-i="disc"></p></div></footer>
+
+<script src="shared.js"></script>
+<script>
+// Lien de téléchargement : à renseigner quand la page des releases existe (sinon le bouton mène à « Install »).
+const RELEASES_URL = "";
+if (RELEASES_URL) document.getElementById("dl").href = RELEASES_URL;
+
+add("badge", ["Free · Open source (MIT) · Windows 10 / 11", "Gratuit · Open source (MIT) · Windows 10 / 11", "Gratis · Código abierto (MIT) · Windows 10 / 11", "Kostenlos · Open Source (MIT) · Windows 10 / 11", "Grátis · Código aberto (MIT) · Windows 10 / 11", "Gratis · Open source (MIT) · Windows 10 / 11", "免费 · 开源（MIT）· Windows 10 / 11", "無料 · オープンソース（MIT）· Windows 10 / 11"]);
+add("free_t", ["Free and open source", "Gratuit et open source", "Gratis y de código abierto", "Kostenlos und Open Source", "Grátis e de código aberto", "Gratis e open source", "免费且开源", "無料でオープンソース"]);
+add("fc1_t", ["Free", "Gratuit", "Gratis", "Kostenlos", "Grátis", "Gratis", "免费", "無料"]);
+add("fc1_d", ["Nothing to buy, no account, no subscription.", "Rien à acheter, aucun compte, aucun abonnement.", "Nada que comprar, sin cuenta, sin suscripción.", "Nichts zu kaufen, kein Konto, keine Gebühren.", "Nada para comprar, sem conta, sem assinatura.", "Niente da comprare, nessun account, nessun abbonamento.", "无需购买，无需账号，无需订阅。", "購入不要、アカウント不要、サブスクリプション不要。"]);
+add("fc2_t", ["MIT licence", "Licence MIT", "Licencia MIT", "MIT-Lizenz", "Licença MIT", "Licenza MIT", "MIT 许可", "MIT ライセンス"]);
+add("fc2_d", ["Use it, copy it, change it, share it. The code is open.", "Utilise-la, copie-la, modifie-la, partage-la. Le code est ouvert.", "Úsala, cópiala, modifícala, compártela. El código es abierto.", "Nutze es, kopiere es, ändere es, teile es. Der Code ist offen.", "Use, copie, modifique, compartilhe. O código é aberto.", "Usala, copiala, modificala, condividila. Il codice è aperto.", "可以使用、复制、修改和分享。代码是开放的。", "使う、コピーする、変更する、共有する。コードは公開されています。"]);
+add("fc3_t", ["Third-party parts", "Composants tiers", "Componentes de terceros", "Drittkomponenten", "Componentes de terceiros", "Componenti di terze parti", "第三方组件", "サードパーティ部品"]);
+add("fc3_d", ["Slint (Royalty-free 2.0) and the fonts (SIL OFL) keep their own licences. The texts are in the package.", "Slint (Royalty-free 2.0) et les polices (SIL OFL) gardent leurs propres licences. Les textes sont dans le paquet.", "Slint (Royalty-free 2.0) y las tipografías (SIL OFL) conservan sus propias licencias. Los textos van en el paquete.", "Slint (Royalty-free 2.0) und die Schriften (SIL OFL) behalten ihre eigenen Lizenzen. Die Texte liegen im Paket.", "Slint (Royalty-free 2.0) e as fontes (SIL OFL) mantêm suas próprias licenças. Os textos estão no pacote.", "Slint (Royalty-free 2.0) e i font (SIL OFL) mantengono le proprie licenze. I testi sono nel pacchetto.", "Slint（Royalty-free 2.0）和字体（SIL OFL）保留各自的许可。许可文本包含在软件包中。", "Slint（Royalty-free 2.0）とフォント（SIL OFL）は、それぞれ独自のライセンスのままです。全文はパッケージに入っています。"]);
+add("h1", ["Know exactly where you stand on your Claude plan.", "Sache exactement où tu en es de ton forfait Claude.", "Sabe exactamente cómo vas con tu plan de Claude.", "Wisse genau, wo du mit deinem Claude-Abo stehst.", "Saiba exatamente onde você está no seu plano do Claude.", "Sappi esattamente a che punto sei con il tuo piano Claude.", "清楚知道你的 Claude 套餐用到了哪里。", "Claude プランの現在地を正確に。"]);
+add("lead", ["Conso Token is a small window that shows how much of your plan you have used, what you can spend today, and whether you are ahead or over. It predicts nothing. It just tells you the truth.", "Conso Token est une petite fenêtre qui montre combien de ton forfait tu as utilisé, ce que tu peux dépenser aujourd’hui, et si tu as de l’avance ou si tu en fais trop. Elle ne prédit rien. Elle te dit ce qui est.", "Conso Token es una pequeña ventana que muestra cuánto de tu plan has usado, cuánto puedes gastar hoy y si vas con margen o te pasas. No predice nada. Te dice lo que hay.", "Conso Token ist ein kleines Fenster, das zeigt, wie viel von deinem Abo du verbraucht hast, was du heute ausgeben kannst und ob du Spielraum hast oder zu viel verbrauchst. Es sagt nichts voraus. Es zeigt, was ist.", "O Conso Token é uma pequena janela que mostra quanto do seu plano você usou, quanto pode gastar hoje e se está com folga ou acima. Ele não prevê nada. Ele mostra o que é.", "Conso Token è una piccola finestra che mostra quanto del tuo piano hai usato, quanto puoi spendere oggi e se hai margine o stai sforando. Non prevede nulla. Ti dice com’è.", "Conso Token 是一个小窗口，显示你已用了多少套餐、今天还能用多少，以及你是有富余还是已超出。它不做任何预测，只告诉你实际情况。", "Conso Token は、プランをどれだけ使ったか、今日どれだけ使えるか、余裕があるかオーバーしているかを示す小さなウィンドウです。予測はしません。事実だけを見せます。"]);
+add("cta_dl", ["Get Conso Token", "Obtenir Conso Token", "Obtener Conso Token", "Conso Token holen", "Baixar o Conso Token", "Scarica Conso Token", "获取 Conso Token", "Conso Token を入手"]);
+add("cta_see", ["See the window", "Voir la fenêtre", "Ver la ventana", "Fenster ansehen", "Ver a janela", "Vedi la finestra", "查看窗口", "ウィンドウを見る"]);
+add("hf1_d", ["Are you using your plan faster or slower than the week goes by? One look.", "Utilises-tu ton forfait plus vite ou moins vite que la semaine ne passe ? D’un seul coup d’œil.", "¿Usas tu plan más rápido o más despacio de lo que pasa la semana? De un vistazo.", "Verbrauchst du dein Abo schneller oder langsamer, als die Woche vergeht? Auf einen Blick.", "Você usa o plano mais rápido ou mais devagar do que a semana passa? Num relance.", "Usi il piano più in fretta o più lentamente di come passa la settimana? A colpo d’occhio.", "你用额度的速度比一周流逝的速度快还是慢？一眼就知道。", "プランを使うペースは、一週間が進むペースより速い？遅い？ ひと目で分かります。"]);
+add("hf2_d", ["Five ways to see each 24-hour day of your week.", "Cinq façons de voir chaque jour de 24 h de ta semaine.", "Cinco formas de ver cada día de 24 h de tu semana.", "Fünf Arten, jeden 24-Stunden-Tag deiner Woche zu sehen.", "Cinco jeitos de ver cada dia de 24 h da sua semana.", "Cinque modi di vedere ogni giorno da 24 h della tua settimana.", "用五种方式查看一周里每个 24 小时的日子。", "一週間の24時間ごとの日を、5つの見せ方で確認できます。"]);
+add("hf3_d", ["What you can still use today and on each following day. Carry-over included.", "Ce que tu peux encore consommer aujourd’hui et chaque jour suivant. Report compris.", "Lo que aún puedes consumir hoy y cada día siguiente. Con el arrastre incluido.", "Was du heute und an jedem folgenden Tag noch verbrauchen kannst. Übertrag inbegriffen.", "O que você ainda pode consumir hoje e em cada dia seguinte. Com a transferência incluída.", "Quello che puoi ancora consumare oggi e in ogni giorno successivo. Riporto incluso.", "你今天和之后每一天还能用多少，已包含结转。", "今日と以降の各日にあと何を使えるか。繰り越しも含みます。"]);
+add("tour_t_h", ["See the real window", "Vois la vraie fenêtre", "Mira la ventana real", "Sieh dir das echte Fenster an", "Veja a janela de verdade", "Guarda la finestra vera", "看看真实的窗口", "実際のウィンドウを見る"]);
+add("guide_cta", ["Lost among the numbers? Open the reading guide →", "Perdu parmi les chiffres ? Ouvre le guide de lecture →", "¿Perdido entre las cifras? Abre la guía de lectura →", "Zwischen den Zahlen verloren? Öffne die Lesehilfe →", "Perdido entre os números? Abra o guia de leitura →", "Perso tra i numeri? Apri la guida alla lettura →", "被数字绕晕了？打开阅读指南 →", "数字で迷ったら、読み方ガイドへ →"]);
+add("ap_t", ["Adapts to your plan, by itself", "S’adapte tout seul à ton forfait", "Se adapta solo a tu plan", "Passt sich von selbst an dein Abo an", "Se adapta sozinho ao seu plano", "Si adatta da solo al tuo piano", "自动适应你的套餐", "あなたのプランに自動で合わせます"]);
+add("ap_d", ["Nothing to configure. At every update, Conso Token reads your own figures and builds the week around them.", "Rien à régler. À chaque mise à jour, Conso Token lit tes propres chiffres et construit la semaine autour d’eux.", "Nada que configurar. En cada actualización, Conso Token lee tus propias cifras y construye la semana a partir de ellas.", "Nichts einzustellen. Bei jeder Aktualisierung liest Conso Token deine eigenen Zahlen und baut die Woche darum auf.", "Nada para configurar. A cada atualização, o Conso Token lê os seus próprios números e monta a semana em torno deles.", "Niente da impostare. A ogni aggiornamento, Conso Token legge i tuoi dati e costruisce la settimana intorno a essi.", "无需设置。每次更新，Conso Token 都会读取你自己的数据，并围绕它们构建这一周。", "設定は不要です。更新のたびに Conso Token があなた自身の数値を読み取り、それに合わせて一週間を組み立てます。"]);
+add("ap1_t", ["Your reset day and hour", "Ton jour et ton heure de remise à zéro", "Tu día y hora de reinicio", "Dein Reset-Tag und deine Uhrzeit", "Seu dia e hora de reinicialização", "Il tuo giorno e la tua ora di reset", "你的重置日期和时间", "あなたのリセットの曜日と時刻"]);
+add("ap1_d", ["Thursday at 1 pm, Saturday at midnight, anything else: the seven days start from yours.", "Jeudi 13 h, samedi minuit, ou autre chose : les sept jours partent du tien.", "Jueves a las 13 h, sábado a medianoche, otro: los siete días parten del tuyo.", "Donnerstag 13 Uhr, Samstag Mitternacht oder etwas anderes: Die sieben Tage beginnen bei deinem.", "Quinta às 13 h, sábado à meia-noite, ou outro: os sete dias partem do seu.", "Giovedì alle 13, sabato a mezzanotte o altro: i sette giorni partono dal tuo.", "周四 13 点、周六午夜，或任何其他时间：七天都从你的时间开始算。", "木曜13時でも土曜0時でも、他の時刻でも、7日間はあなたのリセットから始まります。"]);
+add("ap2_t", ["Your time zone and clock changes", "Ton fuseau et les changements d’heure", "Tu zona horaria y los cambios de hora", "Deine Zeitzone und Zeitumstellungen", "Seu fuso horário e as mudanças de horário", "Il tuo fuso orario e i cambi d’ora", "你的时区和时间切换", "タイムゾーンと時刻の切り替え"]);
+add("ap2_d", ["It follows Windows and explains the week when your clocks change.", "Elle suit Windows et explique la semaine où l’heure change.", "Sigue a Windows y explica la semana en que cambia la hora.", "Es folgt Windows und erklärt die Woche, in der die Uhr umgestellt wird.", "Segue o Windows e explica a semana em que o horário muda.", "Segue Windows e spiega la settimana in cui cambia l’ora.", "跟随 Windows，并在换令时的那一周给出说明。", "Windows に従い、時刻が切り替わる週にはその説明を出します。"]);
+add("ap3_t", ["Your pace, every day", "Ton rythme, chaque jour", "Tu ritmo, cada día", "Dein Tempo, jeden Tag", "Seu ritmo, todos os dias", "Il tuo ritmo, ogni giorno", "你的节奏，每天更新", "あなたのペースを毎日"]);
+add("ap3_d", ["Advance and delay are recalculated from your real usage, on the Pace card and on every day of the day-by-day card.", "L’avance et le retard sont recalculés sur ta vraie conso, sur la carte « Ton rythme » comme sur chaque jour de la carte jour par jour.", "El margen y el exceso se recalculan con tu consumo real, en la tarjeta «Tu ritmo» y en cada día de la tarjeta día a día.", "Spielraum und Überschreitung werden aus deinem echten Verbrauch neu berechnet, auf der Karte „Dein Tempo“ und an jedem Tag der Tageskarte.", "Folga e excesso são recalculados com o seu consumo real, no cartão “Seu ritmo” e em cada dia do cartão dia a dia.", "Margine e superamento si ricalcolano sul tuo consumo reale, nella scheda «Il tuo ritmo» e in ogni giorno della scheda giorno per giorno.", "富余与超出会按你的真实用量重新计算，体现在“你的节奏”卡片和每日卡片的每一天上。", "余裕とオーバーは実際の使用量から再計算され、「あなたのペース」カードと日ごとのカードの各日に反映されます。"]);
+add("how_t", ["Ready in about 10 minutes, once", "Prêt en 10 minutes environ, une seule fois", "Listo en unos 10 minutos, una sola vez", "In etwa 10 Minuten fertig, einmalig", "Pronto em cerca de 10 minutos, uma única vez", "Pronto in circa 10 minuti, una volta sola", "约 10 分钟完成，只需一次", "約 10 分で準備完了（一度だけ）"]);
+add("s1_t", ["Unzip", "Décompresse", "Descomprime", "Entpacken", "Descompacte", "Decomprimi", "解压", "展開"]);
+add("s1_d", ["Put the whole folder on a drive of your PC.", "Mets tout le dossier sur un disque de ton PC.", "Pon toda la carpeta en un disco de tu PC.", "Lege den ganzen Ordner auf ein Laufwerk deines PCs.", "Coloque a pasta inteira em um disco do seu PC.", "Metti l’intera cartella su un disco del tuo PC.", "把整个文件夹放到电脑的某个磁盘上。", "フォルダー全体を PC のドライブに置きます。"]);
+add("s2_t", ["Ask Claude", "Demande à Claude", "Pídeselo a Claude", "Claude bitten", "Peça ao Claude", "Chiedi a Claude", "请 Claude 设置", "Claude に頼む"]);
+add("s2_d", ["Write one sentence in Claude Code. Claude sets up a task that sends your figures every 15 minutes, then tests it in front of you.", "Écris une phrase dans Claude Code. Claude crée une tâche qui envoie tes chiffres toutes les 15 minutes, puis l’essaie devant toi.", "Escribe una frase en Claude Code. Claude crea una tarea que envía tus cifras cada 15 minutos y la prueba delante de ti.", "Schreibe einen Satz in Claude Code. Claude richtet eine Aufgabe ein, die alle 15 Minuten deine Zahlen sendet, und testet sie vor deinen Augen.", "Escreva uma frase no Claude Code. O Claude cria uma tarefa que envia seus números a cada 15 minutos e a testa na sua frente.", "Scrivi una frase in Claude Code. Claude crea un’attività che invia i tuoi numeri ogni 15 minuti e la prova davanti a te.", "在 Claude Code 里写一句话。Claude 会创建一个每 15 分钟发送你数据的任务，并当面测试。", "Claude Code に一文を書きます。Claude が 15 分ごとに数値を送るタスクを作り、目の前でテストします。"]);
+add("s3_t", ["Double-click", "Double-clique", "Doble clic", "Doppelklick", "Clique duas vezes", "Doppio clic", "双击", "ダブルクリック"]);
+add("s3_d", ["Open conso_token.exe. That is it.", "Ouvre conso_token.exe. C’est tout.", "Abre conso_token.exe. Ya está.", "Öffne conso_token.exe. Das war’s.", "Abra o conso_token.exe. Só isso.", "Apri conso_token.exe. Fatto.", "打开 conso_token.exe，就这样。", "conso_token.exe を開くだけです。"]);
+add("trust_t", ["What it never does", "Ce qu’elle ne fait jamais", "Lo que nunca hace", "Was es nie tut", "O que ele nunca faz", "Cosa non fa mai", "它绝不会做的事", "決してしないこと"]);
+add("t1", ["No network: the program never connects to anything.", "Aucun réseau : le programme ne se connecte à rien.", "Sin red: el programa no se conecta a nada.", "Kein Netzwerk: das Programm verbindet sich mit nichts.", "Sem rede: o programa não se conecta a nada.", "Nessuna rete: il programma non si collega a nulla.", "不联网：程序不会连接任何服务器。", "ネットワーク通信なし。プログラムはどこにも接続しません。"]);
+add("t2", ["No password, no token, no account.", "Ni mot de passe, ni jeton, ni compte.", "Sin contraseña, sin token, sin cuenta.", "Kein Passwort, kein Token, kein Konto.", "Sem senha, sem token, sem conta.", "Nessuna password, nessun token, nessun account.", "无需密码、令牌或账号。", "パスワード、トークン、アカウントは不要。"]);
+add("t3", ["Never edits your settings.json.", "Ne modifie jamais ton settings.json.", "Nunca modifica tu settings.json.", "Ändert nie deine settings.json.", "Nunca altera o seu settings.json.", "Non modifica mai il tuo settings.json.", "从不修改你的 settings.json。", "settings.json を変更しません。"]);
+add("t4", ["Reads only the usage counters of your transcripts, never their content.", "Lit seulement les compteurs d’usage de tes transcriptions, jamais leur contenu.", "Solo lee los contadores de uso de tus transcripciones, nunca su contenido.", "Liest nur die Nutzungszähler deiner Transkripte, nie deren Inhalt.", "Lê só os contadores de uso das suas transcrições, nunca o conteúdo.", "Legge solo i contatori d’uso delle tue trascrizioni, mai il contenuto.", "只读取对话记录中的用量计数，从不读取内容。", "トランスクリプトの使用量カウンターだけを読み、内容は読みません。"]);
+add("t5", ["Predicts nothing: it shows measured figures.", "Ne prédit rien : elle montre des chiffres mesurés.", "No predice nada: muestra cifras medidas.", "Sagt nichts voraus: es zeigt gemessene Zahlen.", "Não prevê nada: mostra números medidos.", "Non prevede nulla: mostra numeri misurati.", "不做预测：只显示实测数字。", "予測はしません。測定した数値だけを表示します。"]);
+add("lim_t", ["Good to know", "Bon à savoir", "Conviene saber", "Gut zu wissen", "Bom saber", "Da sapere", "需要了解", "知っておくこと"]);
+add("l1", ["Windows 10 and 11 only.", "Windows 10 et 11 seulement.", "Solo Windows 10 y 11.", "Nur Windows 10 und 11.", "Somente Windows 10 e 11.", "Solo Windows 10 e 11.", "仅支持 Windows 10 和 11。", "Windows 10 と 11 のみ。"]);
+add("l2", ["Needs a Claude plan that exposes its usage figures (Pro, Max…).", "Il faut un forfait Claude qui donne ses chiffres d’usage (Pro, Max…).", "Necesita un plan de Claude que muestre sus cifras de uso (Pro, Max…).", "Du brauchst ein Claude-Abo, das seine Nutzungszahlen liefert (Pro, Max …).", "É preciso um plano do Claude que mostre os números de uso (Pro, Max…).", "Serve un piano Claude che fornisca i dati d’uso (Pro, Max…).", "需要能提供用量数据的 Claude 套餐（Pro、Max 等）。", "使用状況の数値を提供する Claude プラン（Pro、Max など）が必要です。"]);
+add("l3", ["The Claude desktop app must be open for figures to update.", "L’appli Claude de bureau doit être ouverte pour que les chiffres se mettent à jour.", "La app de escritorio de Claude debe estar abierta para que las cifras se actualicen.", "Die Claude-Desktop-App muss geöffnet sein, damit sich die Zahlen aktualisieren.", "O app Claude para desktop precisa estar aberto para os números se atualizarem.", "L’app desktop di Claude deve essere aperta perché i numeri si aggiornino.", "Claude 桌面应用需保持打开，数字才会更新。", "数値を更新するには Claude デスクトップアプリを開いておく必要があります。"]);
+add("l4", ["The program is not signed by a paid publisher: Windows shows a warning the first time (More info → Run anyway).", "Le programme n’est pas signé par un éditeur payant : Windows affiche un avertissement la première fois (Informations complémentaires → Exécuter quand même).", "El programa no está firmado por un editor de pago: Windows muestra un aviso la primera vez (Más información → Ejecutar de todas formas).", "Das Programm ist nicht von einem kostenpflichtigen Herausgeber signiert: Windows zeigt beim ersten Start eine Warnung (Weitere Informationen → Trotzdem ausführen).", "O programa não é assinado por um editor pago: o Windows mostra um aviso na primeira vez (Mais informações → Executar assim mesmo).", "Il programma non è firmato da un editore a pagamento: Windows mostra un avviso la prima volta (Ulteriori informazioni → Esegui comunque).", "本程序未由付费发布者签名：首次运行时 Windows 会显示警告（更多信息 → 仍要运行）。", "有料の発行元による署名はないため、初回は Windows が警告を表示します（詳細情報 → 実行）。"]);
+add("lang_t", ["Speaks your language", "Parle ta langue", "Habla tu idioma", "Spricht deine Sprache", "Fala o seu idioma", "Parla la tua lingua", "说你的语言", "あなたの言語で"]);
+add("lang_d", ["It follows Windows and you can switch with one button. Translations are still to be reviewed by native speakers: tell us what to fix.", "Elle suit Windows et un bouton permet de changer. Les traductions n’ont pas encore été relues par des locuteurs natifs : dis-nous quoi corriger.", "Sigue el idioma de Windows y un botón permite cambiarlo. Las traducciones aún no las han revisado hablantes nativos: dinos qué corregir.", "Es folgt Windows, ein Knopf wechselt die Sprache. Muttersprachler haben die Übersetzungen noch nicht geprüft: sag uns, was zu korrigieren ist.", "Segue o idioma do Windows e um botão permite trocar. As traduções ainda não foram revisadas por falantes nativos: diga-nos o que corrigir.", "Segue Windows e un pulsante permette di cambiarla. Le traduzioni non sono ancora state riviste da madrelingua: dicci cosa correggere.", "它跟随 Windows 语言，也可用一个按钮切换。翻译尚未经母语者审校，欢迎告诉我们需要修改的地方。", "Windows の言語に従い、ボタンで切り替えられます。翻訳はまだネイティブによる確認前です。修正点があればお知らせください。"]);
+add("open_t", ["Open source, MIT", "Open source, MIT", "Código abierto, MIT", "Open Source, MIT", "Código aberto, MIT", "Open source, MIT", "开源，MIT 许可", "オープンソース（MIT）"]);
+add("open_d", ["Built with Rust and Slint. Fonts Cormorant Garamond and Jost (SIL OFL).", "Construite avec Rust et Slint. Polices Cormorant Garamond et Jost (SIL OFL).", "Hecha con Rust y Slint. Tipografías Cormorant Garamond y Jost (SIL OFL).", "Gebaut mit Rust und Slint. Schriften Cormorant Garamond und Jost (SIL OFL).", "Feito com Rust e Slint. Fontes Cormorant Garamond e Jost (SIL OFL).", "Costruita con Rust e Slint. Font Cormorant Garamond e Jost (SIL OFL).", "使用 Rust 和 Slint 构建。字体 Cormorant Garamond 与 Jost（SIL OFL）。", "Rust と Slint で作られています。フォントは Cormorant Garamond と Jost（SIL OFL）。"]);
+add("disc", ["Independent project, not affiliated with or endorsed by Anthropic. “Claude” belongs to its owner.", "Projet indépendant, non affilié à Anthropic ni approuvé par Anthropic. « Claude » appartient à son propriétaire.", "Proyecto independiente, sin afiliación ni respaldo de Anthropic. «Claude» pertenece a su propietario.", "Unabhängiges Projekt, weder mit Anthropic verbunden noch von Anthropic unterstützt. „Claude“ gehört seinem Inhaber.", "Projeto independente, sem afiliação nem aprovação da Anthropic. “Claude” pertence ao seu proprietário.", "Progetto indipendente, non affiliato né approvato da Anthropic. «Claude» appartiene al suo proprietario.", "独立项目，与 Anthropic 无隶属关系，也未获 Anthropic 认可。“Claude”归其所有者所有。", "独立したプロジェクトであり、Anthropic とは無関係で、Anthropic の承認も受けていません。「Claude」はその所有者に帰属します。"]);
+demarrer();
+</script>
+</body>
+</html>

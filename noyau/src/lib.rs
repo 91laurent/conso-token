@@ -1,0 +1,11 @@
+//! Conso Token : calculs purs et lecture des chiffres de Claude Code.
+//! Aucun code d'interface ici : tout se teste sans Slint.
+
+pub mod fr;
+pub mod langue;
+pub mod modele;
+pub mod pont;
+pub mod temps;
+pub mod textes;
+pub mod transcripts;
+pub mod vues;

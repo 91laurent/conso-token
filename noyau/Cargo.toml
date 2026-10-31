@@ -1,0 +1,12 @@
+[package]
+name = "noyau"
+description = "Conso Token : calculs purs (semaine, budget, écart), lecture des chiffres de Claude Code, sans interface"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+jiff = "0.2"
