@@ -129,8 +129,8 @@
 
 <script src="shared.js"></script>
 <script>
-// Lien de téléchargement : à renseigner quand la page des releases existe (sinon le bouton mène à « Install »).
-const RELEASES_URL = "";
+// Lien de téléchargement : la dernière release du dépôt (si la constante est vide, le bouton mène à « Install »).
+const RELEASES_URL = "https://github.com/91laurent/conso-token/releases/latest";
 if (RELEASES_URL) document.getElementById("dl").href = RELEASES_URL;
 
 add("badge", ["Free · Open source (MIT) · Windows 10 / 11", "Gratuit · Open source (MIT) · Windows 10 / 11", "Gratis · Código abierto (MIT) · Windows 10 / 11", "Kostenlos · Open Source (MIT) · Windows 10 / 11", "Grátis · Código aberto (MIT) · Windows 10 / 11", "Gratis · Open source (MIT) · Windows 10 / 11", "免费 · 开源（MIT）· Windows 10 / 11", "無料 · オープンソース（MIT）· Windows 10 / 11"]);
