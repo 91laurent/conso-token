@@ -100,7 +100,7 @@ fn la_remise_a_zero_suivante_ouvre_une_nouvelle_semaine() {
 /// désormais la VRAIE heure de l'instant reçu (vendredi 30/10 à 23:00, comme le compte à rebours), plus
 /// « samedi 31/10 à 00:00 » (début + 7 jours), et l'avis dit que la pendule a changé le 25/10.
 #[test]
-fn la_carte_ecrit_la_vraie_heure_pour_un_reset_du_samedi_la_semaine_du_changement_d_heure() {
+fn la_carte_ecrit_la_vraie_heure_la_semaine_du_changement_d_heure() {
     let e = [Echantillon { t: RESET_A + 600, cinq: None, sept: Some(Fenetre { p: 1.0, r: RESET_B - 1 }) }];
     let v = construire(&semaines(&e)[0], RESET_A + 700, None).expect("vue");
     assert_eq!(carte_reset_detail(v.reset), "vendredi 30/10 à 23:00 · l’heure est relue à chaque mise à jour");

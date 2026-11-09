@@ -31,6 +31,37 @@ INSTALLAZIONE (10 minuti, una sola volta)
    funzionato, la finestra mostra già i tuoi numeri. Altrimenti dice «Nessun numero ricevuto»:
    dillo a chi ti ha dato l'app.
 
+NOVITÀ DELLA 1.3.0: LA SCHEDA CONVERSAZIONI
+Accanto a «Settimana», la scheda «Conversazioni» mostra ogni conversazione di Claude Code delle
+ultime 24 ore: quanto è pieno il suo contesto (circa, ≈) e quanto manca alla consegna, il momento di
+proseguire in una conversazione nuova. Su una barra, il segno crema è la consegna e il tratteggio è
+l'attenzione; «riassunta» significa che Claude ha compattato quella conversazione (consegna subito).
+Una conversazione ferma da più di 30 minuti viene ripiegata sotto «+ altre n».
+- All'inizio: un solo gruppo, attenzione al 70%, consegna all'80%. Il pulsante OPZIONI apre una
+  finestra: dividere in due gruppi (scrivi tu i nomi; un clic sull'etichetta di una riga sposta allora
+  l'intera cartella nell'altro gruppo), due cursori per le soglie con una barra di prova, la finestra
+  di contesto per modello (Auto, 200 000 o 1 000 000), il punto lampeggiante, i numeri animati. Tutto
+  si applica subito e resta salvato in conversations.txt, nella cartella dei dati. «Ripristina»
+  rimette i valori iniziali (chiede un secondo clic per confermare).
+- La prima volta che apri la scheda, una finestra chiede se vuoi raggruppare le conversazioni: spunti le cartelle del primo gruppo e dai tu i nomi ai gruppi (si digitano solo i nomi). Il pulsante «Scegli i gruppi…» (in alto a destra nella scheda Conversazioni, e in OPZIONI) la riapre in qualsiasi momento, quante volte vuoi: tornare a un solo gruppo, rinominare i gruppi, deselezionare tutto. Non si perde nulla: la scelta resta salvata in conversations.txt.
+- Un punto lampeggiante sul pulsante «Conversazioni», visibile anche nella schermata Settimana: rosa
+  alla consegna, ambra all'attenzione. Nessun suono, nessuna notifica di Windows.
+- Le tre schede della schermata Settimana animano i numeri all'apertura e a ogni aggiornamento. Per
+  fermarle: la casella in OPZIONI o l'impostazione di Windows «Effetti di animazione».
+- Una ✕ a destra di ogni riga nasconde la conversazione: la riga sparisce dall'elenco, da «+ altre n» e dal punto lampeggiante, anche se arriva un nuovo messaggio (utile per una conversazione archiviata o di prova). Basta un clic. OPZIONI mostra «n conversazioni nascoste» con un pulsante «Mostra di nuovo» (solo se ce ne sono); «Ripristina» non le tocca. Quando nascondi una conversazione con ✕, l'app scrive l'identificatore di sessione di quella conversazione (un semplice codice, né il titolo né il contenuto) nella sua cartella dati (conversations.txt) perché resti nascosta; viene dimenticato quando l'ultimo messaggio ha più di 24 ore, oppure appena clicchi su «Mostra di nuovo».
+- Dei file di Claude Code di questo PC si conservano solo i contatori (data, modello, numero di token,
+  nome della cartella) e il titolo di ogni conversazione così come lo mostra l'app Claude (per nominarla nell'elenco;
+  letto nei file già letti, tenuto in memoria finché è mostrato, mai scritto né inviato); il testo di un messaggio non viene mai conservato, scritto né inviato. Le esecuzioni pianificate e i sottoagenti sono
+  esclusi. La dimensione della finestra non è scritta in nessun file: la percentuale resta
+  approssimativa (≈); se serve, imposta in OPZIONI la finestra giusta per modello. Se Claude cambia
+  il formato dei file, l'elenco lo dice invece di mostrare numeri sbagliati.
+  L'elenco si basa sull'ultimo messaggio di Claude, non sullo stato della finestra: una conversazione archiviata o chiusa resta mostrata finché il suo ultimo messaggio ha meno di 24 ore (nascondila con ✕); una conversazione aperta ma senza messaggi da più di 24 ore non compare (torna appena Claude risponde).
+  Limiti: se Claude cambia il tipo delle sue righe, o se le sue risposte non si trovano più, l'elenco
+  resta vuoto SENZA avviso; se cambia la riga che porta il titolo, i nomi tornano a «cartella · 4 caratteri», senza errore. Il titolo si cerca negli ultimi 64 KB del file: resta in memoria finché il programma gira, ma dopo un riavvio una conversazione molto lunga senza una riga di titolo recente torna a «cartella · 4 caratteri». L'elenco dei modelli in OPZIONI ha un ordine fisso (Opus, Sonnet, Haiku,
+  poi gli altri), ma tiene i cinque modelli più recenti: con sei o più visti in 24 ore, un sesto che
+  risponde lo cambia.
+  Fin dalla prima lettura il programma crea anche contextes_vus.txt nella cartella dei dati (il contesto
+  più grande visto per modello: solo numeri).
 DA SAPERE
 - La finestra legge da sola l'ora in cui si azzera la tua settimana e usa il tuo fuso orario e i
   tuoi cambi d'ora. Nella settimana del cambio d'ora una riga sotto il conto alla rovescia lo

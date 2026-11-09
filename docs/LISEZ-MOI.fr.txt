@@ -31,6 +31,38 @@ INSTALLATION (10 minutes, une seule fois)
    réseau. Si l'étape 2 a marché, la fenêtre montre déjà tes chiffres. Sinon elle dit « Aucun
    chiffre reçu pour l’instant » : dis-le à la personne qui t'a donné l'appli.
 
+NOUVEAU EN 1.3.0 : L'ONGLET CONVERSATIONS
+À côté de « Semaine », l'onglet « Conversations » montre chaque conversation Claude Code des dernières
+24 heures : à quel point son contexte est plein (environ, ≈) et ce qu'il reste avant la passation, le
+moment de continuer dans une conversation neuve. Sur une barre, le trait crème est la passation et le
+pointillé l'attention ; « résumée » veut dire que Claude a compacté cette conversation (passation tout
+de suite). Une conversation au repos depuis plus de 30 minutes est repliée sous « + n autres ».
+- Au départ : un seul groupe, attention à 70 %, passation à 80 %. Le bouton CONFIG ouvre une fenêtre :
+  séparer en deux groupes (tu tapes leurs noms ; un clic sur l'étiquette d'une ligne change alors tout
+  le dossier de groupe), deux curseurs de seuils avec une barre d'essai, la fenêtre de contexte par
+  modèle (Auto, 200 000 ou 1 000 000), le point clignotant, les chiffres animés. Tout s'applique tout
+  de suite et se range dans conversations.txt, dans le dossier de données. « Rétablir » remet le départ (il demande un deuxième clic pour confirmer).
+- À la première ouverture de l'onglet, une fenêtre te demande si tu veux regrouper tes conversations : tu coches les dossiers du premier groupe et tu nommes les groupes toi-même (tu ne tapes que les noms). Le bouton « Choisir les groupes… » (en haut à droite de l'onglet Conversations, et dans CONFIG) la rouvre à tout moment, autant de fois que tu veux : revenir à un seul groupe, renommer les groupes, tout décocher. Rien n'est perdu : le choix reste dans conversations.txt.
+- Un point clignotant sur le bouton « Conversations », visible aussi sur l'écran Semaine : rose à la
+  passation, ambre à l'attention. Ni son, ni notification Windows.
+- Les trois cartes de l'écran Semaine animent leurs chiffres à l'ouverture et à chaque mise à jour.
+  Pour arrêter : la case dans CONFIG, ou le réglage Windows « Effets d'animation ».
+- Un ✕ à droite de chaque ligne masque la conversation : la ligne disparaît de la liste, du « + n autres » et du point clignotant, même si un nouveau message arrive (utile pour une conversation archivée ou de test). Un clic suffit. CONFIG affiche « n conversations masquées » avec un bouton « Réafficher » (seulement s'il y en a) ; « Rétablir » n'y touche pas. Quand tu masques une conversation avec ✕, l'appli écrit l'identifiant de session de cette conversation (un simple code, ni son titre ni son contenu) dans son dossier de données (conversations.txt) pour qu'elle reste masquée ; il est oublié quand son dernier message a plus de 24 h, ou dès que tu cliques sur « Réafficher ».
+- Seuls des compteurs sont retenus dans les fichiers de Claude Code de ce PC (date, modèle, nombre de
+  tokens, nom du dossier), plus le titre de chaque conversation tel que l'appli Claude l'affiche (pour la nommer dans la
+  liste ; lu dans les fichiers déjà lus, gardé en mémoire le temps de l'affichage, jamais écrit ni
+  envoyé) ; le texte d'un message n'est jamais gardé, ni écrit, ni envoyé. Les exécutions planifiées et les sous-agents
+  sont écartés. La taille de la fenêtre n'est écrite dans aucun fichier : le pourcentage reste
+  approximatif (≈) ; si besoin, règle la bonne fenêtre par modèle dans CONFIG. Si Claude change le
+  format de ses fichiers, la liste le dit au lieu d'afficher de faux chiffres.
+  La liste se fonde sur le dernier message de Claude, pas sur l'état de la fenêtre : une conversation archivée ou fermée reste affichée tant que son dernier message a moins de 24 h (masque-la avec ✕) ; une conversation ouverte mais sans message depuis plus de 24 h n'apparaît pas (elle revient dès que Claude y répond).
+  Limites : si Claude change le type de ses lignes, ou si ses réponses deviennent introuvables, la
+  liste reste vide SANS alarme ; si la ligne qui porte le titre change, les noms redeviennent
+  « dossier · 4 caractères », sans erreur. Le titre est cherché dans les 64 derniers Ko du fichier : gardé en mémoire tant que le programme tourne, mais après un redémarrage une conversation très bavarde sans ligne de titre récente redevient « dossier · 4 caractères ». La liste des modèles de CONFIG a un ordre fixe (Opus,
+  Sonnet, Haiku, puis les autres), mais elle garde les cinq modèles les plus récents : avec six
+  modèles ou plus vus en 24 h, un sixième qui répond la change.
+  Dès la première lecture, le programme crée aussi contextes_vus.txt dans le dossier de données (le plus
+  grand contexte vu pour chaque modèle : des nombres seulement).
 À SAVOIR
 - La fenêtre lit toute seule l'heure à laquelle ta semaine se remet à zéro et montre ton propre
   fuseau horaire et tes changements d'heure (heure d'été/d'hiver). La semaine d'un changement

@@ -13,7 +13,7 @@ use crate::modele::{EtatJour, Vue};
 use crate::textes::{Cle, fmt, t};
 
 pub const NB_VUES: usize = 5;
-/// « Les batteries » (choix par défaut, 23/10/2026).
+/// « Les batteries » (choix du propriétaire du projet, 23/10/2026).
 pub const VUE_DEFAUT: usize = 3;
 /// Les noms écrits dans `vue.txt`, dans l'ordre des onglets.
 pub const NOMS_VUES: [&str; NB_VUES] = ["aujourdhui", "lignes", "trajectoire", "batteries", "semaine"];

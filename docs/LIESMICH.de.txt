@@ -32,6 +32,41 @@ EINRICHTUNG (10 Minuten, einmalig)
    Netzwerkfunktion. Hat Schritt 2 geklappt, zeigt das Fenster schon deine Zahlen. Sonst steht
    dort „Noch keine Zahlen erhalten“: sag es der Person, die dir die App gegeben hat.
 
+NEU IN 1.3.0: DER REITER UNTERHALTUNGEN
+Neben „Woche“ zeigt der Reiter „Unterhaltungen“ jede Claude-Code-Unterhaltung der letzten 24 Stunden:
+wie voll ihr Kontext ist (ungefähr, ≈) und wie viel bis zur Übergabe bleibt, dem Moment, in einer
+frischen Unterhaltung weiterzumachen. Auf einem Balken ist die cremefarbene Marke die Übergabe und
+die gepunktete Marke „Achtung“; „zusammengefasst“ heißt, dass Claude diese Unterhaltung komprimiert
+hat (sofort übergeben). Eine Unterhaltung, die länger als 30 Minuten ruht, wird unter „+ n weitere“
+eingeklappt.
+- Am Anfang: eine Gruppe, Achtung bei 70 %, Übergabe bei 80 %. Die Schaltfläche OPTIONEN öffnet ein
+  Fenster: in zwei Gruppen aufteilen (du tippst die Namen selbst; ein Klick auf das Kürzel einer
+  Zeile verschiebt dann den ganzen Ordner in die andere Gruppe), zwei Regler für die Schwellen mit
+  Probebalken, das Kontextfenster je Modell (Auto, 200 000 oder 1 000 000), der blinkende Punkt, die
+  animierten Zahlen. Alles gilt sofort und wird in conversations.txt im Datenordner gespeichert.
+  „Zurücksetzen“ stellt die Anfangswerte wieder her (es verlangt einen zweiten Klick zur Bestätigung).
+- Beim ersten Öffnen des Reiters fragt ein Fenster, ob du deine Unterhaltungen gruppieren willst: Du hakst die Ordner der ersten Gruppe an und benennst die Gruppen selbst (getippt werden nur die Namen). Die Schaltfläche „Gruppen wählen…“ (oben rechts im Reiter Unterhaltungen und unter OPTIONEN) öffnet es jederzeit erneut, so oft du willst: zurück zu einer Gruppe, Gruppen umbenennen, alles abwählen. Nichts geht verloren: Die Wahl bleibt in conversations.txt gespeichert.
+- Ein blinkender Punkt auf dem Reiter „Unterhaltungen“, auch auf dem Bildschirm Woche sichtbar: rosa
+  bei Übergabe, bernsteinfarben bei Achtung. Kein Ton, keine Windows-Benachrichtigung.
+- Die drei Karten des Bildschirms Woche animieren ihre Zahlen beim Öffnen und bei jeder
+  Aktualisierung. Abschalten: das Kästchen unter OPTIONEN oder die Windows-Einstellung
+  „Animationseffekte“.
+- Ein ✕ rechts in jeder Zeile blendet die Unterhaltung aus: Die Zeile verschwindet aus der Liste, aus „+ n weitere“ und vom blinkenden Punkt, auch wenn eine neue Nachricht eintrifft (praktisch für eine archivierte oder Test-Unterhaltung). Ein Klick genügt. OPTIONEN zeigt „n Unterhaltungen ausgeblendet“ mit der Schaltfläche „Wieder einblenden“ (nur wenn es welche gibt); „Zurücksetzen“ rührt sie nicht an. Wenn du eine Unterhaltung mit ✕ ausblendest, schreibt die App die Sitzungskennung dieser Unterhaltung (nur einen Code, weder Titel noch Inhalt) in ihren Datenordner (conversations.txt), damit sie ausgeblendet bleibt; sie wird vergessen, sobald die letzte Nachricht älter als 24 Stunden ist, oder sobald du auf „Wieder einblenden“ klickst.
+- Behalten werden nur Zähler aus den Claude-Code-Dateien dieses PCs (Datum, Modell, Tokenanzahl,
+  Ordnername) und der Titel jeder Unterhaltung, so wie ihn die Claude-App anzeigt (damit sie in der Liste einen
+  Namen hat; er wird in den ohnehin gelesenen Dateien gelesen, bleibt nur für die Anzeige im Speicher
+  und wird nie geschrieben oder gesendet); der Text einer Nachricht wird nie behalten, geschrieben oder gesendet. Geplante Läufe und Unteragenten bleiben außen vor. Die
+  Fenstergröße steht in keiner Datei: Der Prozentwert bleibt ein Näherungswert (≈); stelle bei Bedarf
+  unter OPTIONEN das richtige Fenster je Modell ein. Ändert Claude das Dateiformat, sagt die Liste
+  das, statt falsche Zahlen zu zeigen.
+  Die Liste beruht auf der letzten Nachricht von Claude, nicht auf dem Zustand des Fensters: Eine archivierte oder geschlossene Unterhaltung bleibt angezeigt, solange ihre letzte Nachricht jünger als 24 Stunden ist (blende sie mit ✕ aus); eine geöffnete Unterhaltung ohne Nachricht seit mehr als 24 Stunden erscheint nicht (sie kommt zurück, sobald Claude darin antwortet).
+  Grenzen: Ändert Claude den Typ seiner Zeilen oder sind seine Antworten nicht mehr zu finden, bleibt
+  die Liste OHNE Warnung leer; ändert sich die Zeile mit dem Titel, heißen die Namen wieder
+  „Ordner · 4 Zeichen“, ohne Fehlermeldung. Der Titel wird in den letzten 64 KB der Datei gesucht: Er bleibt, solange das Programm läuft, doch nach einem Neustart heißt eine sehr lange Unterhaltung ohne neuere Titelzeile wieder „Ordner · 4 Zeichen“. Die Modellliste unter OPTIONEN hat eine feste Reihenfolge
+  (Opus, Sonnet, Haiku, dann die übrigen), enthält aber die fünf zuletzt gesehenen Modelle: Bei sechs
+  oder mehr Modellen in 24 Stunden ändert ein sechstes, das antwortet, ihren Inhalt.
+  Ab dem ersten Lesen legt das Programm außerdem contextes_vus.txt im Datenordner an (der größte
+  gesehene Kontext je Modell: nur Zahlen).
 GUT ZU WISSEN
 - Das Fenster liest die Uhrzeit des Wochenwechsels selbst und nutzt deine Zeitzone und deine
   Zeitumstellungen. In der Woche der Zeitumstellung erklärt eine Zeile unter dem Countdown den

@@ -1,6 +1,6 @@
 //! Le modèle de la semaine : écart au rythme, budget de chaque jour, report.
 //!
-//! Règles (notes de spécification §2, validées) :
+//! Règles (notes de spécification §2, validées par le propriétaire du projet) :
 //! - une semaine = de `resets_at − 7 j` à `resets_at` (168 h), `resets_at` relu à chaque lecture ;
 //! - un jour = un bloc de 24 h compté depuis le début de la semaine (sept jours égaux) ;
 //! - budget du jour = ce qui reste au début du jour ÷ nombre de jours restants (jour compris) :
@@ -47,7 +47,7 @@ pub enum Transition {
 /// pourcentage ne sert pas : chaque session de Claude Code envoie ses propres chiffres, ceux de
 /// SA dernière réponse, donc une session au repos renvoie un pourcentage plus ancien, donc plus
 /// bas, sans qu'aucune semaine n'ait changé (relecture Opus du 14/10, H1). Une « remise à plein »
-/// sans nouveau `resets_at` n'est pas documentée : elle n'est pas détectée (question ouverte).
+/// sans nouveau `resets_at` n'est pas documentée : elle n'est pas détectée (question ouverte au propriétaire du projet).
 /// Un `resets_at` qui recule de plus de 3 jours vient d'une session restée sur l'ancienne semaine.
 pub fn transition(avant: &Fenetre, apres: &Fenetre) -> Transition {
     let ecart = apres.r - avant.r;

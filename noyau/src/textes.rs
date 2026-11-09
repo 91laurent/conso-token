@@ -640,6 +640,300 @@ textes! {
         "3.  Claude Code を再起動します。使い始めると、数値が自動でここに届きます。"
     ],
 
+    // ------------------------------------------------ la page « Conversations » et la fenêtre de réglage
+    // Les noms des groupes se tapent à la main (rien à traduire) ; seuls « Groupe {0} » et « Toutes les
+    // conversations » sont des textes de l'appli. « Passation » = le moment de passer le relais à une
+    // nouvelle conversation, quand le contexte de celle-ci est trop plein.
+    OngletConversations => ["Conversations", "Conversations", "Conversaciones", "Unterhaltungen", "Conversas", "Conversazioni", "对话", "会話"],
+    ConvTitre => [
+        "Open conversations",
+        "Conversations ouvertes",
+        "Conversaciones abiertas",
+        "Offene Unterhaltungen",
+        "Conversas abertas",
+        "Conversazioni aperte",
+        "进行中的对话",
+        "開いている会話"
+    ],
+    ConvSousTitre => [
+        "context at the last exchange · window ≈ set by model (adjustable in Settings) · hover a long name to scroll it · click a tag to move the whole folder to the other group",
+        "contexte au dernier échange · fenêtre ≈ selon le modèle (réglable dans Config) · le survol d’un nom long le fait défiler · un clic sur l’étiquette change le camp du dossier",
+        "contexto en el último intercambio · ventana ≈ según el modelo (ajustable en Ajustes) · pasa el cursor sobre un nombre largo para verlo entero · un clic en la etiqueta cambia de grupo toda la carpeta",
+        "Kontext beim letzten Austausch · Fenster ≈ je nach Modell (einstellbar unter Optionen) · über einem langen Namen mit der Maus verweilen lässt ihn laufen · ein Klick auf das Kürzel verschiebt den ganzen Ordner in die andere Gruppe",
+        "contexto na última troca · janela ≈ conforme o modelo (ajustável em Ajustes) · passe o mouse sobre um nome longo para vê-lo inteiro · um clique na etiqueta muda a pasta inteira de grupo",
+        "contesto all’ultimo scambio · finestra ≈ secondo il modello (regolabile in Opzioni) · passa il mouse su un nome lungo per farlo scorrere · un clic sull’etichetta sposta tutta la cartella nell’altro gruppo",
+        "上一次交流时的上下文 · 窗口 ≈ 按模型而定（可在“设置”中调整）· 鼠标悬停在长名称上会滚动显示 · 点击标签可将整个文件夹移到另一组",
+        "直近のやり取り時点のコンテキスト · ウィンドウ ≈ モデルごと（「設定」で変更可）· 長い名前にカーソルを乗せるとスクロール · ラベルをクリックするとフォルダごと別のグループへ"
+    ],
+    ConvLegende => [
+        "cream mark: hand-off · dotted mark: warning · the bar goes from 0 to 100% of the window · “summarized”: the conversation was compacted (hand-off now)",
+        "trait crème : passation · pointillé : attention · barre de 0 à 100 % de la fenêtre · « résumée » : la conversation a été compactée (passation tout de suite)",
+        "marca crema: relevo · línea de puntos: atención · la barra va del 0 al 100 % de la ventana · «resumida»: la conversación se compactó (relevo inmediato)",
+        "cremefarbene Marke: Übergabe · gepunktete Marke: Achtung · Balken von 0 bis 100 % des Fensters · „zusammengefasst“: die Unterhaltung wurde komprimiert (sofort übergeben)",
+        "marca creme: transferência · tracejado: atenção · a barra vai de 0 a 100% da janela · «resumida»: a conversa foi compactada (transferência imediata)",
+        "segno crema: consegna · tratteggio: attenzione · la barra va da 0 a 100% della finestra · «riassunta»: la conversazione è stata compattata (consegna subito)",
+        "奶油色标记：交接 · 虚线：注意 · 进度条为窗口的 0 到 100% · “已摘要”：对话已被压缩（立即交接）",
+        "クリーム色の線：引き継ぎ · 点線：注意 · バーはウィンドウの0〜100% · 「要約済み」：会話が圧縮されました（すぐに引き継ぎ）"
+    ],
+    // {0} = seuil d'attention, {1} = seuil de passation (en % de la fenêtre)
+    ConvSeuils => [
+        "warning {0} · hand-off {1}",
+        "attention {0} · passation {1}",
+        "atención {0} · relevo {1}",
+        "Achtung {0} · Übergabe {1}",
+        "atenção {0} · transferência {1}",
+        "attenzione {0} · consegna {1}",
+        "注意 {0} · 交接 {1}",
+        "注意 {0} · 引き継ぎ {1}"
+    ],
+    // {0} = pourcentage de la fenêtre déjà pris (avec son signe %), {1} = seuil de passation
+    ConvSur => ["≈ {0} of {1}", "≈ {0} sur {1}", "≈ {0} de {1}", "≈ {0} von {1}", "≈ {0} de {1}", "≈ {0} su {1}", "≈ {0} / {1}", "≈ {0} / {1}"],
+    // {0} = points de pourcentage qui restent avant la passation
+    ConvReste => ["{0} left", "reste {0}", "quedan {0}", "noch {0}", "faltam {0}", "restano {0}", "还剩 {0}", "残り {0}"],
+    ConvPassation => ["hand-off", "passation", "relevo", "Übergabe", "transferência", "consegna", "交接", "引き継ぎ"],
+    ConvResumee => ["summarized", "résumée", "resumida", "zusammengefasst", "resumida", "riassunta", "已摘要", "要約済み"],
+    // {0} = nombre de conversations de moins de 24 h, repliées
+    ConvAutres => [
+        "+ {0} more, under 24 h",
+        "+ {0} autres, moins de 24 h",
+        "+ {0} más, menos de 24 h",
+        "+ {0} weitere, unter 24 Std.",
+        "+ {0} outras, menos de 24 h",
+        "+ altre {0}, meno di 24 h",
+        "另有 {0} 个，24 小时内",
+        "他 {0} 件（24時間以内）"
+    ],
+    ConvVide => [
+        "No active conversation in this group.",
+        "Aucune conversation active dans ce groupe.",
+        "Ninguna conversación activa en este grupo.",
+        "Keine aktive Unterhaltung in dieser Gruppe.",
+        "Nenhuma conversa ativa neste grupo.",
+        "Nessuna conversazione attiva in questo gruppo.",
+        "此组中没有活跃的对话。",
+        "このグループにアクティブな会話はありません。"
+    ],
+    ConvIndispo => [
+        "Conversations cannot be read: the format of Claude’s transcripts may have changed. Nothing is shown rather than wrong figures.",
+        "Les conversations ne peuvent pas être lues : le format des transcriptions de Claude a peut-être changé. Rien n’est affiché plutôt que de faux chiffres.",
+        "No se pueden leer las conversaciones: puede que haya cambiado el formato de las transcripciones de Claude. Es mejor no mostrar nada que mostrar cifras falsas.",
+        "Die Unterhaltungen lassen sich nicht lesen: Das Format der Claude-Protokolle hat sich möglicherweise geändert. Lieber nichts anzeigen als falsche Zahlen.",
+        "Não foi possível ler as conversas: o formato das transcrições do Claude pode ter mudado. Melhor não mostrar nada do que números errados.",
+        "Impossibile leggere le conversazioni: il formato delle trascrizioni di Claude potrebbe essere cambiato. Meglio non mostrare nulla che dati sbagliati.",
+        "无法读取对话：Claude 记录文件的格式可能已更改。宁可不显示，也不显示错误的数字。",
+        "会話を読み取れません。Claude の記録ファイルの形式が変わった可能性があります。誤った数値を表示するより、何も表示しません。"
+    ],
+    // {0} = 1 ou 2
+    GroupeN => ["Group {0}", "Groupe {0}", "Grupo {0}", "Gruppe {0}", "Grupo {0}", "Gruppo {0}", "第 {0} 组", "グループ{0}"],
+    GroupeTous => [
+        "All conversations",
+        "Toutes les conversations",
+        "Todas las conversaciones",
+        "Alle Unterhaltungen",
+        "Todas as conversas",
+        "Tutte le conversazioni",
+        "所有对话",
+        "すべての会話"
+    ],
+    BoutonConfig => ["SETTINGS", "CONFIG", "AJUSTES", "OPTIONEN", "AJUSTES", "OPZIONI", "设置", "設定"],
+    ConfigTitre => ["Settings", "Configuration", "Configuración", "Einstellungen", "Configuração", "Impostazioni", "设置", "設定"],
+    ConfigSeparer => [
+        "Split into two groups",
+        "Séparer en deux groupes",
+        "Separar en dos grupos",
+        "In zwei Gruppen aufteilen",
+        "Separar em dois grupos",
+        "Dividere in due gruppi",
+        "分为两组",
+        "2つのグループに分ける"
+    ],
+    // {0} = 1 ou 2, {1} = nom du groupe tapé à la main
+    ConfigGroupeNom => ["Group {0}: {1}", "Groupe {0} : {1}", "Grupo {0}: {1}", "Gruppe {0}: {1}", "Grupo {0}: {1}", "Gruppo {0}: {1}", "第 {0} 组：{1}", "グループ{0}：{1}"],
+    ConfigAttention => ["Warning", "Attention", "Atención", "Achtung", "Atenção", "Attenzione", "注意", "注意"],
+    ConfigPassation => ["Hand-off", "Passation", "Relevo", "Übergabe", "Transferência", "Consegna", "交接", "引き継ぎ"],
+    // la barre d'essai : {0} = pourcentage d'exemple (avec son signe %), {1} = points qui restent
+    ConfigEssaiOk => [
+        "Example at {0}: {1} left before the hand-off",
+        "Exemple à {0} : reste {1} avant la passation",
+        "Ejemplo al {0}: quedan {1} antes del relevo",
+        "Beispiel bei {0}: noch {1} bis zur Übergabe",
+        "Exemplo em {0}: faltam {1} para a transferência",
+        "Esempio al {0}: restano {1} prima della consegna",
+        "示例 {0}：距离交接还剩 {1}",
+        "例：{0} のとき、引き継ぎまで残り {1}"
+    ],
+    ConfigEssaiAttention => [
+        "Example at {0}: warning, {1} left",
+        "Exemple à {0} : attention, reste {1}",
+        "Ejemplo al {0}: atención, quedan {1}",
+        "Beispiel bei {0}: Achtung, noch {1}",
+        "Exemplo em {0}: atenção, faltam {1}",
+        "Esempio al {0}: attenzione, restano {1}",
+        "示例 {0}：注意，还剩 {1}",
+        "例：{0} のとき、注意、残り {1}"
+    ],
+    ConfigEssaiPassation => [
+        "Example at {0}: hand-off",
+        "Exemple à {0} : passation",
+        "Ejemplo al {0}: relevo",
+        "Beispiel bei {0}: Übergabe",
+        "Exemplo em {0}: transferência",
+        "Esempio al {0}: consegna",
+        "示例 {0}：交接",
+        "例：{0} のとき、引き継ぎ"
+    ],
+    ConfigFenetre => [
+        "Context window, by model",
+        "Fenêtre de contexte, par modèle",
+        "Ventana de contexto, por modelo",
+        "Kontextfenster je Modell",
+        "Janela de contexto, por modelo",
+        "Finestra di contesto, per modello",
+        "各模型的上下文窗口",
+        "モデルごとのコンテキストウィンドウ"
+    ],
+    // {0} = le plus grand contexte déjà vu pour ce modèle
+    ConfigVu => [
+        "seen up to {0} tokens",
+        "vu jusqu’à {0} tokens",
+        "visto hasta {0} tokens",
+        "gesehen bis {0} Tokens",
+        "visto até {0} tokens",
+        "visto fino a {0} token",
+        "最高见过 {0} 个 token",
+        "最大 {0} トークンまで確認"
+    ],
+    // {0} = la fenêtre que « Auto » donnerait
+    ConfigAutoVaut => ["Auto: {0}", "Auto : {0}", "Auto: {0}", "Auto: {0}", "Auto: {0}", "Auto: {0}", "自动：{0}", "自動：{0}"],
+    ConfigAuto => ["Auto", "Auto", "Auto", "Auto", "Auto", "Auto", "自动", "自動"],
+    ConfigFenetreNote => [
+        "The window is not written in any file: “Auto” takes 1,000,000 if this model has ever gone past 200,000 tokens, otherwise 200,000. The percentage always stays approximate (≈).",
+        "La fenêtre n’est écrite dans aucun fichier : « Auto » prend 1 000 000 si ce modèle a déjà dépassé 200 000 tokens, sinon 200 000. Le pourcentage reste toujours un « ≈ ».",
+        "La ventana no está escrita en ningún archivo: «Auto» toma 1 000 000 si este modelo ya ha superado los 200 000 tokens, y si no, 200 000. El porcentaje siempre es aproximado (≈).",
+        "Das Fenster steht in keiner Datei: „Auto“ nimmt 1 000 000, wenn dieses Modell schon über 200 000 Tokens hinausgekommen ist, sonst 200 000. Der Prozentwert bleibt immer ein Näherungswert (≈).",
+        "A janela não está escrita em nenhum arquivo: «Auto» usa 1 000 000 se este modelo já passou de 200 000 tokens, senão 200 000. A porcentagem é sempre aproximada (≈).",
+        "La finestra non è scritta in nessun file: «Auto» usa 1 000 000 se questo modello ha già superato i 200 000 token, altrimenti 200 000. La percentuale resta sempre approssimativa (≈).",
+        "窗口大小没有写在任何文件里：如果该模型曾超过 200 000 个 token，“自动”取 1 000 000，否则取 200 000。百分比始终是近似值（≈）。",
+        "ウィンドウの大きさはどのファイルにも書かれていません。「自動」は、そのモデルが200 000トークンを超えたことがあれば1 000 000、なければ200 000とします。パーセンテージは常に概算（≈）です。"
+    ],
+    ConfigAlerte => [
+        "Blinking dot on the Conversations tab",
+        "Point clignotant sur le bouton Conversations",
+        "Punto parpadeante en el botón Conversaciones",
+        "Blinkender Punkt auf dem Reiter Unterhaltungen",
+        "Ponto piscante no botão Conversas",
+        "Punto lampeggiante sul pulsante Conversazioni",
+        "在“对话”按钮上显示闪烁的圆点",
+        "「会話」ボタンに点滅するドットを表示"
+    ],
+    ConfigAnimer => [
+        "Animate the figures on the Week screen",
+        "Animer les chiffres de l’écran Semaine",
+        "Animar las cifras de la pantalla Semana",
+        "Zahlen auf dem Bildschirm Woche animieren",
+        "Animar os números da tela Semana",
+        "Animare i numeri della schermata Settimana",
+        "为“本周”页面的数字添加动画",
+        "「週」画面の数字をアニメーションで表示"
+    ],
+    ConfigPied => [
+        "Changes apply right away.",
+        "Les changements s’appliquent tout de suite.",
+        "Los cambios se aplican al instante.",
+        "Änderungen gelten sofort.",
+        "As alterações valem na hora.",
+        "Le modifiche si applicano subito.",
+        "更改立即生效。",
+        "変更はすぐに反映されます。"
+    ],
+    ConfigRetablir => ["Reset", "Rétablir", "Restablecer", "Zurücksetzen", "Restaurar", "Ripristina", "恢复默认", "初期値に戻す"],
+    // Le premier clic sur « Rétablir » change le bouton en ce texte ; un deuxième clic (dans les 5 s) rétablit.
+    ConfigRetablirConfirmer => ["Click again to confirm", "Cliquer pour confirmer", "Haz clic para confirmar", "Zum Bestätigen klicken", "Clique para confirmar", "Clicca per confermare", "再次点击确认", "もう一度押して確定"],
+
+    // ------------------------------------------------ la fenêtre d'accueil de la page « Conversations »
+    // Montrée une fois, à la première ouverture de la page : c'est l'utilisateur qui désigne les dossiers du
+    // premier groupe et qui nomme les groupes (l'appli ne peut pas deviner le rôle d'une conversation).
+    // Le bouton « Séparer en deux groupes » est celui de Config (`ConfigSeparer`).
+    AccueilTitre => [
+        "Group your conversations?",
+        "Regrouper tes conversations ?",
+        "¿Agrupar tus conversaciones?",
+        "Unterhaltungen gruppieren?",
+        "Agrupar suas conversas?",
+        "Raggruppare le conversazioni?",
+        "要把对话分组吗？",
+        "会話をグループに分けますか？"
+    ],
+    AccueilTexte => [
+        "Conso Token cannot know which conversation plays which role (for example one that directs the others). You decide: tick the folders that form the first group and name each group. Each group has its own thresholds. You can change everything at any time with “Choose groups…”.",
+        "Conso Token ne peut pas savoir quel rôle joue chaque conversation (par exemple celle qui pilote les autres). C’est toi qui le dis : coche les dossiers qui forment le premier groupe et donne un nom à chaque groupe. Chaque groupe a ses propres seuils. Tu pourras tout changer à tout moment avec « Choisir les groupes… ».",
+        "Conso Token no puede saber qué papel tiene cada conversación (por ejemplo, una que dirige a las demás). Lo decides tú: marca las carpetas que forman el primer grupo y ponle nombre a cada grupo. Cada grupo tiene sus propios umbrales. Podrás cambiarlo todo en cualquier momento con «Elegir grupos…».",
+        "Conso Token kann nicht wissen, welche Unterhaltung welche Rolle hat (zum Beispiel eine, die die anderen steuert). Das legst du fest: Hake die Ordner an, die die erste Gruppe bilden, und gib jeder Gruppe einen Namen. Jede Gruppe hat eigene Schwellen. Alles lässt sich jederzeit mit „Gruppen wählen…“ ändern.",
+        "O Conso Token não consegue saber que papel cada conversa tem (por exemplo, uma que dirige as outras). Quem decide é você: marque as pastas que formam o primeiro grupo e dê um nome a cada grupo. Cada grupo tem seus próprios limites. Você pode mudar tudo a qualquer momento com «Escolher grupos…».",
+        "Conso Token non può sapere che ruolo abbia ogni conversazione (per esempio una che dirige le altre). Decidi tu: spunta le cartelle che formano il primo gruppo e dai un nome a ciascun gruppo. Ogni gruppo ha le sue soglie. Potrai cambiare tutto in qualsiasi momento con «Scegli i gruppi…».",
+        "Conso Token 无法知道每个对话扮演什么角色（例如负责指挥其他对话的那个）。由你来决定：勾选属于第一组的文件夹，并给每组起个名字。每组有各自的阈值。之后可随时通过“选择分组…”按钮更改。",
+        "Conso Token は、どの会話がどんな役割か（たとえば他の会話を取りまとめるもの）を判断できません。あなたが決めます。最初のグループに入れるフォルダーにチェックを入れ、各グループに名前を付けてください。グループごとにしきい値があります。「グループを選ぶ…」ボタンから、いつでも変更できます。"
+    ],
+    AccueilDossiers => [
+        "Folders of the first group",
+        "Dossiers du premier groupe",
+        "Carpetas del primer grupo",
+        "Ordner der ersten Gruppe",
+        "Pastas do primeiro grupo",
+        "Cartelle del primo gruppo",
+        "第一组的文件夹",
+        "最初のグループのフォルダー"
+    ],
+    AccueilNom1 => [
+        "Name of the first group (ticked folders)",
+        "Nom du premier groupe (dossiers cochés)",
+        "Nombre del primer grupo (carpetas marcadas)",
+        "Name der ersten Gruppe (angehakte Ordner)",
+        "Nome do primeiro grupo (pastas marcadas)",
+        "Nome del primo gruppo (cartelle spuntate)",
+        "第一组的名称（已勾选的文件夹）",
+        "最初のグループの名前（チェックしたフォルダー）"
+    ],
+    AccueilNom2 => [
+        "Name of the second group (all the others)",
+        "Nom du second groupe (tous les autres)",
+        "Nombre del segundo grupo (todas las demás)",
+        "Name der zweiten Gruppe (alle anderen)",
+        "Nome do segundo grupo (todas as outras)",
+        "Nome del secondo gruppo (tutte le altre)",
+        "第二组的名称（其余所有文件夹）",
+        "2番目のグループの名前（それ以外すべて）"
+    ],
+    AccueilGarder => [
+        "Keep one group",
+        "Garder un seul groupe",
+        "Mantener un solo grupo",
+        "Bei einer Gruppe bleiben",
+        "Manter um só grupo",
+        "Tenere un solo gruppo",
+        "只保留一组",
+        "グループは1つのまま"
+    ],
+    // le bouton de Config qui rouvre la fenêtre d'accueil
+    ConfigGroupes => [
+        "Choose groups…",
+        "Choisir les groupes…",
+        "Elegir grupos…",
+        "Gruppen wählen…",
+        "Escolher grupos…",
+        "Scegli i gruppi…",
+        "选择分组…",
+        "グループを選ぶ…"
+    ],
+
+    // ------------------------------------------------ masquer une conversation (1.3.4)
+    // L'info-bulle du ✕ d'une ligne de la page « Conversations ».
+    ConvMasquer => ["Hide", "Masquer", "Ocultar", "Ausblenden", "Ocultar", "Nascondi", "隐藏", "非表示"],
+    // Config : la ligne « n conversations masquées » (une forme pour 1, une pour les autres : {0} = leur nombre) et son bouton.
+    ConfigMasqueeUne => ["1 conversation hidden", "1 conversation masquée", "1 conversación oculta", "1 Unterhaltung ausgeblendet", "1 conversa oculta", "1 conversazione nascosta", "已隐藏 1 个对话", "非表示の会話：1件"],
+    ConfigMasquees => ["{0} conversations hidden", "{0} conversations masquées", "{0} conversaciones ocultas", "{0} Unterhaltungen ausgeblendet", "{0} conversas ocultas", "{0} conversazioni nascoste", "已隐藏 {0} 个对话", "非表示の会話：{0}件"],
+    ConfigReafficher => ["Show again", "Réafficher", "Mostrar de nuevo", "Wieder einblenden", "Mostrar novamente", "Mostra di nuovo", "重新显示", "再表示"],
+
     // ------------------------------------------------ « À propos »
     AproposTitre => [
         "About Conso Token",
@@ -653,14 +947,14 @@ textes! {
     ],
     // {0} = numéro de version
     AproposCorps => [
-        "Version {0}\nConso Token shows you where your Claude usage stands. It guesses nothing and predicts nothing: it only reads the figures your Claude app passes to it and the token counters of your conversations (never their content), on your computer. Nothing is sent over the Internet.",
-        "Version {0}\nConso Token te montre où en est ta consommation de Claude. Il ne devine rien et ne prédit rien : il ne lit que les chiffres que ton appli Claude lui transmet et les compteurs de tokens de tes conversations (jamais leur contenu), sur ton ordinateur. Rien n’est envoyé sur Internet.",
-        "Versión {0}\nConso Token te muestra cómo va tu consumo de Claude. No adivina ni predice nada: solo lee las cifras que le pasa tu app de Claude y los contadores de tokens de tus conversaciones (nunca su contenido), en tu ordenador. No se envía nada por Internet.",
-        "Version {0}\nConso Token zeigt dir, wie weit dein Claude-Verbrauch ist. Es rät nichts und sagt nichts voraus: Es liest nur die Zahlen, die deine Claude-App weitergibt, und die Token-Zähler deiner Unterhaltungen (nie deren Inhalt), auf deinem Computer. Nichts wird über das Internet gesendet.",
-        "Versão {0}\nO Conso Token mostra como está o seu consumo do Claude. Ele não adivinha nem prevê nada: lê apenas os números que o seu app do Claude lhe passa e os contadores de tokens das suas conversas (nunca o conteúdo), no seu computador. Nada é enviado pela Internet.",
-        "Versione {0}\nConso Token ti mostra a che punto è il tuo consumo di Claude. Non indovina e non prevede nulla: legge solo i numeri che la tua app Claude gli trasmette e i contatori di token delle tue conversazioni (mai il contenuto), sul tuo computer. Non viene inviato nulla su Internet.",
-        "版本 {0}\nConso Token 展示你的 Claude 用量进展。它不做任何猜测或预测：只读取你的 Claude 应用传来的数字，以及对话的 token 计数（绝不读取对话内容），全部在你的电脑上完成。不会通过互联网发送任何内容。",
-        "バージョン {0}\nConso Token は、Claude の使用状況を表示します。推測や予測は一切行いません。読み取るのは、Claude アプリから渡される数値と、会話のトークンカウンター（内容は決して読みません）だけで、すべてお使いのパソコン上で行われます。インターネットには何も送信されません。"
+        "Version {0}\nConso Token shows you where your Claude usage stands. It guesses nothing and predicts nothing: it only keeps the figures your Claude app passes to it, the token counters of your conversations and the title of each conversation as the Claude app shows it, on your computer. The title comes from the files already read for the counters and is kept in memory while it is displayed; it is never written or sent. The text of a message is never kept, written or sent. When you hide a conversation with ×, the app writes that conversation’s session identifier (a plain code, neither its title nor its contents) in its own data folder so that it stays hidden; it is forgotten once the conversation’s last message is more than 24 h old, or as soon as you click “Show again”. Nothing is sent over the Internet.",
+        "Version {0}\nConso Token te montre où en est ta consommation de Claude. Il ne devine rien et ne prédit rien : il ne retient que les chiffres que ton appli Claude lui transmet, les compteurs de tokens de tes conversations et le titre de chaque conversation tel que l’appli Claude l’affiche, sur ton ordinateur. Le titre est lu dans les fichiers déjà lus pour les compteurs et est gardé en mémoire le temps de l’affichage ; il n’est jamais écrit ni envoyé. Le texte d’un message n’est jamais gardé, ni écrit, ni envoyé. Quand tu masques une conversation avec ×, l’appli écrit l’identifiant de session de cette conversation (un simple code, ni son titre ni son contenu) dans son dossier de données pour qu’elle reste masquée ; il est oublié quand son dernier message a plus de 24 h, ou dès que tu cliques sur « Réafficher ». Rien n’est envoyé sur Internet.",
+        "Versión {0}\nConso Token te muestra cómo va tu consumo de Claude. No adivina ni predice nada: solo conserva las cifras que le pasa tu app de Claude, los contadores de tokens de tus conversaciones y el título de cada conversación tal como lo muestra la app de Claude, en tu ordenador. El título se lee en los archivos que ya se leen para los contadores y se guarda en la memoria mientras se muestra; nunca se escribe ni se envía. El texto de un mensaje nunca se guarda, ni se escribe ni se envía. Cuando ocultas una conversación con ×, la app escribe el identificador de sesión de esa conversación (un simple código, ni su título ni su contenido) en su carpeta de datos para que siga oculta; se olvida cuando su último mensaje tiene más de 24 h, o en cuanto haces clic en «Mostrar de nuevo». No se envía nada por Internet.",
+        "Version {0}\nConso Token zeigt dir, wie weit dein Claude-Verbrauch ist. Es rät nichts und sagt nichts voraus: Es behält nur die Zahlen, die deine Claude-App weitergibt, die Token-Zähler deiner Unterhaltungen und den Titel jeder Unterhaltung, so wie ihn die Claude-App anzeigt, auf deinem Computer. Der Titel wird in den Dateien gelesen, die ohnehin für die Zähler gelesen werden, und wird nur für die Anzeige im Speicher gehalten; er wird nie geschrieben oder gesendet. Der Text einer Nachricht wird nie behalten, geschrieben oder gesendet. Wenn du eine Unterhaltung mit × ausblendest, schreibt die App die Sitzungskennung dieser Unterhaltung (nur einen Code, weder Titel noch Inhalt) in ihren Datenordner, damit sie ausgeblendet bleibt; sie wird vergessen, sobald die letzte Nachricht älter als 24 Std. ist, oder sobald du auf „Wieder einblenden“ klickst. Nichts wird über das Internet gesendet.",
+        "Versão {0}\nO Conso Token mostra como está o seu consumo do Claude. Ele não adivinha nem prevê nada: guarda apenas os números que o seu app do Claude lhe passa, os contadores de tokens das suas conversas e o título de cada conversa como o app do Claude o mostra, no seu computador. O título é lido nos arquivos que já são lidos para os contadores e é mantido na memória enquanto é exibido; nunca é gravado nem enviado. O texto de uma mensagem nunca é guardado, gravado nem enviado. Quando você oculta uma conversa com ×, o app grava o identificador de sessão dessa conversa (um simples código, nem o título nem o conteúdo) na sua pasta de dados para que ela continue oculta; ele é esquecido quando a última mensagem tem mais de 24 h, ou assim que você clica em “Mostrar novamente”. Nada é enviado pela Internet.",
+        "Versione {0}\nConso Token ti mostra a che punto è il tuo consumo di Claude. Non indovina e non prevede nulla: conserva solo i numeri che la tua app Claude gli trasmette, i contatori di token delle tue conversazioni e il titolo di ogni conversazione così come lo mostra l’app Claude, sul tuo computer. Il titolo è letto nei file già letti per i contatori e viene tenuto in memoria finché è mostrato; non viene mai scritto né inviato. Il testo di un messaggio non viene mai conservato, scritto né inviato. Quando nascondi una conversazione con ×, l’app scrive l’identificatore di sessione di quella conversazione (un semplice codice, né il titolo né il contenuto) nella sua cartella dati perché resti nascosta; viene dimenticato quando l’ultimo messaggio ha più di 24 h, oppure appena clicchi su «Mostra di nuovo». Non viene inviato nulla su Internet.",
+        "版本 {0}\nConso Token 展示你的 Claude 用量进展。它不做任何猜测或预测：只保留你的 Claude 应用传来的数字、对话的 token 计数，以及 Claude 应用所显示的每个对话的标题，全部在你的电脑上完成。标题取自已为计数而读取的文件，只在显示期间保存在内存中，绝不写入或发送；消息的文字从不保留，也绝不写入或发送。当你用 × 隐藏一个对话时，应用会把该对话的会话标识符（只是一串代码，不含标题和内容）写入自己的数据文件夹，使它保持隐藏；当其最后一条消息超过 24 小时，或你点击“重新显示”时，该标识符即被清除。不会通过互联网发送任何内容。",
+        "バージョン {0}\nConso Token は、Claude の使用状況を表示します。推測や予測は一切行いません。保持するのは、Claude アプリから渡される数値、会話のトークンカウンター、そして Claude アプリに表示されるものと同じ各会話のタイトルだけで、すべてお使いのパソコン上で行われます。タイトルはカウンターのためにすでに読んでいるファイルから取得し、表示している間だけメモリに保持します。書き込みも送信もしません。メッセージの文章は一切保持せず、書き込みも送信もしません。× で会話を非表示にすると、アプリはその会話のセッション ID（ただのコードで、タイトルも内容も含みません）を自分のデータフォルダーに書き込み、非表示を保ちます。最後のメッセージから 24 時間が過ぎるか、「再表示」を押すと、この ID は消去されます。インターネットには何も送信されません。"
     ],
     AproposSlint => [
         "Built with Slint (slint.dev), under the “Slint Royalty-free 2.0” license",

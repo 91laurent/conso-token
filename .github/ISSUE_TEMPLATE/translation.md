@@ -7,7 +7,7 @@ labels: translation
 
 **Language** (en, fr, es, de, pt, it, zh, ja):
 
-**Where** (a card, a button, the clock-change line, a one-page guide, the web pages):
+**Where** (a card, a button, the Conversations tab, the clock-change line, a one-page guide, the web pages):
 
 **Current text:**
 

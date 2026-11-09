@@ -8,14 +8,22 @@
 
 slint::include_modules!();
 
+use std::cell::{Cell, RefCell};
+use std::collections::BTreeMap;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
+mod ecran;
+
+use ecran::{brancher, maj_compteurs, rafraichir_conversations};
+use noyau::conversations::{self, Lecture};
 use noyau::langue::{self, Langue};
 use noyau::modele::{self, Echantillon, Fenetre, Vue};
+use noyau::reglages::{self, Reglages};
+use noyau::suivi::{self, Suivi};
 use noyau::temps::{JOUR_S, SEMAINE_S};
 use noyau::textes::{Cle, fmt, t};
 use noyau::{fr, pont, transcripts, vues};
@@ -39,10 +47,78 @@ struct Tokens {
     par_jour: [u64; 7],
 }
 
+/// Les trois valeurs animées de l'écran Semaine : chacune est une suite de morceaux (chiffres et texte)
+/// que l'interface fait rouler, retourner ou compter.
+struct Compteurs {
+    rythme: Rc<VecModel<Glyphe>>,
+    reste: Rc<VecModel<Glyphe>>,
+    reset: Rc<VecModel<Glyphe>>,
+    /// Le dernier texte posé pour chacune (rien à refaire s'il n'a pas changé).
+    textes: RefCell<[String; 3]>,
+    /// « Il te reste » : la dernière valeur, d'où repart le compte progressif.
+    reste_valeur: Cell<Option<f64>>,
+    minuteur_reste: Rc<Timer>,
+    /// Vrai au départ et au retour sur l'onglet Semaine : les chiffres repartent de zéro.
+    intro: Cell<bool>,
+}
+
 struct Contexte {
     donnees: PathBuf,
     demo: bool,
     tokens: Arc<Mutex<Option<Tokens>>>,
+    /// La dernière lecture des conversations (faite toutes les minutes par le fil de lecture).
+    conversations: Arc<Mutex<Option<Lecture>>>,
+    reglages: RefCell<Reglages>,
+    /// Le plus grand contexte vu par modèle (rangé dans `contextes_vus.txt`).
+    vus: RefCell<BTreeMap<String, u64>>,
+    /// Les conversations de moins de 24 h, mais de plus de 30 min : repliées tant qu'on n'a pas cliqué.
+    recentes_ouvertes: Cell<bool>,
+    /// Le pourcentage de l'exemple de la barre d'essai de chaque groupe (rien : à mi-chemin des seuils).
+    essai: Cell<[Option<u8>; 2]>,
+    /// Le dernier calcul de la page Conversations (la fenêtre de réglage en tire la liste des modèles).
+    dernier_suivi: RefCell<Option<Suivi>>,
+    /// Les dossiers de la fenêtre d'accueil et leur case (l'interface garde l'aspect, ici l'état).
+    accueil: RefCell<Vec<(String, bool)>>,
+    /// La fenêtre d'accueil s'est déjà ouverte toute seule pendant cette séance.
+    accueil_montre: Cell<bool>,
+    compteurs: Compteurs,
+}
+
+impl Contexte {
+    /// Range les réglages (sauf en démonstration : rien n'est écrit).
+    fn sauver(&self) {
+        if !self.demo {
+            let _ = reglages::ecrire(&self.donnees, &self.reglages.borrow());
+        }
+    }
+
+    /// Les chiffres s'animent si la case de Config est cochée ET si Windows n'a pas coupé les effets d'animation.
+    fn animer(&self) -> bool {
+        self.reglages.borrow().animer && animations_windows()
+    }
+}
+
+/// Le réglage Windows « effets d'animation » (Accessibilité) ; `CONSO_TOKEN_ANIMATIONS=0` ou `1` le force (captures).
+fn animations_windows() -> bool {
+    if let Ok(v) = std::env::var("CONSO_TOKEN_ANIMATIONS") {
+        return v.trim() != "0";
+    }
+    #[cfg(windows)]
+    {
+        #[link(name = "user32")]
+        unsafe extern "system" {
+            fn SystemParametersInfoW(action: u32, param: u32, pv: *mut core::ffi::c_void, win_ini: u32) -> i32;
+        }
+        const SPI_GETCLIENTAREAANIMATION: u32 = 0x1042;
+        let mut actif: i32 = 1;
+        // SAFETY : `actif` est un BOOL de 4 octets, ce que l'action demandée attend ; en cas d'échec on garde « oui ».
+        let ok = unsafe { SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, 0, (&mut actif as *mut i32).cast(), 0) };
+        ok == 0 || actif != 0
+    }
+    #[cfg(not(windows))]
+    {
+        true
+    }
 }
 
 fn main() {
@@ -61,15 +137,56 @@ fn main() {
     langue::definir(langue::choisir(&donnees));
 
     let demo = a("--demo");
-    let contexte = Rc::new(Contexte { donnees: donnees.clone(), demo, tokens: Arc::new(Mutex::new(None)) });
-    if !demo && !a("--sans-tokens") {
-        lancer_lecture_tokens(donnees, racine_transcriptions(), Arc::clone(&contexte.tokens));
+    let contexte = Rc::new(Contexte {
+        donnees: donnees.clone(),
+        demo,
+        tokens: Arc::new(Mutex::new(None)),
+        conversations: Arc::new(Mutex::new(None)),
+        reglages: RefCell::new(reglages::lire(&donnees)),
+        vus: RefCell::new(if demo { suivi::vus_demo() } else { reglages::lire_vus(&donnees) }),
+        recentes_ouvertes: Cell::new(false),
+        essai: Cell::new([None, None]),
+        dernier_suivi: RefCell::new(None),
+        accueil: RefCell::new(Vec::new()),
+        accueil_montre: Cell::new(false),
+        compteurs: Compteurs {
+            rythme: Rc::new(VecModel::default()),
+            reste: Rc::new(VecModel::default()),
+            reset: Rc::new(VecModel::default()),
+            textes: RefCell::new([String::new(), String::new(), String::new()]),
+            reste_valeur: Cell::new(None),
+            minuteur_reste: Rc::new(Timer::default()),
+            intro: Cell::new(true),
+        },
+    });
+    if demo {
+        // des conversations d'exemple, pour voir la page (rien n'est lu dans les fichiers)
+        let maintenant = maintenant_s();
+        if let Ok(mut g) = contexte.conversations.lock() {
+            *g = Some(Lecture { conversations: suivi::exemple(maintenant), candidats: 9, lisibles: 9 });
+        }
+    } else if !a("--sans-tokens") {
+        lancer_lecture(donnees, racine_transcriptions(), Arc::clone(&contexte.tokens), Arc::clone(&contexte.conversations));
     }
 
     let Some(app) = creer_fenetre(&contexte.donnees, &args) else { return };
     app.set_version(env!("CARGO_PKG_VERSION").into());
     app.set_langue_index(langue::courante().index() as i32);
+    app.set_rythme_glyphes(ModelRc::from(Rc::clone(&contexte.compteurs.rythme)));
+    app.set_reste_glyphes(ModelRc::from(Rc::clone(&contexte.compteurs.reste)));
+    app.set_reset_glyphes(ModelRc::from(Rc::clone(&contexte.compteurs.reset)));
     appliquer_textes(&app);
+    brancher(&app, &contexte);
+    // Pour les captures : CONSO_TOKEN_ONGLET=conversations ouvre l'onglet Conversations, CONSO_TOKEN_CONFIG=1 la fenêtre de réglage.
+    if std::env::var("CONSO_TOKEN_ONGLET").is_ok_and(|v| v.trim().eq_ignore_ascii_case("conversations")) {
+        app.set_onglet(1);
+    }
+    if std::env::var_os("CONSO_TOKEN_CONFIG").is_some() {
+        app.set_cfg_ouverte(true);
+    }
+    if std::env::var_os("CONSO_TOKEN_AUTRES").is_some() {
+        contexte.recentes_ouvertes.set(true);
+    }
     let ne_pas_ecrire_langue = demo || langue_forcee.is_some();
     {
         let faible = app.as_weak();
@@ -102,10 +219,30 @@ fn main() {
 
     // les chiffres sont relus toutes les 15 secondes (lecture de deux petits fichiers)
     let faible = app.as_weak();
+    let ctx15 = Rc::clone(&contexte);
     let minuteur = Timer::default();
     minuteur.start(TimerMode::Repeated, Duration::from_secs(15), move || {
         if let Some(app) = faible.upgrade() {
-            rafraichir(&app, &contexte);
+            rafraichir(&app, &ctx15);
+        }
+    });
+    // Au départ, la première lecture des conversations peut prendre un instant (le fil de lecture parcourt
+    // les transcriptions une fois en entier) : on regarde chaque seconde jusqu'à ce qu'elle soit là.
+    let faible = app.as_weak();
+    let ctx1 = Rc::clone(&contexte);
+    let attente = Rc::new(Timer::default());
+    let attente2 = Rc::clone(&attente);
+    let essais = Cell::new(0u32);
+    attente.start(TimerMode::Repeated, Duration::from_secs(1), move || {
+        essais.set(essais.get() + 1);
+        let prete = ctx1.conversations.lock().is_ok_and(|g| g.is_some());
+        if prete {
+            if let Some(app) = faible.upgrade() {
+                rafraichir_conversations(&app, &ctx1, maintenant_s());
+            }
+        }
+        if prete || essais.get() >= 60 {
+            attente2.stop();
         }
     });
 
@@ -173,6 +310,34 @@ fn appliquer_textes(app: &App) {
     g.set_apropos_slint(t(Cle::AproposSlint).into());
     g.set_apropos_polices(t(Cle::AproposPolices).into());
     g.set_bouton_retour(t(Cle::BoutonRetour).into());
+    g.set_onglet_conversations(t(Cle::OngletConversations).into());
+    g.set_bouton_config(t(Cle::BoutonConfig).into());
+    g.set_conv_titre(t(Cle::ConvTitre).into());
+    g.set_conv_sous_titre(t(Cle::ConvSousTitre).into());
+    g.set_conv_legende(t(Cle::ConvLegende).into());
+    g.set_config_titre(t(Cle::ConfigTitre).into());
+    g.set_config_separer(t(Cle::ConfigSeparer).into());
+    g.set_config_attention(t(Cle::ConfigAttention).into());
+    g.set_config_passation(t(Cle::ConfigPassation).into());
+    g.set_config_fenetre(t(Cle::ConfigFenetre).into());
+    g.set_config_auto(t(Cle::ConfigAuto).into());
+    g.set_config_fenetre_note(t(Cle::ConfigFenetreNote).into());
+    g.set_config_alerte(t(Cle::ConfigAlerte).into());
+    g.set_config_animer(t(Cle::ConfigAnimer).into());
+    g.set_config_pied(t(Cle::ConfigPied).into());
+    g.set_config_retablir(t(Cle::ConfigRetablir).into());
+    g.set_config_retablir_confirmer(t(Cle::ConfigRetablirConfirmer).into());
+    g.set_accueil_titre(t(Cle::AccueilTitre).into());
+    g.set_accueil_texte(t(Cle::AccueilTexte).into());
+    g.set_accueil_dossiers(t(Cle::AccueilDossiers).into());
+    g.set_accueil_nom1(t(Cle::AccueilNom1).into());
+    g.set_accueil_nom2(t(Cle::AccueilNom2).into());
+    g.set_accueil_garder(t(Cle::AccueilGarder).into());
+    g.set_config_groupes(t(Cle::ConfigGroupes).into());
+    g.set_conv_masquer(t(Cle::ConvMasquer).into());
+    g.set_config_reafficher(t(Cle::ConfigReafficher).into());
+    g.set_fenetre_petite(suivi::entier(reglages::FENETRE_PETITE).into());
+    g.set_fenetre_grande(suivi::entier(reglages::FENETRE_GRANDE).into());
 }
 
 // ---------------------------------------------------------------- le pont
@@ -260,10 +425,12 @@ fn racine_transcriptions() -> PathBuf {
     base.join("projects")
 }
 
-/// Relit les transcriptions toutes les minutes, hors de l'interface.
-fn lancer_lecture_tokens(donnees: PathBuf, racine: PathBuf, sortie: Arc<Mutex<Option<Tokens>>>) {
+/// Relit les transcriptions toutes les minutes, hors de l'interface : les tokens par jour (si on connaît
+/// la semaine) et les conversations (contexte au dernier échange).
+fn lancer_lecture(donnees: PathBuf, racine: PathBuf, sortie: Arc<Mutex<Option<Tokens>>>, conversations: Arc<Mutex<Option<Lecture>>>) {
     std::thread::spawn(move || {
         let mut lecteur = transcripts::Lecteur::default();
+        let mut lecteur_conv = conversations::LecteurConversations::default();
         loop {
             let (histo, dernier) = pont::charger(&donnees);
             let mut tous = histo;
@@ -274,6 +441,10 @@ fn lancer_lecture_tokens(donnees: PathBuf, racine: PathBuf, sortie: Arc<Mutex<Op
                 if let Ok(mut g) = sortie.lock() {
                     *g = Some(Tokens { debut, par_jour });
                 }
+            }
+            let lecture = lecteur_conv.lire(&racine, maintenant_s());
+            if let Ok(mut g) = conversations.lock() {
+                *g = Some(lecture);
             }
             std::thread::sleep(Duration::from_secs(60));
         }
@@ -314,7 +485,14 @@ fn donnees_demo() -> (Vec<Echantillon>, Option<Echantillon>, i64, [u64; 7]) {
 
 // ---------------------------------------------------------------- l'affichage
 
+/// Tout remettre à jour : l'écran Semaine, puis la page Conversations (et le point clignotant, la fenêtre de réglage).
 fn rafraichir(app: &App, ctx: &Contexte) {
+    app.set_animer(ctx.animer());
+    rafraichir_semaine(app, ctx);
+    rafraichir_conversations(app, ctx, maintenant_s());
+}
+
+fn rafraichir_semaine(app: &App, ctx: &Contexte) {
     let (histo, dernier, maintenant, tokens_demo) = if ctx.demo {
         let (h, d, m, t) = donnees_demo();
         (h, d, m, Some(t))
@@ -341,7 +519,7 @@ fn rafraichir(app: &App, ctx: &Contexte) {
     });
     match modele::construire(semaine, maintenant, tokens.as_ref()) {
         Some(vue) => {
-            afficher(app, &vue, tokens.is_some());
+            afficher(app, ctx, &vue, tokens.is_some());
             app.set_page(0);
         }
         None => page_accueil(app, Accueil::NouvelleSemaine),
@@ -403,7 +581,7 @@ fn pourcent(x: f64) -> String {
     fr::pourcent(x)
 }
 
-fn afficher(app: &App, v: &Vue, tokens_connus: bool) {
+fn afficher(app: &App, ctx: &Contexte, v: &Vue, tokens_connus: bool) {
     // --- les trois cartes
     let ecart = v.ecart_rythme;
     let (valeur, tag, c) = if ecart.abs() < 0.5 {
@@ -413,13 +591,11 @@ fn afficher(app: &App, v: &Vue, tokens_connus: bool) {
     } else {
         (fmt(Cle::RythmeTrop, &[&(ecart.round() as i64)]), t(Cle::TagTrop), ERREUR)
     };
-    app.set_rythme_valeur(valeur.into());
+    maj_compteurs(ctx, &valeur, &pourcent(v.reste), v.reste, &fr::duree(v.reste_s));
     app.set_rythme_tag(tag.into());
     app.set_rythme_couleur(couleur(c));
     app.set_rythme_detail(fmt(Cle::RythmeDetail, &[&pourcent(v.utilise.round()), &pourcent(v.ecoule.round())]).into());
-    app.set_reste_valeur(pourcent(v.reste).into());
     app.set_reste_detail(t(Cle::ResteDetail).into());
-    app.set_reset_valeur(fr::duree(v.reste_s).into());
     app.set_reset_detail(fr::carte_reset_detail(v.reset).into());
     app.set_reset_avis(fr::carte_reset_avis(v.debut, v.reset).unwrap_or_default().into());
 

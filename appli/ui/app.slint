@@ -53,6 +53,58 @@ export struct SegVue {
     etiquette: string,
 }
 
+// Un morceau d'une valeur animée de l'écran Semaine : soit un chiffre (qui roule ou se retourne quand il
+// change), soit un bout de texte fixe (« % d'avance », « h »…). `rang` : 0 pour le dernier chiffre,
+// 1 pour celui d'avant… (les chiffres bougent l'un après l'autre).
+export struct Glyphe {
+    texte: string,
+    chiffre: bool,
+    valeur: int,
+    rang: int,
+}
+
+// Une ligne de la page « Conversations », déjà mise en forme par le programme (voir noyau/src/suivi.rs).
+// genre : 0 = titre de groupe, 1 = conversation, 2 = message (aucune conversation, lecture impossible),
+// 3 = « + N autres » (conversations repliées). `y` et `h` : place et hauteur de la ligne dans la liste.
+// camp : 0 = premier groupe, 1 = second. etat : 0 = ok, 1 = attention, 2 = passation, 3 = résumée.
+export struct LigneConv {
+    genre: int,
+    y: length,
+    h: length,
+    titre: string,
+    sous: string,
+    etiquette: string,
+    camp: int,
+    dossier: string,
+    nom: string,
+    meta: string,
+    attention: float,
+    passation: float,
+    pct: float,
+    texte-pct: string,
+    tokens: string,
+    reste: string,
+    etat: int,
+    recente: bool,
+    ouvert: bool,
+    // l'identifiant de session de la conversation : ce que le ✕ de la ligne désigne pour la masquer (jamais affiché)
+    session: string,
+}
+
+// Un modèle de la fenêtre de réglage : son nom, ce qu'on en sait, la fenêtre choisie (0 = Auto, 1 = 200 000, 2 = 1 000 000).
+export struct ModeleCfg {
+    cle: string, // l'identifiant du modèle : le clic le désigne par lui, jamais par sa place dans la liste
+    nom: string,
+    info: string,
+    choix: int,
+}
+
+// Un dossier de la fenêtre d'accueil : son nom, et s'il est dans le premier groupe.
+export struct DossierCfg {
+    nom: string,
+    coche: bool,
+}
+
 global Couleurs {
     // couleur du chiffre d'un jour : vert (sous le budget), rose (dépassé), or (aujourd'hui), gris (à venir)
     pure public function valeur(genre: int, depasse: bool) -> color {
@@ -90,6 +142,37 @@ export global Textes {
     in property <string> apropos-slint;
     in property <string> apropos-polices;
     in property <string> bouton-retour;
+    // la page « Conversations » et la fenêtre de réglage
+    in property <string> onglet-conversations;
+    in property <string> bouton-config;
+    in property <string> conv-titre;
+    in property <string> conv-sous-titre;
+    in property <string> conv-legende;
+    in property <string> config-titre;
+    in property <string> config-separer;
+    in property <string> config-attention;
+    in property <string> config-passation;
+    in property <string> config-fenetre;
+    in property <string> config-auto;
+    in property <string> config-fenetre-note;
+    in property <string> config-alerte;
+    in property <string> config-animer;
+    in property <string> config-pied;
+    in property <string> config-retablir;
+    in property <string> config-retablir-confirmer;
+    in property <string> fenetre-petite;
+    in property <string> fenetre-grande;
+    // la fenêtre d'accueil de la page Conversations
+    in property <string> accueil-titre;
+    in property <string> accueil-texte;
+    in property <string> accueil-dossiers;
+    in property <string> accueil-nom1;
+    in property <string> accueil-nom2;
+    in property <string> accueil-garder;
+    in property <string> config-groupes;
+    // masquer une conversation : l'info-bulle du ✕ d'une ligne, et le bouton de Config qui les réaffiche toutes
+    in property <string> conv-masquer;
+    in property <string> config-reafficher;
 }
 
 // Fines diagonales dorées à 45 degrés, comme la texture du style 14.
@@ -110,9 +193,201 @@ component Hatch inherits Rectangle {
     }
 }
 
+// ---------- les compteurs animés de l'écran Semaine ----------
+
+// Un chiffre qui roule (odomètre) : une colonne de 0 à 9 derrière une fenêtre, qui glisse jusqu'au chiffre voulu.
+component RouleauChiffre inherits Rectangle {
+    in property <int> valeur;
+    in property <int> rang;
+    in property <length> taille;
+    in property <color> couleur;
+    property <length> hl: self.taille * 1.2;
+    height: self.hl;
+    clip: true;
+    Rectangle {
+        x: 0px;
+        y: -root.valeur * root.hl;
+        width: parent.width;
+        height: 10 * root.hl;
+        animate y { duration: 1100ms; delay: root.rang * 80ms; easing: ease-out-quart; }
+        for k in 10 : Text {
+            x: 0px;
+            y: k * root.hl;
+            width: parent.width;
+            height: root.hl;
+            text: "\{k}";
+            color: root.couleur;
+            font-size: root.taille;
+            font-weight: 400;
+            font-family: Textes.police-texte;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}
+
+// Un chiffre en volets, comme un tableau d'affichage : la moitié haute de l'ancien chiffre se rabat, puis la
+// moitié basse du nouveau retombe. Slint n'a pas de rotation en 3D : le volet s'aplatit (échelle verticale),
+// rendu approché. La suite est jouée par un minuteur de 16 ms, car un même geste ne peut pas aller de 0 à 1
+// puis recommencer avec une animation de propriété.
+component Volet inherits Rectangle {
+    in property <int> valeur;
+    in property <int> rang;
+    in property <length> taille;
+    in property <color> couleur;
+    property <length> hl: self.taille * 1.2;
+    property <int> ancien;
+    property <int> pose;
+    property <float> p: 1.0;
+    property <int> attente;
+    property <color> fond: #1c1a14;
+    height: self.hl;
+    init => {
+        self.ancien = self.valeur;
+        self.pose = self.valeur;
+    }
+    changed valeur => {
+        self.ancien = self.pose;
+        self.attente = self.rang * 5;
+        self.p = 0.0;
+    }
+    Timer {
+        interval: 16ms;
+        running: root.p < 1.0;
+        triggered => {
+            if (root.attente > 0) {
+                root.attente -= 1;
+            } else {
+                root.p = Math.min(1.0, root.p + 0.06);
+                if (root.p >= 1.0) {
+                    root.pose = root.valeur;
+                }
+            }
+        }
+    }
+    // moitié haute du chiffre NOUVEAU (fixe, derrière)
+    Rectangle {
+        x: 0px; y: 0px;
+        width: parent.width; height: parent.height / 2;
+        background: root.fond;
+        clip: true;
+        Text {
+            x: 0px; y: 0px;
+            width: parent.width; height: root.hl;
+            text: "\{root.valeur}";
+            color: root.couleur; font-size: root.taille; font-weight: 400; font-family: Textes.police-texte;
+            horizontal-alignment: center; vertical-alignment: center;
+        }
+    }
+    // moitié basse du chiffre ANCIEN (fixe, derrière) ; le nouveau une fois le volet fini
+    Rectangle {
+        x: 0px; y: parent.height / 2;
+        width: parent.width; height: parent.height / 2;
+        background: root.fond;
+        clip: true;
+        Text {
+            x: 0px; y: -root.hl / 2;
+            width: parent.width; height: root.hl;
+            text: root.p >= 1.0 ? "\{root.valeur}" : "\{root.ancien}";
+            color: root.couleur; font-size: root.taille; font-weight: 400; font-family: Textes.police-texte;
+            horizontal-alignment: center; vertical-alignment: center;
+        }
+    }
+    // volet du haut : la moitié haute de l'ANCIEN se rabat (de 0 à 0,5)
+    if root.p < 0.5 : Rectangle {
+        x: 0px; y: 0px;
+        width: parent.width; height: parent.height / 2;
+        background: root.fond;
+        clip: true;
+        transform-origin: { x: self.width / 2, y: self.height };
+        transform-scale-y: Math.max(0.0, 1.0 - 2.0 * root.p) * 100%;
+        Text {
+            x: 0px; y: 0px;
+            width: parent.width; height: root.hl;
+            text: "\{root.ancien}";
+            color: root.couleur; font-size: root.taille; font-weight: 400; font-family: Textes.police-texte;
+            horizontal-alignment: center; vertical-alignment: center;
+        }
+    }
+    // volet du bas : la moitié basse du NOUVEAU retombe (de 0,5 à 1)
+    if root.p >= 0.5 && root.p < 1.0 : Rectangle {
+        x: 0px; y: parent.height / 2;
+        width: parent.width; height: parent.height / 2;
+        background: root.fond;
+        clip: true;
+        transform-origin: { x: self.width / 2, y: 0px };
+        transform-scale-y: Math.max(0.0, 2.0 * root.p - 1.0) * 100%;
+        Text {
+            x: 0px; y: -root.hl / 2;
+            width: parent.width; height: root.hl;
+            text: "\{root.valeur}";
+            color: root.couleur; font-size: root.taille; font-weight: 400; font-family: Textes.police-texte;
+            horizontal-alignment: center; vertical-alignment: center;
+        }
+    }
+    // la ligne médiane du tableau d'affichage
+    Rectangle { x: 0px; y: parent.height / 2 - 0.5px; width: parent.width; height: 1px; background: Palette.noir; }
+}
+
+// Une valeur en gros : des morceaux de texte et des chiffres. style 0 = texte simple, 1 = rouleaux, 3 = volets.
+component Compteur inherits Rectangle {
+    in property <[Glyphe]> glyphes;
+    in property <int> style;
+    in property <length> taille: 40px;
+    in property <color> couleur: Palette.or-clair;
+    height: self.taille * 1.2;
+    HorizontalLayout {
+        x: 0px; y: 0px;
+        height: parent.height;
+        alignment: start;
+        spacing: 0px;
+        for g in root.glyphes : Rectangle {
+            property <bool> chiffre-anime: g.chiffre && (root.style == 1 || root.style == 3);
+            preferred-width: self.chiffre-anime ? (mesure.preferred-width + (root.style == 3 ? 8px : 0px)) : texte.preferred-width;
+            min-width: self.preferred-width;
+            mesure := Text {
+                x: 0px; y: 0px;
+                visible: false;
+                text: "0";
+                font-size: root.taille; font-weight: 400; font-family: Textes.police-texte;
+            }
+            texte := Text {
+                x: 0px; y: 0px;
+                height: parent.height;
+                visible: !parent.chiffre-anime;
+                text: g.texte;
+                color: root.couleur;
+                font-size: root.taille;
+                font-weight: 400;
+                font-family: Textes.police-texte;
+                vertical-alignment: center;
+            }
+            if root.style == 1 && g.chiffre : RouleauChiffre {
+                x: 0px; y: 0px;
+                width: parent.width;
+                valeur: g.valeur;
+                rang: g.rang;
+                taille: root.taille;
+                couleur: root.couleur;
+            }
+            if root.style == 3 && g.chiffre : Volet {
+                x: 1px; y: 0px;
+                width: parent.width - 2px;
+                valeur: g.valeur;
+                rang: g.rang;
+                taille: root.taille;
+                couleur: root.couleur;
+            }
+        }
+    }
+}
+
 component Carte inherits Rectangle {
     in property <string> etiquette;
-    in property <string> valeur;
+    // la valeur en gros, en morceaux (chiffres et texte) ; `style-compteur` : 0 = texte simple (aussi pour
+    // le compte progressif, que le programme joue lui-même), 1 = rouleaux (odomètre), 3 = volets
+    in property <[Glyphe]> glyphes;
+    in property <int> style-compteur: 0;
     in property <string> detail;
     in property <string> tag;
     in property <string> avis;
@@ -133,13 +408,13 @@ component Carte inherits Rectangle {
         wrap: word-wrap;
         font-family: Textes.police-texte;
     }
-    Text {
+    Compteur {
         x: 18px; y: 36px;
-        text: root.valeur;
-        color: root.couleur-valeur;
-        font-size: 40px;
-        font-weight: 400;
-        font-family: Textes.police-texte;
+        width: parent.width - 36px;
+        glyphes: root.glyphes;
+        style: root.style-compteur;
+        taille: 40px;
+        couleur: root.couleur-valeur;
     }
     Text {
         x: 18px; y: 96px;
@@ -670,6 +945,250 @@ component BarreReste inherits Rectangle {
     }
 }
 
+// ---------- la page « Conversations » ----------
+
+// Le point qui clignote sur le bouton « Conversations » : rose (passation), ambre (attention), éteint.
+component PointAlerte inherits Rectangle {
+    in property <int> niveau;
+    in property <bool> clignote: true;
+    property <bool> clair: true;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    visible: root.niveau > 0;
+    background: root.niveau == 2 ? Palette.erreur : Palette.pause;
+    opacity: (!root.clignote || root.clair) ? 1.0 : 0.15;
+    animate opacity { duration: 700ms; easing: ease-in-out; }
+    Timer {
+        interval: 750ms;
+        running: root.niveau > 0 && root.clignote;
+        triggered => { root.clair = !root.clair; }
+    }
+}
+
+// Un nom coupé par « … » ; quand le pointeur le survole, il défile pour se montrer en entier.
+component NomDefilant inherits Rectangle {
+    in property <string> texte;
+    in property <color> couleur: Palette.creme;
+    in property <length> taille: 13px;
+    clip: true;
+    property <length> trop: complet.preferred-width - self.width;
+    property <bool> defile: ta.has-hover && self.trop > 2px;
+    complet := Text {
+        x: root.defile ? -root.trop : 0px;
+        y: 0px;
+        height: parent.height;
+        visible: root.defile;
+        text: root.texte;
+        color: root.couleur;
+        font-size: root.taille;
+        font-family: Textes.police-texte;
+        vertical-alignment: center;
+        animate x { duration: max(1200ms, 1000ms * (root.trop / 45px)); easing: linear; }
+    }
+    Text {
+        x: 0px; y: 0px;
+        width: parent.width; height: parent.height;
+        visible: !root.defile;
+        text: root.texte;
+        overflow: elide;
+        color: root.couleur;
+        font-size: root.taille;
+        font-family: Textes.police-texte;
+        vertical-alignment: center;
+    }
+    ta := TouchArea { }
+}
+
+// La barre d'une conversation, de 0 à 100 % de la fenêtre : or jusqu'à l'attention, zone ambrée hachurée
+// jusqu'à la passation, rose au-delà ; pointillé = attention, trait crème = passation.
+component BarreContexte inherits Rectangle {
+    in property <float> attention;
+    in property <float> passation;
+    in property <float> pct;
+    height: 16px;
+    background: Palette.piste;
+    Rectangle {
+        x: 0px; y: 0px;
+        width: parent.width * min(root.pct, root.attention) / 100;
+        height: parent.height;
+        background: Palette.dore;
+    }
+    Rectangle {
+        x: parent.width * root.attention / 100;
+        y: 0px;
+        width: parent.width * max(0.0, min(root.pct, root.passation) - root.attention) / 100;
+        height: parent.height;
+        background: #8f6f33;
+        clip: true;
+        Hatch { x: 0px; y: 0px; width: parent.width; height: parent.height; trait: #e0bd75; }
+    }
+    Rectangle {
+        x: parent.width * root.passation / 100;
+        y: 0px;
+        width: parent.width * max(0.0, min(root.pct, 100.0) - root.passation) / 100;
+        height: parent.height;
+        background: rgba(228, 154, 154, 0.85);
+    }
+    for k in 6 : Rectangle {
+        x: parent.width * root.attention / 100;
+        y: -4px + k * 4px;
+        width: 1px;
+        height: 2px;
+        background: Palette.attenue;
+    }
+    Rectangle {
+        x: parent.width * root.passation / 100 - 1px;
+        y: -4px;
+        width: 2px;
+        height: parent.height + 8px;
+        background: Palette.creme;
+    }
+}
+
+// Une conversation : étiquette de camp (cliquable), nom, modèle et âge, barre, « ≈ 41 % sur 60 », tokens, reste,
+// et tout à droite un ✕ discret (info-bulle « Masquer ») qui la masque.
+component LigneConversation inherits Rectangle {
+    in property <LigneConv> l;
+    callback etiquette-cliquee(string);
+    callback masquer-cliquee(string);
+    property <length> col-g: 228px;
+    property <length> col-v: 124px;
+    property <length> col-r: 112px; // « zusammengefasst » (allemand) tient en entier
+    property <length> col-x: 34px; // le ✕ : à droite de la colonne « reste », sans mordre dessus ni sur la barre
+    property <length> esp: 16px;
+    property <length> piste-l: self.width - self.col-g - self.col-v - self.col-r - self.col-x - 3 * self.esp;
+    property <color> c-nom: root.l.recente ? Palette.attenue : Palette.creme;
+    Rectangle { x: 0px; y: 0px; width: parent.width; height: 1px; background: rgba(201, 164, 92, 0.14); }
+    HorizontalLayout {
+        x: 0px; y: 0px;
+        width: root.col-g;
+        height: parent.height;
+        spacing: 10px;
+        if root.l.etiquette != "" : Rectangle {
+            width: tag-t.preferred-width + 14px;
+            height: 18px;
+            y: (parent.height - 18px) / 2;
+            border-width: 1px;
+            border-radius: 2px;
+            border-color: root.l.camp == 0 ? Palette.or-clair : rgba(179, 167, 140, 0.6);
+            background: ta-tag.has-hover ? rgba(201, 164, 92, 0.15) : transparent;
+            tag-t := Text {
+                text: root.l.etiquette;
+                color: root.l.camp == 0 ? Palette.or-clair : Palette.attenue;
+                font-size: 10px;
+                letter-spacing: 1px;
+                font-family: Textes.police-texte;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+            ta-tag := TouchArea {
+                mouse-cursor: pointer;
+                clicked => { root.etiquette-cliquee(root.l.dossier); }
+            }
+        }
+        Rectangle {
+            horizontal-stretch: 1;
+            NomDefilant {
+                x: 0px; y: 9px;
+                width: parent.width;
+                height: 18px;
+                texte: root.l.nom;
+                couleur: root.c-nom;
+            }
+            Text {
+                x: 0px; y: 29px;
+                width: parent.width;
+                text: root.l.meta;
+                overflow: elide;
+                color: Palette.attenue;
+                font-size: 11px;
+                font-family: Textes.police-texte;
+            }
+        }
+    }
+    BarreContexte {
+        x: root.col-g + root.esp;
+        y: (parent.height - 16px) / 2;
+        width: root.piste-l;
+        attention: root.l.attention;
+        passation: root.l.passation;
+        pct: root.l.pct;
+    }
+    Text {
+        x: root.col-g + root.esp + root.piste-l + root.esp;
+        y: 11px;
+        width: root.col-v;
+        text: root.l.texte-pct;
+        color: root.c-nom;
+        font-size: 12px;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: root.col-g + root.esp + root.piste-l + root.esp;
+        y: 29px;
+        width: root.col-v;
+        text: root.l.tokens;
+        color: Palette.attenue;
+        font-size: 10px;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: parent.width - root.col-x - root.col-r;
+        y: 0px;
+        width: root.col-r;
+        height: parent.height;
+        horizontal-alignment: right;
+        vertical-alignment: center;
+        text: root.l.reste;
+        color: root.l.etat == 0 ? Palette.or-clair : (root.l.etat == 1 ? Palette.pause : Palette.erreur);
+        font-size: 12px;
+        font-weight: 500;
+        font-family: Textes.police-texte;
+    }
+    // le ✕ : deux traits (pas un caractère : aucune police n'est exigée), une zone cliquable de 26 × 26, l'info-bulle
+    // « Masquer » écrite à la main (Slint n'en a pas) au survol, à gauche du ✕
+    Rectangle {
+        x: parent.width - root.col-x + 4px;
+        y: (parent.height - 26px) / 2;
+        width: 26px;
+        height: 26px;
+        border-radius: 2px;
+        background: ta-masquer.has-hover ? rgba(201, 164, 92, 0.18) : transparent;
+        Path {
+            x: 8px; y: 8px;
+            width: 10px; height: 10px;
+            viewbox-width: 10; viewbox-height: 10;
+            commands: "M 0 0 L 10 10 M 10 0 L 0 10";
+            stroke: ta-masquer.has-hover ? Palette.creme : Palette.attenue;
+            stroke-width: 1.4px;
+        }
+        ta-masquer := TouchArea {
+            mouse-cursor: pointer;
+            clicked => { root.masquer-cliquee(root.l.session); }
+        }
+        if ta-masquer.has-hover : Rectangle {
+            x: -(tip-t.preferred-width + 20px) - 2px;
+            y: 2px;
+            width: tip-t.preferred-width + 20px;
+            height: 22px;
+            background: Palette.noir2;
+            border-width: 1px;
+            border-color: Palette.filet;
+            tip-t := Text {
+                text: Textes.conv-masquer;
+                color: Palette.creme;
+                font-size: 11px;
+                font-family: Textes.police-texte;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+    }
+}
+
 component Bouton inherits Rectangle {
     in property <string> texte;
     in property <string> police: Textes.police-texte;
@@ -693,17 +1212,498 @@ component Bouton inherits Rectangle {
     }
 }
 
+// La page : titre, sous-titre, liste défilante (groupes, conversations, repliées), légende.
+component PageConversations inherits Rectangle {
+    in property <[LigneConv]> lignes;
+    in property <length> total;
+    callback etiquette-cliquee(string);
+    callback autres-clique();
+    // le ✕ d'une ligne : masque la conversation (son identifiant de session)
+    callback masquer-cliquee(string);
+    // « Choisir les groupes… » : rouvre la fenêtre de choix des groupes, à tout moment (toujours là, même avec un seul groupe)
+    callback groupes-clique();
+    property <length> haut-entete: 70px;
+    property <length> haut-pied: 36px;
+    Text {
+        x: 0px; y: 0px;
+        text: Textes.conv-titre;
+        color: Palette.or-clair;
+        font-size: 22px;
+        font-weight: 600;
+        font-family: Textes.police-titre;
+    }
+    Bouton {
+        x: parent.width - 240px; y: 0px;
+        width: 240px; height: 30px;
+        texte: Textes.config-groupes;
+        clique => { root.groupes-clique(); }
+    }
+    Text {
+        x: 0px; y: 34px;
+        width: parent.width;
+        height: 32px;
+        text: Textes.conv-sous-titre;
+        color: Palette.attenue;
+        font-size: 12px;
+        wrap: word-wrap;
+        font-family: Textes.police-texte;
+    }
+    Flickable {
+        x: 0px;
+        y: root.haut-entete;
+        width: parent.width;
+        height: parent.height - root.haut-entete - root.haut-pied;
+        content-width: root.width;
+        content-height: max(root.total, self.height);
+        for l in root.lignes : Rectangle {
+            x: 0px;
+            y: l.y;
+            width: root.width;
+            height: l.h;
+            if l.genre == 0 : Rectangle {
+                Text {
+                    x: 0px; y: 12px;
+                    text: l.titre;
+                    color: Palette.or-clair;
+                    font-size: 20px;
+                    font-weight: 600;
+                    font-family: Textes.police-titre;
+                    vertical-alignment: center;
+                }
+                Text {
+                    x: titre-pris.preferred-width + 14px;
+                    y: 20px;
+                    text: l.sous;
+                    color: Palette.attenue;
+                    font-size: 11px;
+                    font-family: Textes.police-texte;
+                }
+                titre-pris := Text {
+                    x: 0px; y: 12px;
+                    visible: false;
+                    text: l.titre;
+                    font-size: 20px;
+                    font-weight: 600;
+                    font-family: Textes.police-titre;
+                }
+            }
+            if l.genre == 1 : LigneConversation {
+                x: 0px; y: 0px;
+                width: parent.width;
+                height: parent.height;
+                l: l;
+                etiquette-cliquee(d) => { root.etiquette-cliquee(d); }
+                masquer-cliquee(s) => { root.masquer-cliquee(s); }
+            }
+            if l.genre == 2 : Text {
+                x: 0px; y: 0px;
+                width: parent.width;
+                height: parent.height;
+                text: l.titre;
+                color: Palette.attenue;
+                font-size: 13px;
+                wrap: word-wrap;
+                vertical-alignment: center;
+                font-family: Textes.police-texte;
+            }
+            if l.genre == 3 : Rectangle {
+                Path {
+                    x: 2px; y: (parent.height - 10px) / 2;
+                    width: 10px; height: 10px;
+                    viewbox-width: 10; viewbox-height: 10;
+                    fill: ta-autres.has-hover ? Palette.or-clair : Palette.attenue;
+                    commands: l.ouvert ? "M 0 2 L 10 2 L 5 8 Z" : "M 2 0 L 8 5 L 2 10 Z";
+                }
+                Text {
+                    x: 18px; y: 0px;
+                    height: parent.height;
+                    text: l.titre;
+                    color: ta-autres.has-hover ? Palette.or-clair : Palette.attenue;
+                    font-size: 12px;
+                    vertical-alignment: center;
+                    font-family: Textes.police-texte;
+                }
+                ta-autres := TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => { root.autres-clique(); }
+                }
+            }
+        }
+    }
+    Text {
+        x: 0px;
+        y: parent.height - root.haut-pied + 8px;
+        width: parent.width;
+        text: Textes.conv-legende;
+        color: Palette.attenue;
+        font-size: 11px;
+        wrap: word-wrap;
+        font-family: Textes.police-texte;
+    }
+}
+
+// ---------- la fenêtre de réglage ----------
+
+component Case inherits Rectangle {
+    in property <string> texte;
+    in-out property <bool> coche;
+    callback change(bool);
+    height: 24px;
+    Rectangle {
+        x: 0px; y: 4px;
+        width: 16px; height: 16px;
+        border-width: 1px;
+        border-color: Palette.or;
+        background: root.coche ? Palette.or : transparent;
+        if root.coche : Path {
+            x: 0px; y: 0px;
+            width: parent.width; height: parent.height;
+            viewbox-width: 16; viewbox-height: 16;
+            stroke: Palette.noir;
+            stroke-width: 2px;
+            MoveTo { x: 3; y: 8; }
+            LineTo { x: 7; y: 12; }
+            LineTo { x: 13; y: 4; }
+        }
+    }
+    Text {
+        x: 26px; y: 0px;
+        width: parent.width - 26px;
+        height: parent.height;
+        text: root.texte;
+        color: Palette.creme;
+        font-size: 13px;
+        overflow: elide;
+        vertical-alignment: center;
+        font-family: Textes.police-texte;
+    }
+    TouchArea {
+        mouse-cursor: pointer;
+        clicked => {
+            root.coche = !root.coche;
+            root.change(root.coche);
+        }
+    }
+}
+
+// Un curseur : on clique ou on glisse ; le programme garde la valeur (et la ramène dans ses bornes).
+component Curseur inherits Rectangle {
+    in property <int> valeur;
+    in property <int> mini: 10;
+    in property <int> maxi: 95;
+    callback change(int);
+    height: 20px;
+    property <length> piste-l: self.width - 14px;
+    function position(x: length) -> int {
+        return Math.round(root.mini + Math.min(1.0, Math.max(0.0, (x - 7px) / root.piste-l)) * (root.maxi - root.mini));
+    }
+    Rectangle {
+        x: 7px; y: 8px;
+        width: root.piste-l; height: 4px;
+        background: Palette.piste;
+        Rectangle {
+            x: 0px; y: 0px;
+            width: parent.width * (root.valeur - root.mini) / (root.maxi - root.mini);
+            height: parent.height;
+            background: Palette.dore;
+        }
+    }
+    Rectangle {
+        x: root.piste-l * (root.valeur - root.mini) / (root.maxi - root.mini);
+        y: 3px;
+        width: 14px; height: 14px;
+        border-radius: 7px;
+        background: Palette.or-clair;
+        border-width: 1px;
+        border-color: Palette.or;
+    }
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        property <bool> glisse;
+        pointer-event(e) => {
+            if (e.kind == PointerEventKind.down && e.button == PointerEventButton.left) {
+                self.glisse = true;
+                root.change(root.position(self.mouse-x));
+            }
+            if (e.kind == PointerEventKind.up) {
+                self.glisse = false;
+            }
+        }
+        moved => {
+            if (self.glisse) {
+                root.change(root.position(self.mouse-x));
+            }
+        }
+    }
+}
+
+component ChampNom inherits Rectangle {
+    in-out property <string> texte;
+    in property <string> defaut;
+    callback modifie();
+    height: 28px;
+    border-width: 1px;
+    border-color: saisie.has-focus ? Palette.or : Palette.filet-fin;
+    background: Palette.noir;
+    if root.texte == "" && !saisie.has-focus : Text {
+        x: 8px; y: 0px;
+        width: parent.width - 16px; height: parent.height;
+        text: root.defaut;
+        color: Palette.attenue;
+        font-size: 13px;
+        vertical-alignment: center;
+        font-family: Textes.police-texte;
+    }
+    saisie := TextInput {
+        x: 8px; y: 0px;
+        width: parent.width - 16px;
+        height: parent.height;
+        text <=> root.texte;
+        color: Palette.creme;
+        font-size: 13px;
+        font-family: Textes.police-texte;
+        vertical-alignment: center;
+        single-line: true;
+        edited => { root.modifie(); }
+    }
+}
+
+// Un groupe dans la fenêtre de réglage : titre, nom (si deux groupes), deux curseurs, barre d'essai.
+component BlocGroupe inherits Rectangle {
+    in property <string> titre;
+    in-out property <string> nom;
+    in property <string> defaut;
+    in property <bool> avec-nom;
+    in property <int> attention;
+    in property <int> passation;
+    in property <int> essai;
+    in property <string> essai-texte;
+    in property <int> essai-etat;
+    callback nom-modifie();
+    callback seuil(int, int);
+    callback essai-change(int);
+    property <length> y0: root.avec-nom ? 70px : 36px;
+    height: root.avec-nom ? 172px : 138px;
+    Rectangle { x: 0px; y: 0px; width: parent.width; height: 1px; background: rgba(201, 164, 92, 0.14); }
+    Text {
+        x: 0px; y: 10px;
+        width: parent.width;
+        text: root.titre;
+        color: Palette.or-clair;
+        font-size: 14px;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+    if root.avec-nom : ChampNom {
+        x: 0px; y: 34px;
+        width: parent.width;
+        texte <=> root.nom;
+        defaut: root.defaut;
+        modifie => { root.nom-modifie(); }
+    }
+    Text {
+        x: 0px; y: root.y0;
+        width: 100px; height: 20px;
+        text: Textes.config-attention;
+        color: Palette.creme;
+        font-size: 13px;
+        vertical-alignment: center;
+        font-family: Textes.police-texte;
+    }
+    Curseur {
+        x: 106px; y: root.y0;
+        width: parent.width - 106px - 50px;
+        valeur: root.attention;
+        change(v) => { root.seuil(0, v); }
+    }
+    Text {
+        x: parent.width - 44px; y: root.y0;
+        width: 44px; height: 20px;
+        text: "\{root.attention} %";
+        horizontal-alignment: right;
+        vertical-alignment: center;
+        color: Palette.or-clair;
+        font-size: 13px;
+        font-family: Textes.police-texte;
+    }
+    Text {
+        x: 0px; y: root.y0 + 26px;
+        width: 100px; height: 20px;
+        text: Textes.config-passation;
+        color: Palette.creme;
+        font-size: 13px;
+        vertical-alignment: center;
+        font-family: Textes.police-texte;
+    }
+    Curseur {
+        x: 106px; y: root.y0 + 26px;
+        width: parent.width - 106px - 50px;
+        valeur: root.passation;
+        change(v) => { root.seuil(1, v); }
+    }
+    Text {
+        x: parent.width - 44px; y: root.y0 + 26px;
+        width: 44px; height: 20px;
+        text: "\{root.passation} %";
+        horizontal-alignment: right;
+        vertical-alignment: center;
+        color: Palette.or-clair;
+        font-size: 13px;
+        font-family: Textes.police-texte;
+    }
+    BarreContexte {
+        x: 0px; y: root.y0 + 58px;
+        width: parent.width;
+        attention: root.attention;
+        passation: root.passation;
+        pct: root.essai;
+    }
+    // un clic ou un glissé sur la barre choisit le pourcentage de l'exemple
+    TouchArea {
+        x: 0px; y: root.y0 + 50px;
+        width: parent.width; height: 32px;
+        mouse-cursor: pointer;
+        property <bool> glisse;
+        pointer-event(e) => {
+            if (e.kind == PointerEventKind.down && e.button == PointerEventButton.left) {
+                self.glisse = true;
+                root.essai-change(Math.round(Math.min(100.0, Math.max(0.0, self.mouse-x / self.width * 100))));
+            }
+            if (e.kind == PointerEventKind.up) {
+                self.glisse = false;
+            }
+        }
+        moved => {
+            if (self.glisse) {
+                root.essai-change(Math.round(Math.min(100.0, Math.max(0.0, self.mouse-x / self.width * 100))));
+            }
+        }
+    }
+    Text {
+        x: 0px; y: root.y0 + 80px;
+        width: parent.width;
+        text: root.essai-texte;
+        color: root.essai-etat == 0 ? Palette.or-clair : (root.essai-etat == 1 ? Palette.pause : Palette.erreur);
+        font-size: 11px;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+}
+
+// Un modèle : son nom, ce qu'on en sait, et le choix de la fenêtre (Auto, 200 000, 1 000 000).
+component LigneModele inherits Rectangle {
+    in property <ModeleCfg> m;
+    callback choisir(int);
+    height: 60px;
+    Text {
+        x: 0px; y: 2px;
+        width: parent.width - 282px - 10px;
+        text: root.m.nom;
+        color: Palette.creme;
+        font-size: 13px;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+    // deux lignes au plus : en japonais et en chinois « vu jusqu'à … · Auto : … » ne tient pas sur une
+    Text {
+        x: 0px; y: 20px;
+        width: parent.width - 282px - 10px;
+        height: 40px; // deux lignes, même dans les polices chinoise et japonaise (interligne plus haut)
+        text: root.m.info;
+        color: Palette.attenue;
+        font-size: 11px;
+        wrap: word-wrap;
+        overflow: elide;
+        font-family: Textes.police-texte;
+    }
+    for libelle[k] in [Textes.config-auto, Textes.fenetre-petite, Textes.fenetre-grande] : Onglet {
+        x: parent.width - 282px + (k == 0 ? 0px : (k == 1 ? 76px : 178px));
+        y: 17px;
+        width: k == 0 ? 70px : (k == 1 ? 96px : 104px);
+        height: 26px;
+        texte: libelle;
+        actif: root.m.choix == k;
+        clique => { root.choisir(k); }
+    }
+}
+
+
 export component App inherits Window {
     title: "Conso Token";
     icon: @image-url("../icone/icone.png");
     preferred-width: 1100px;
     preferred-height: 840px;
-    min-width: 1000px;
+    min-width: 1100px;
     min-height: 800px;
     background: Palette.noir;
 
     // 0 = chiffres de la semaine, 1 = première ouverture ou attente de chiffres
     in property <int> page: 0;
+    // l'onglet en cours : 0 = Semaine, 1 = Conversations
+    in-out property <int> onglet: 0;
+    // le point clignotant du bouton Conversations : 0 = éteint, 1 = attention (ambre), 2 = passation (rose)
+    in property <int> alerte-niveau: 0;
+    // faux : les chiffres ne s'animent pas (case de Config ou réglage Windows des animations) ; le point ne clignote plus
+    in property <bool> animer: true;
+    callback onglet-change(int);
+
+    // la page « Conversations »
+    in property <[LigneConv]> lignes-conv;
+    in property <length> conv-total: 0px;
+    callback etiquette-cliquee(string);
+    callback autres-clique();
+    callback masquer-cliquee(string);
+
+    // la fenêtre de réglage (appliquée tout de suite : chaque changement part au programme)
+    in-out property <bool> cfg-ouverte: false;
+    // « Rétablir » a reçu son premier clic et attend le deuxième ; retombe à la fermeture de la fenêtre
+    in-out property <bool> cfg-retablir-attend: false;
+    changed cfg-ouverte => { root.cfg-retablir-attend = false; }
+    in-out property <bool> cfg-separer: false;
+    in-out property <bool> cfg-alerte: true;
+    in-out property <bool> cfg-animer: true;
+    in-out property <string> cfg-nom1;
+    in-out property <string> cfg-nom2;
+    in property <string> cfg-defaut1;
+    in property <string> cfg-defaut2;
+    in property <string> cfg-titre1;
+    in property <string> cfg-titre2;
+    in property <int> cfg-a1: 70;
+    in property <int> cfg-p1: 80;
+    in property <int> cfg-a2: 70;
+    in property <int> cfg-p2: 80;
+    in property <int> cfg-essai1: 75;
+    in property <int> cfg-essai2: 75;
+    in property <string> cfg-essai-texte1;
+    in property <string> cfg-essai-texte2;
+    in property <int> cfg-essai-etat1;
+    in property <int> cfg-essai-etat2;
+    in property <[ModeleCfg]> cfg-modeles;
+    // les conversations masquées à la main (de moins de 24 h) : leur nombre, la phrase « n conversations masquées » et « Réafficher »
+    in property <int> cfg-masquees: 0;
+    in property <string> cfg-masquees-texte;
+    callback cfg-reafficher();
+    callback cfg-separer-change(bool);
+    callback cfg-alerte-change(bool);
+    callback cfg-animer-change(bool);
+    callback cfg-nom-change(int);
+    callback cfg-seuil-change(int, int, int);
+    callback cfg-essai-change(int, int);
+    callback cfg-fenetre-change(string, int); // (clé du modèle, choix)
+    callback cfg-retablir();
+
+    // la fenêtre d'accueil (« Choisir les groupes… ») : montrée une fois toute seule à la première ouverture de la
+    // page Conversations, puis à tout moment par le bouton de la page Conversations ou celui de Config ;
+    // l'utilisateur y coche les dossiers du premier groupe et nomme les groupes
+    in-out property <bool> accueil-ouverte: false;
+    in property <[DossierCfg]> accueil-dossiers;
+    in-out property <string> accueil-nom1;
+    in-out property <string> accueil-nom2;
+    callback accueil-ouvrir();
+    callback accueil-coche(int, bool);
+    // vrai : séparer en deux groupes ; faux : garder un seul groupe
+    callback accueil-valider(bool);
+    callback accueil-fermer();
     in-out property <bool> apropos: false;
     in property <string> version: "0.1";
 
@@ -716,14 +1716,15 @@ export component App inherits Window {
     in property <string> source-texte;
     in property <color> source-couleur: Palette.ok;
 
-    // trois cartes
-    in property <string> rythme-valeur;
+    // trois cartes : « Ton rythme » en odomètre, « Il te reste » en compte progressif (joué par le programme),
+    // « Ton forfait revient » en volets
+    in property <[Glyphe]> rythme-glyphes;
     in property <string> rythme-detail;
     in property <string> rythme-tag;
     in property <color> rythme-couleur: Palette.or-clair;
-    in property <string> reste-valeur;
+    in property <[Glyphe]> reste-glyphes;
     in property <string> reste-detail;
-    in property <string> reset-valeur;
+    in property <[Glyphe]> reset-glyphes;
     in property <string> reset-detail;
     in property <string> reset-avis;
 
@@ -816,16 +1817,51 @@ export component App inherits Window {
             letter-spacing: 5px;
             font-family: Textes.police-titre;
         }
+        // les deux onglets : Semaine, Conversations (avec le point clignotant)
+        onglet-sem := Onglet {
+            x: 226px; y: 18px;
+            width: 88px; height: 28px;
+            texte: Textes.onglet-semaine;
+            actif: root.onglet == 0;
+            clique => {
+                root.onglet = 0;
+                root.langue-ouverte = false;
+                root.onglet-change(0);
+            }
+        }
+        onglet-conv := Onglet {
+            x: onglet-sem.x + onglet-sem.width + 8px; y: 18px;
+            width: 128px; height: 28px;
+            texte: Textes.onglet-conversations;
+            actif: root.onglet == 1;
+            clique => {
+                root.onglet = 1;
+                root.langue-ouverte = false;
+                root.onglet-change(1);
+            }
+        }
+        PointAlerte {
+            x: onglet-conv.x + onglet-conv.width - 6px;
+            y: onglet-conv.y - 4px;
+            niveau: root.alerte-niveau;
+            clignote: root.animer;
+        }
         bouton-apropos := Bouton {
-            x: parent.width - 32px - 96px; y: 18px;
-            width: 96px; height: 28px;
+            x: parent.width - 32px - 88px; y: 18px;
+            width: 88px; height: 28px;
             texte: Textes.bouton-apropos;
             clique => { root.apropos = true; root.langue-ouverte = false; }
         }
+        bouton-config := Bouton {
+            x: bouton-apropos.x - 10px - 92px; y: 18px;
+            width: 92px; height: 28px;
+            texte: Textes.bouton-config;
+            clique => { root.cfg-ouverte = true; root.langue-ouverte = false; }
+        }
         // le sélecteur de langue : le nom de la langue en cours, dans cette langue ; un clic ouvre la liste
         bouton-langue := Bouton {
-            x: bouton-apropos.x - 12px - 124px; y: 18px;
-            width: 124px; height: 28px;
+            x: bouton-config.x - 10px - 116px; y: 18px;
+            width: 116px; height: 28px;
             texte: ["English", "Français", "Español", "Deutsch", "Português", "Italiano", "简体中文", "日本語"][root.langue-index];
             police: root.langue-index == 6 ? "Microsoft YaHei" : (root.langue-index == 7 ? "Yu Gothic" : Textes.police-texte);
             clique => { root.langue-ouverte = !root.langue-ouverte; }
@@ -844,8 +1880,21 @@ export component App inherits Window {
             background: root.source-couleur;
         }
 
+        // ---------- l'onglet Conversations ----------
+        if root.onglet == 1 : PageConversations {
+            x: 32px; y: 62px;
+            width: parent.width - 64px;
+            height: parent.height - 62px - 28px;
+            lignes: root.lignes-conv;
+            total: root.conv-total;
+            etiquette-cliquee(d) => { root.etiquette-cliquee(d); }
+            masquer-cliquee(s) => { root.masquer-cliquee(s); }
+            autres-clique => { root.autres-clique(); }
+            groupes-clique => { root.langue-ouverte = false; root.accueil-ouvrir(); }
+        }
+
         // ---------- page 0 : les chiffres de la semaine ----------
-        if root.page == 0 : Rectangle {
+        if root.onglet == 0 && root.page == 0 : Rectangle {
             x: 0px; y: 0px;
             width: parent.width; height: parent.height;
 
@@ -856,19 +1905,22 @@ export component App inherits Window {
                 spacing: 14px;
                 Carte {
                     etiquette: Textes.carte-rythme;
-                    valeur: root.rythme-valeur;
+                    glyphes: root.rythme-glyphes;
+                    style-compteur: root.animer ? 1 : 0;
                     couleur-valeur: root.rythme-couleur;
                     detail: root.rythme-detail;
                     tag: root.rythme-tag;
                 }
                 Carte {
                     etiquette: Textes.carte-reste;
-                    valeur: root.reste-valeur;
+                    glyphes: root.reste-glyphes;
+                    style-compteur: 0;
                     detail: root.reste-detail;
                 }
                 Carte {
                     etiquette: Textes.carte-reset;
-                    valeur: root.reset-valeur;
+                    glyphes: root.reset-glyphes;
+                    style-compteur: root.animer ? 3 : 0;
                     detail: root.reset-detail;
                     avis: root.reset-avis;
                 }
@@ -1089,7 +2141,7 @@ export component App inherits Window {
         }
 
         // ---------- page 1 : première ouverture, ou en attente de chiffres ----------
-        if root.page == 1 : Rectangle {
+        if root.onglet == 0 && root.page == 1 : Rectangle {
             x: 32px; y: 62px;
             width: parent.width - 64px;
             height: parent.height - 62px - 28px;
@@ -1218,6 +2270,340 @@ export component App inherits Window {
             }
         }
 
+        // ---------- la fenêtre de réglage (Config) ----------
+        if root.cfg-ouverte : Rectangle {
+            x: 0px; y: 0px;
+            width: parent.width; height: parent.height;
+            background: rgba(0, 0, 0, 0.6);
+            // un clic à côté de la fenêtre la referme
+            TouchArea { clicked => { root.cfg-ouverte = false; } }
+            modale := Rectangle {
+                width: 560px;
+                x: (parent.width - self.width) / 2;
+                y: 24px;
+                height: min(parent.height - 48px, 44px + contenu.preferred-height + 52px);
+                background: Palette.noir2;
+                border-width: 1px;
+                border-color: Palette.filet;
+                // bloque les clics : ils ne doivent pas atteindre la fermeture derrière
+                TouchArea { }
+                Hatch { width: parent.width; height: parent.height; }
+                Text {
+                    x: 22px; y: 8px;
+                    width: parent.width - 80px; height: 36px;
+                    text: Textes.config-titre;
+                    color: Palette.creme;
+                    font-size: 22px;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                    font-family: Textes.police-titre;
+                }
+                Rectangle {
+                    x: parent.width - 22px - 24px; y: 12px;
+                    width: 24px; height: 28px;
+                    Text {
+                        text: "×";
+                        color: ta-x.has-hover ? Palette.or-clair : Palette.attenue;
+                        font-size: 24px;
+                        font-family: Textes.police-texte;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                    ta-x := TouchArea {
+                        mouse-cursor: pointer;
+                        clicked => { root.cfg-ouverte = false; }
+                    }
+                }
+                Flickable {
+                    x: 22px; y: 48px;
+                    width: parent.width - 44px;
+                    height: parent.height - 48px - 52px;
+                    content-width: self.width;
+                    content-height: contenu.preferred-height;
+                    contenu := VerticalLayout {
+                        x: 0px; y: 0px;
+                        width: modale.width - 44px;
+                        spacing: 0px;
+                        Case {
+                            texte: Textes.config-separer;
+                            coche <=> root.cfg-separer;
+                            change(v) => { root.cfg-separer-change(v); }
+                        }
+                        Rectangle { height: 8px; }
+                        // toujours là (avant la 1.3.3 il n'apparaissait que s'il y avait des dossiers à proposer)
+                        Rectangle {
+                            height: 40px;
+                            Bouton {
+                                x: 0px; y: 2px;
+                                width: 240px; height: 30px;
+                                texte: Textes.config-groupes;
+                                clique => { root.cfg-ouverte = false; root.accueil-ouvrir(); }
+                            }
+                        }
+                        // les conversations masquées avec le ✕ de la page Conversations : combien, et « Réafficher » les ramène
+                        // toutes (seulement s'il y en a ; « Rétablir », en bas, n'y touche pas)
+                        if root.cfg-masquees > 0 : Rectangle {
+                            height: 40px;
+                            Text {
+                                x: 0px; y: 0px;
+                                width: parent.width - 170px - 12px;
+                                height: 30px;
+                                text: root.cfg-masquees-texte;
+                                color: Palette.creme;
+                                font-size: 13px;
+                                overflow: elide;
+                                vertical-alignment: center;
+                                font-family: Textes.police-texte;
+                            }
+                            Bouton {
+                                x: parent.width - 170px; y: 2px;
+                                width: 170px; height: 30px;
+                                texte: Textes.config-reafficher;
+                                clique => { root.cfg-reafficher(); }
+                            }
+                        }
+                        BlocGroupe {
+                            titre: root.cfg-titre1;
+                            nom <=> root.cfg-nom1;
+                            defaut: root.cfg-defaut1;
+                            avec-nom: root.cfg-separer;
+                            attention: root.cfg-a1;
+                            passation: root.cfg-p1;
+                            essai: root.cfg-essai1;
+                            essai-texte: root.cfg-essai-texte1;
+                            essai-etat: root.cfg-essai-etat1;
+                            nom-modifie => { root.cfg-nom-change(0); }
+                            seuil(q, v) => { root.cfg-seuil-change(0, q, v); }
+                            essai-change(v) => { root.cfg-essai-change(0, v); }
+                        }
+                        if root.cfg-separer : BlocGroupe {
+                            titre: root.cfg-titre2;
+                            nom <=> root.cfg-nom2;
+                            defaut: root.cfg-defaut2;
+                            avec-nom: true;
+                            attention: root.cfg-a2;
+                            passation: root.cfg-p2;
+                            essai: root.cfg-essai2;
+                            essai-texte: root.cfg-essai-texte2;
+                            essai-etat: root.cfg-essai-etat2;
+                            nom-modifie => { root.cfg-nom-change(1); }
+                            seuil(q, v) => { root.cfg-seuil-change(1, q, v); }
+                            essai-change(v) => { root.cfg-essai-change(1, v); }
+                        }
+                        Rectangle {
+                            height: 34px;
+                            Rectangle { x: 0px; y: 0px; width: parent.width; height: 1px; background: rgba(201, 164, 92, 0.14); }
+                            Text {
+                                x: 0px; y: 12px;
+                                width: parent.width;
+                                text: Textes.config-fenetre;
+                                color: Palette.or-clair;
+                                font-size: 14px;
+                                overflow: elide;
+                                font-family: Textes.police-texte;
+                            }
+                        }
+                        for m in root.cfg-modeles : LigneModele {
+                            m: m;
+                            choisir(k) => { root.cfg-fenetre-change(m.cle, k); }
+                        }
+                        Rectangle {
+                            height: 54px;
+                            Text {
+                                x: 0px; y: 2px;
+                                width: parent.width;
+                                text: Textes.config-fenetre-note;
+                                color: Palette.attenue;
+                                font-size: 11px;
+                                wrap: word-wrap;
+                                font-family: Textes.police-texte;
+                            }
+                        }
+                        Rectangle {
+                            height: 70px;
+                            Rectangle { x: 0px; y: 0px; width: parent.width; height: 1px; background: rgba(201, 164, 92, 0.14); }
+                            Case {
+                                x: 0px; y: 10px;
+                                width: parent.width;
+                                texte: Textes.config-alerte;
+                                coche <=> root.cfg-alerte;
+                                change(v) => { root.cfg-alerte-change(v); }
+                            }
+                            Case {
+                                x: 0px; y: 38px;
+                                width: parent.width;
+                                texte: Textes.config-animer;
+                                coche <=> root.cfg-animer;
+                                change(v) => { root.cfg-animer-change(v); }
+                            }
+                        }
+                    }
+                }
+                Text {
+                    x: 22px; y: parent.height - 36px;
+                    width: parent.width - 44px - 190px; height: 24px;
+                    text: Textes.config-pied;
+                    color: Palette.attenue;
+                    font-size: 11px;
+                    overflow: elide;
+                    vertical-alignment: center;
+                    font-family: Textes.police-texte;
+                }
+                // « Rétablir » demande un deuxième clic (dans les 5 secondes) : le premier change seulement le bouton
+                Rectangle {
+                    x: parent.width - 22px - 180px; y: parent.height - 36px;
+                    width: 180px; height: 24px;
+                    Text {
+                        width: parent.width; height: parent.height;
+                        text: root.cfg-retablir-attend ? Textes.config-retablir-confirmer : Textes.config-retablir;
+                        color: root.cfg-retablir-attend ? Palette.erreur : (ta-retablir.has-hover ? Palette.creme : Palette.or-clair);
+                        font-size: 12px;
+                        horizontal-alignment: right;
+                        vertical-alignment: center;
+                        overflow: elide;
+                        font-family: Textes.police-texte;
+                    }
+                    ta-retablir := TouchArea {
+                        mouse-cursor: pointer;
+                        clicked => {
+                            if (root.cfg-retablir-attend) {
+                                root.cfg-retablir-attend = false;
+                                root.cfg-retablir();
+                            } else {
+                                root.cfg-retablir-attend = true;
+                            }
+                        }
+                    }
+                    // sans second clic, le bouton redevient « Rétablir » au bout de 5 secondes
+                    Timer {
+                        interval: 5s;
+                        running: root.cfg-retablir-attend;
+                        triggered => { root.cfg-retablir-attend = false; }
+                    }
+                }
+            }
+        }
+
+        // ---------- la fenêtre d'accueil de la page Conversations ----------
+        if root.accueil-ouverte : Rectangle {
+            x: 0px; y: 0px;
+            width: parent.width; height: parent.height;
+            background: rgba(0, 0, 0, 0.6);
+            // un clic à côté la referme (elle ne revient pas toute seule)
+            TouchArea { clicked => { root.accueil-fermer(); } }
+            Rectangle {
+                width: 560px;
+                height: 500px;
+                x: (parent.width - self.width) / 2;
+                y: max(24px, (parent.height - self.height) / 2);
+                background: Palette.noir2;
+                border-width: 1px;
+                border-color: Palette.filet;
+                TouchArea { }
+                Hatch { width: parent.width; height: parent.height; }
+                Text {
+                    x: 22px; y: 8px;
+                    width: parent.width - 80px; height: 36px;
+                    text: Textes.accueil-titre;
+                    color: Palette.creme;
+                    font-size: 22px;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                    font-family: Textes.police-titre;
+                }
+                Rectangle {
+                    x: parent.width - 22px - 24px; y: 12px;
+                    width: 24px; height: 28px;
+                    Text {
+                        text: "×";
+                        color: ta-x-accueil.has-hover ? Palette.or-clair : Palette.attenue;
+                        font-size: 24px;
+                        font-family: Textes.police-texte;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                    ta-x-accueil := TouchArea {
+                        mouse-cursor: pointer;
+                        clicked => { root.accueil-fermer(); }
+                    }
+                }
+                Text {
+                    x: 22px; y: 52px;
+                    width: parent.width - 44px; height: 92px;
+                    text: Textes.accueil-texte;
+                    color: Palette.attenue;
+                    font-size: 12px;
+                    wrap: word-wrap;
+                    font-family: Textes.police-texte;
+                }
+                Text {
+                    x: 22px; y: 152px;
+                    width: parent.width - 44px; height: 20px;
+                    text: Textes.accueil-dossiers;
+                    color: Palette.or-clair;
+                    font-size: 14px;
+                    overflow: elide;
+                    font-family: Textes.police-texte;
+                }
+                // la liste défile à la molette quand il y a beaucoup de dossiers
+                Flickable {
+                    x: 22px; y: 178px;
+                    width: parent.width - 44px; height: 132px;
+                    content-width: self.width;
+                    content-height: root.accueil-dossiers.length * 26px;
+                    for d[i] in root.accueil-dossiers : Case {
+                        x: 0px; y: i * 26px;
+                        width: parent.width - 14px;
+                        texte: d.nom;
+                        coche: d.coche;
+                        change(v) => { root.accueil-coche(i, v); }
+                    }
+                }
+                Text {
+                    x: 22px; y: 322px;
+                    width: parent.width - 44px; height: 16px;
+                    text: Textes.accueil-nom1;
+                    color: Palette.attenue;
+                    font-size: 11px;
+                    overflow: elide;
+                    font-family: Textes.police-texte;
+                }
+                ChampNom {
+                    x: 22px; y: 340px;
+                    width: parent.width - 44px;
+                    texte <=> root.accueil-nom1;
+                    defaut: root.cfg-defaut1;
+                }
+                Text {
+                    x: 22px; y: 376px;
+                    width: parent.width - 44px; height: 16px;
+                    text: Textes.accueil-nom2;
+                    color: Palette.attenue;
+                    font-size: 11px;
+                    overflow: elide;
+                    font-family: Textes.police-texte;
+                }
+                ChampNom {
+                    x: 22px; y: 394px;
+                    width: parent.width - 44px;
+                    texte <=> root.accueil-nom2;
+                    defaut: root.cfg-defaut2;
+                }
+                Bouton {
+                    x: 22px; y: 446px;
+                    width: 240px; height: 32px;
+                    texte: Textes.accueil-garder;
+                    clique => { root.accueil-valider(false); }
+                }
+                Bouton {
+                    x: parent.width - 22px - 240px; y: 446px;
+                    width: 240px; height: 32px;
+                    texte: Textes.config-separer;
+                    clique => { root.accueil-valider(true); }
+                }
+            }
+        }
+
         // ---------- écran « À propos » (attribution de la licence Slint) ----------
         if root.apropos : Rectangle {
             x: 0px; y: 0px;
@@ -1242,7 +2628,9 @@ export component App inherits Window {
                 font-family: Textes.police-titre;
             }
             Rectangle { x: 48px; y: 80px; width: 48px; height: 1px; background: Palette.or; }
-            Text {
+            // 1.3.4 : les quatre blocs se suivent selon la hauteur réelle du texte (le corps s'est allongé avec la phrase
+            // du masquage : 7 lignes en allemand, 8 en japonais à 1100 de large ; des positions fixes se chevauchaient)
+            apropos-corps := Text {
                 x: 48px; y: 94px;
                 width: parent.width - 96px;
                 text: Textes.apropos-corps;
@@ -1251,8 +2639,8 @@ export component App inherits Window {
                 wrap: word-wrap;
                 font-family: Textes.police-texte;
             }
-            Text {
-                x: 48px; y: 190px;
+            apropos-lic := Text {
+                x: 48px; y: apropos-corps.y + apropos-corps.preferred-height + 14px;
                 width: parent.width - 96px;
                 text: Textes.apropos-slint;
                 color: Palette.attenue;
@@ -1260,12 +2648,12 @@ export component App inherits Window {
                 wrap: word-wrap;
                 font-family: Textes.police-texte;
             }
-            AboutSlint {
-                x: 48px; y: 214px;
+            apropos-logo := AboutSlint {
+                x: 48px; y: apropos-lic.y + apropos-lic.preferred-height + 10px;
                 width: 420px; height: 210px;
             }
             Text {
-                x: 48px; y: 448px;
+                x: 48px; y: apropos-logo.y + apropos-logo.height + 12px;
                 width: parent.width - 96px;
                 text: Textes.apropos-polices;
                 color: Palette.attenue;

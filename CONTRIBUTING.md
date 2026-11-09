@@ -28,4 +28,4 @@ cargo test --workspace --target-dir C:\ct
 
 - The calculation lives in `noyau/` and has no user interface, so it can be tested alone. Add a test with every change of rule.
 - A change in the package files (feeder scripts, setup text, guides) needs a new version number: two different packages must never carry the same one. Add a line to [CHANGELOG.md](CHANGELOG.md).
-- No network code, no secrets, nothing read from the content of the conversations: the program only reads counters.
+- No network code, no secrets, nothing kept from the text of the messages: the program only reads counters and, to name the rows of the Conversations tab, the title of each conversation (kept in memory, never written or sent). The only thing it writes about a conversation is the session identifier of a conversation hidden with ✕ (`conversations.txt`). Any change that reads, keeps, writes or sends more than that changes this promise and must be said in the README, the changelog and the About screen.

@@ -2,7 +2,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
-    // Thème sombre uniquement (choix de conception) : même style pour les éléments standard
+    // Thème sombre uniquement (décision du propriétaire du projet) : même style pour les éléments standard
     // (écran « À propos », champs de texte).
     let config = slint_build::CompilerConfiguration::new().with_style("fluent-dark".into());
     slint_build::compile_with_config("ui/app.slint", config).expect("compilation de l'interface Slint");

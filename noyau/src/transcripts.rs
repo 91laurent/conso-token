@@ -39,7 +39,7 @@ struct Usage {
 
 impl Usage {
     /// Tokens comptés : entrée + sortie + création de cache. La lecture du cache, très
-    /// fréquente et presque gratuite, n'est PAS comptée (choix à valider).
+    /// fréquente et presque gratuite, n'est PAS comptée (choix à valider par le propriétaire du projet).
     fn total(&self) -> u64 {
         self.input_tokens.unwrap_or(0) + self.output_tokens.unwrap_or(0) + self.cache_creation_input_tokens.unwrap_or(0)
     }

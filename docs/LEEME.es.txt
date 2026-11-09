@@ -31,6 +31,38 @@ INSTALACIÓN (10 minutos, una sola vez)
    ventana ya muestra tus cifras. Si no, dice «Aún no se han recibido cifras»: díselo a quien te
    dio la aplicación.
 
+NUEVO EN 1.3.0: LA PESTAÑA CONVERSACIONES
+Junto a «Semana», la pestaña «Conversaciones» muestra cada conversación de Claude Code de las
+últimas 24 horas: cuán lleno está su contexto (aproximado, ≈) y cuánto queda antes del relevo, el
+momento de seguir en una conversación nueva. En una barra, la marca crema es el relevo y la línea de
+puntos es la atención; «resumida» significa que Claude compactó esa conversación (relevo inmediato).
+Una conversación inactiva desde hace más de 30 minutos se pliega bajo «+ n más».
+- Al principio: un solo grupo, atención al 70 %, relevo al 80 %. El botón AJUSTES abre una ventana:
+  separar en dos grupos (tú escribes sus nombres; un clic en la etiqueta de una línea cambia
+  entonces de grupo toda la carpeta), dos deslizadores de umbral con una barra de prueba, la ventana
+  de contexto por modelo (Auto, 200 000 o 1 000 000), el punto parpadeante, las cifras animadas.
+  Todo se aplica al instante y se guarda en conversations.txt, en la carpeta de datos.
+  «Restablecer» devuelve los valores iniciales (pide un segundo clic para confirmar).
+- La primera vez que abres la pestaña, una ventana te pregunta si quieres agrupar tus conversaciones: marcas las carpetas del primer grupo y nombras tú los grupos (solo escribes los nombres). El botón «Elegir grupos…» (arriba a la derecha de la pestaña Conversaciones, y en AJUSTES) la vuelve a abrir en cualquier momento, tantas veces como quieras: volver a un solo grupo, renombrar los grupos, desmarcarlo todo. No se pierde nada: la elección se guarda en conversations.txt.
+- Un punto parpadeante en el botón «Conversaciones», visible también en la pantalla Semana: rosa en
+  el relevo, ámbar en la atención. Sin sonido ni notificación de Windows.
+- Las tres tarjetas de la pantalla Semana animan sus cifras al abrir y en cada actualización. Para
+  pararlo: la casilla de AJUSTES o el ajuste de Windows «Efectos de animación».
+- Una ✕ a la derecha de cada fila oculta la conversación: la fila desaparece de la lista, del «+ n más» y del punto parpadeante, aunque llegue un mensaje nuevo (útil para una conversación archivada o de prueba). Basta un clic. AJUSTES muestra «n conversaciones ocultas» con un botón «Mostrar de nuevo» (solo si hay alguna); «Restablecer» no las toca. Cuando ocultas una conversación con ✕, la app escribe el identificador de sesión de esa conversación (un simple código, ni su título ni su contenido) en su carpeta de datos (conversations.txt) para que siga oculta; se olvida cuando su último mensaje tiene más de 24 h, o en cuanto haces clic en «Mostrar de nuevo».
+- Solo se conservan contadores de los archivos de Claude Code de este PC (fecha, modelo, número de
+  tokens, nombre de la carpeta), más el título de cada conversación tal como lo muestra la app de Claude (para nombrarla en la
+  lista; leído en los archivos que ya se leen, guardado en la memoria mientras se muestra, nunca
+  escrito ni enviado); el texto de un mensaje nunca se guarda, ni se escribe ni se envía. Las ejecuciones programadas y los
+  subagentes se descartan. El tamaño de la ventana no está escrito en ningún archivo: el porcentaje
+  es aproximado (≈); si hace falta, ajusta la ventana correcta por modelo en AJUSTES. Si Claude
+  cambia el formato de sus archivos, la lista lo dice en lugar de mostrar cifras falsas.
+  La lista se basa en el último mensaje de Claude, no en el estado de la ventana: una conversación archivada o cerrada sigue apareciendo mientras su último mensaje tenga menos de 24 h (ócultala con ✕); una conversación abierta pero sin mensajes desde hace más de 24 h no aparece (vuelve en cuanto Claude responde en ella).
+  Límites: si Claude cambia el tipo de sus líneas, o si sus respuestas ya no se encuentran, la lista
+  queda vacía SIN aviso; si cambia la línea que lleva el título, los nombres vuelven a «carpeta · 4 caracteres», sin error. El título se busca en los últimos 64 KB del archivo: se guarda mientras el programa funciona, pero tras reiniciarlo una conversación muy larga sin una línea de título reciente vuelve a «carpeta · 4 caracteres». La lista de modelos en AJUSTES tiene un orden fijo (Opus, Sonnet, Haiku y
+  luego los demás), pero conserva los cinco modelos más recientes: con seis o más vistos en 24 h, un
+  sexto que responde la cambia.
+  Desde la primera lectura, el programa crea también contextes_vus.txt en la carpeta de datos (el mayor
+  contexto visto por modelo: solo números).
 CONVIENE SABER
 - La ventana lee sola la hora a la que se reinicia tu semana y usa tu propia zona horaria y tus
   cambios de hora. La semana del cambio de hora, una línea bajo la cuenta atrás lo explica (por
