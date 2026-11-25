@@ -15,4 +15,4 @@ labels: bug
 
 **What you saw** (a screenshot helps; the Week tab only shows percentages, but the Conversations tab shows the titles and folder names of your conversations: hide or blur them before you post it):
 
-**If no figures arrive:** the last line of `outils\dernier_envoi.txt`:
+**If no figures arrive:** the last line of `%USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt` (it can contain your Windows user name, in the path of the data folder: replace it before you post):

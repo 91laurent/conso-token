@@ -9,8 +9,9 @@ aucun site et ne demande aucun mot de passe.
 
 CE QU'IL TE FAUT
 - Windows 10 ou 11. Rien d'autre à installer.
-- L'appli Claude de bureau (celle où tu utilises Claude Code) avec un forfait Pro ou Max : les
-  chiffres du forfait n'existent pas pour les autres forfaits.
+- L'appli Claude de bureau (celle où tu utilises Claude Code) avec un forfait Claude payant dont
+  l'appli donne les chiffres : certains forfaits ne les donnent pas. Conso Token n'a été essayé
+  qu'avec un seul forfait.
 
 INSTALLATION (10 minutes, une seule fois)
 1. Mets le dossier « Conso Token » reçu sur un disque de ton ordinateur (par exemple H:). S'il est
@@ -31,18 +32,42 @@ INSTALLATION (10 minutes, une seule fois)
    réseau. Si l'étape 2 a marché, la fenêtre montre déjà tes chiffres. Sinon elle dit « Aucun
    chiffre reçu pour l’instant » : dis-le à la personne qui t'a donné l'appli.
 
-NOUVEAU EN 1.3.0 : L'ONGLET CONVERSATIONS
+L'ONGLET CONVERSATIONS (DEPUIS LA 1.3.0), ET CE QUI EST VENU DEPUIS
+Version 1.3.8. Nouveau depuis la 1.3.4 : les groupes 3 à 8 écrits à la main (voir plus bas) ; le
+journal d'envoi a rejoint le dossier de données ; des mots plus simples sur quelques écrans, dans
+les huit langues.
 À côté de « Semaine », l'onglet « Conversations » montre chaque conversation Claude Code des dernières
-24 heures : à quel point son contexte est plein (environ, ≈) et ce qu'il reste avant la passation, le
+24 heures : à quel point elle est pleine (son contexte ; environ, ≈) et ce qu'il reste avant la passation, le
 moment de continuer dans une conversation neuve. Sur une barre, le trait crème est la passation et le
-pointillé l'attention ; « résumée » veut dire que Claude a compacté cette conversation (passation tout
+pointillé l'attention ; « résumée » veut dire que Claude a résumé cette conversation pour la raccourcir (passation tout
 de suite). Une conversation au repos depuis plus de 30 minutes est repliée sous « + n autres ».
 - Au départ : un seul groupe, attention à 70 %, passation à 80 %. Le bouton CONFIG ouvre une fenêtre :
   séparer en deux groupes (tu tapes leurs noms ; un clic sur l'étiquette d'une ligne change alors tout
-  le dossier de groupe), deux curseurs de seuils avec une barre d'essai, la fenêtre de contexte par
-  modèle (Auto, 200 000 ou 1 000 000), le point clignotant, les chiffres animés. Tout s'applique tout
+  le dossier de groupe), deux curseurs de seuils avec une barre d'essai, « Capacité d’une
+  conversation, par modèle » (Auto, 200 000 ou 1 000 000), le point clignotant, les chiffres animés. Tout s'applique tout
   de suite et se range dans conversations.txt, dans le dossier de données. « Rétablir » remet le départ (il demande un deuxième clic pour confirmer).
-- À la première ouverture de l'onglet, une fenêtre te demande si tu veux regrouper tes conversations : tu coches les dossiers du premier groupe et tu nommes les groupes toi-même (tu ne tapes que les noms). Le bouton « Choisir les groupes… » (en haut à droite de l'onglet Conversations, et dans CONFIG) la rouvre à tout moment, autant de fois que tu veux : revenir à un seul groupe, renommer les groupes, tout décocher. Rien n'est perdu : le choix reste dans conversations.txt.
+- La première fois que tu es sur l'onglet et qu'il y a des conversations à proposer, une fenêtre te demande si tu veux les regrouper (elle ne s'ouvre toute seule qu'une fois) : tu coches les dossiers du premier groupe et tu nommes les groupes toi-même (tu ne tapes que les noms). Le bouton « Choisir les groupes… » (en haut à droite de l'onglet Conversations, et dans CONFIG) la rouvre à tout moment, autant de fois que tu veux : revenir à un seul groupe, renommer les groupes, tout décocher. Rien n'est perdu : le choix reste dans conversations.txt.
+- PLUS DE DEUX GROUPES (depuis la 1.3.5), écrits à la main : les groupes 3 à 8, chacun avec ses
+  niveaux. Coche d'abord « Séparer en deux groupes » dans CONFIG (ces groupes ne s'affichent que
+  si la case est cochée). Ferme la fenêtre de Conso Token (ouverte, elle réécrit le fichier depuis
+  sa mémoire, et ta modification est perdue). Ouvre conversations.txt, dans le dossier de données,
+  avec le Bloc-notes, ajoute des lignes à la fin et enregistre en UTF-8. Le numéro du groupe
+  termine chaque mot, en minuscules ; par exemple :
+      nom3=Reviews
+      attention3=40
+      passation3=55
+      titre3=Review
+  nom3= est le nom montré (24 caractères au plus ; sans lui : « Groupe 3 »). attention3= et
+  passation3= sont l'attention et la passation (10 à 95 ; 70 et 80 si tu n'écris rien). titre3= est
+  un début de titre ; groupe3= est le nom d'un dossier de travail, écrit exactement. Une ligne par
+  début de titre ou par dossier. Une conversation est rangée d'abord par son titre, puis par son
+  dossier, et seulement ensuite dans les deux groupes de l'écran. Un début de titre compte par mots
+  entiers, majuscules ou minuscules : il doit être suivi d'une espace ou finir le titre
+  (« Review » reconnaît « Review of the plan », pas « Review: plan » ni « Reviews »). L'étiquette
+  d'une ligne de ces groupes ne se clique pas. CONFIG ne les montre pas ; le programme garde tes
+  lignes quand il réécrit le fichier. « Rétablir » les efface ; « Garder un seul groupe » les masque
+  sans les effacer. Ce que tu écris là (noms de groupes, noms de dossiers, débuts de titre) reste
+  dans ce fichier, sur ton PC.
 - Un point clignotant sur le bouton « Conversations », visible aussi sur l'écran Semaine : rose à la
   passation, ambre à l'attention. Ni son, ni notification Windows.
 - Les trois cartes de l'écran Semaine animent leurs chiffres à l'ouverture et à chaque mise à jour.
@@ -52,8 +77,8 @@ de suite). Une conversation au repos depuis plus de 30 minutes est repliée sous
   tokens, nom du dossier), plus le titre de chaque conversation tel que l'appli Claude l'affiche (pour la nommer dans la
   liste ; lu dans les fichiers déjà lus, gardé en mémoire le temps de l'affichage, jamais écrit ni
   envoyé) ; le texte d'un message n'est jamais gardé, ni écrit, ni envoyé. Les exécutions planifiées et les sous-agents
-  sont écartés. La taille de la fenêtre n'est écrite dans aucun fichier : le pourcentage reste
-  approximatif (≈) ; si besoin, règle la bonne fenêtre par modèle dans CONFIG. Si Claude change le
+  sont écartés. La capacité d'une conversation n'est écrite dans aucun fichier : le pourcentage reste
+  approximatif (≈) ; si besoin, règle la bonne capacité par modèle dans CONFIG. Si Claude change le
   format de ses fichiers, la liste le dit au lieu d'afficher de faux chiffres.
   La liste se fonde sur le dernier message de Claude, pas sur l'état de la fenêtre : une conversation archivée ou fermée reste affichée tant que son dernier message a moins de 24 h (masque-la avec ✕) ; une conversation ouverte mais sans message depuis plus de 24 h n'apparaît pas (elle revient dès que Claude y répond).
   Limites : si Claude change le type de ses lignes, ou si ses réponses deviennent introuvables, la
@@ -75,16 +100,41 @@ de suite). Une conversation au repos depuis plus de 30 minutes est repliée sous
   sur conso_token.exe.
 - Si tu déplaces le dossier plus tard, la tâche ne retrouvera plus le programme : redonne à Claude
   la phrase de l'étape 2 avec le nouveau chemin.
-- La tâche « conso-token-feed » (section « Planifié » de la barre de gauche) fait elle-même un peu
-  consommer ton forfait, comme toute tâche : c'est compris dans les chiffres affichés. Si tu la
-  supprimes, les chiffres ne se mettent plus à jour. Chaque passage s'archive tout seul à la fin :
-  tu peux voir des sessions « Conso Token feed » dans les archives, c'est normal.
-- Pour tout arrêter : supprime cette tâche, puis le dossier Conso Token.
+- La tâche s'affiche sous le titre « Conso Token feed » (son identifiant est conso-token-feed),
+  dans la section « Planifiées » de la barre de gauche, ou dans « Routines » de l'onglet « Code »,
+  selon la version de ton appli Claude. Elle fait elle-même un peu consommer ton forfait, comme
+  toute tâche : c'est compris dans les chiffres affichés. Si tu la supprimes, les chiffres ne se
+  mettent plus à jour. Chaque passage s'archive tout seul à la fin : tu peux voir des sessions
+  « Conso Token feed » dans les archives, c'est normal.
 - Les données vont dans C:\Users\<ton nom>\AppData\Local\ConsoToken.
 - Tu peux changer la langue avec le bouton en haut à droite de la fenêtre.
 - Les licences (polices et Slint) sont dans le dossier « licences ».
+- Pour passer d'une version plus ancienne à celle-ci : ferme la fenêtre, remplace TOUT le dossier,
+  puis redonne à Claude la phrase de l'étape 2. Ton dossier de données est gardé.
+
+COMMENT L'ENLEVER
+1. Ferme la fenêtre de Conso Token.
+2. Supprime la tâche « Conso Token feed » (conso-token-feed) dans l'appli Claude de bureau
+   (« Planifiées », ou « Routines » dans l'onglet « Code »). Supprimer seulement le dossier ne
+   suffit pas : la tâche continuerait à ouvrir une petite session toutes les 15 minutes, qui
+   n'enverrait rien et consommerait quand même un peu de ton forfait.
+3. Seulement si une « ligne d'état » de Claude Code qui lance Conso Token a été ajoutée
+   (l'installation de l'étape 2 n'en ajoute jamais) : elle est dans le fichier settings.json de
+   C:\Users\<ton nom>\.claude, dans le morceau « statusLine » qui contient
+   « conso_token.exe --pont ». Fais d'abord une copie du fichier. S'il n'y a rien après
+   « --pont », retire ce morceau « statusLine ». S'il contient « --suite » suivi d'une autre
+   commande, c'est la ligne d'état que tu avais avant : garde « statusLine » et ne laisse dans sa
+   ligne « command » que la commande qui suit « --suite ». Ne touche à rien d'autre.
+4. Supprime le dossier Conso Token.
+5. Facultatif : pour effacer aussi tes réglages et l'historique de tes chiffres, supprime le
+   dossier de données C:\Users\<ton nom>\AppData\Local\ConsoToken.
+Claude marche pareil sans Conso Token.
 
 SI RIEN N'ARRIVE
-Ouvre « outils\dernier_envoi.txt » (dans le dossier Conso Token) avec le Bloc-notes et dis à la
-personne qui t'a donné l'appli ce qu'il contient (ou qu'il n'existe pas), avec une capture de la
-fenêtre.
+Attends 15 à 20 minutes après l'installation, avec l'appli Claude de bureau ouverte. Toujours
+rien ? Dans l'Explorateur de fichiers, clique dans la barre d'adresse, tape
+%USERPROFILE%\AppData\Local\ConsoToken et appuie sur Entrée, puis ouvre dernier_envoi.txt avec le
+Bloc-notes (chemin complet : %USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt). Il n'est
+plus dans le dossier « outils ». Un envoi réussi porte « rc=0 » sur cette ligne. Dis à la personne
+qui t'a donné l'appli ce qu'il contient (ou qu'il n'existe pas), avec une capture de la fenêtre.
+Si rien ne vient jamais, tu peux enlever l'appli comme expliqué ci-dessus.

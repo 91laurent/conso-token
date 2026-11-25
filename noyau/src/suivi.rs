@@ -12,6 +12,9 @@
 //!   ambre s'il n'y a que de l'attention, éteinte sinon ou si la case est décochée.
 //! - MASQUÉE (le ✕ d'une ligne, 1.3.4) : écartée avant les groupes, les récentes et l'alerte ; reconnue par son
 //!   identifiant de session, elle reste masquée même si un nouveau message arrive.
+//! - MAISONS (1.3.5) : des groupes de plus que les deux de l'écran, écrits à la main dans `conversations.txt`, chacun avec ses
+//!   seuils. Une conversation y entre par le début de son titre, sinon par son dossier (voir `groupe_de`) ; les groupes de la
+//!   page sont alors les deux de l'écran puis les maisons, dans l'ordre de leur numéro.
 
 use std::collections::BTreeMap;
 
@@ -169,19 +172,41 @@ pub fn etiquette_groupe(nom: &str) -> String {
 }
 
 /// Le nom montré d'un groupe : celui tapé à la main, sinon « Groupe 1 » (traduit) ; « Toutes les conversations » sans séparation.
+/// Les groupes 2 et suivants (`i` à partir de 2) sont les maisons écrites à la main, dans l'ordre de leur numéro.
 pub fn nom_du_groupe(r: &Reglages, i: usize) -> String {
+    let (nom, numero) = match i {
+        0 | 1 => (r.noms[i].as_str(), i + 1),
+        _ => r.maisons.get(i - 2).map_or(("", i + 1), |m| (m.nom.as_str(), m.numero)),
+    };
     if !r.separer {
         t(Cle::GroupeTous).to_string()
-    } else if r.noms[i].is_empty() {
-        fmt(Cle::GroupeN, &[&(i + 1)])
+    } else if nom.is_empty() {
+        fmt(Cle::GroupeN, &[&numero])
     } else {
-        r.noms[i].clone()
+        nom.to_string()
     }
 }
 
-/// Le groupe d'un dossier : 0 sans séparation ; avec, 0 si le dossier est dans la liste du groupe 1, sinon 1.
-pub fn groupe_du_dossier(r: &Reglages, dossier: &str) -> usize {
-    if !r.separer || r.groupe1.iter().any(|d| d == dossier) { 0 } else { 1 }
+/// Le groupe d'une conversation (0 et 1 : les deux de l'écran ; 2 et plus : les maisons écrites à la main, dans l'ordre de
+/// leur numéro). Sans séparation : toujours 0. Avec, dans cet ordre :
+/// 1. le TITRE : la première maison dont un début de titre reconnaît celui de la conversation (`Maison::reclame_titre`) ;
+/// 2. le DOSSIER : la première maison qui le désigne ;
+/// 3. la liste du groupe 1 : 0 si le dossier y est ;
+/// 4. sinon le groupe 2 (1).
+///
+/// Les maisons passent donc avant les deux groupes de l'écran : un dossier rangé dans le groupe 1 par un clic ne défait pas
+/// ce que le fichier a décidé. `titre` est le titre prêt à montrer (voir `titre_affiche`), `None` s'il n'y en a pas.
+pub fn groupe_de(r: &Reglages, dossier: &str, titre: Option<&str>) -> usize {
+    if !r.separer {
+        return 0;
+    }
+    if let Some(i) = titre.and_then(|t| r.maisons.iter().position(|m| m.reclame_titre(t))) {
+        return 2 + i;
+    }
+    if let Some(i) = r.maisons.iter().position(|m| m.reclame_dossier(dossier)) {
+        return 2 + i;
+    }
+    if r.groupe1.iter().any(|d| d == dossier) { 0 } else { 1 }
 }
 
 fn quatre_caracteres(session: &str) -> String {
@@ -273,8 +298,8 @@ pub fn calculer(convs: &[Conversation], r: &Reglages, connus: &BTreeMap<String, 
             nb_masquees += 1;
             continue;
         }
-        let g = groupe_du_dossier(r, &c.dossier);
-        let seuils = r.seuils[g];
+        let g = groupe_de(r, &c.dossier, titre_affiche(c).as_deref());
+        let seuils = r.seuils_du_groupe(g);
         let vu = vus.get(&c.modele).copied().unwrap_or(0);
         let fenetre = r.choix_fenetre(&c.modele).tokens(vu);
         let pct = pourcentage(c.contexte, fenetre);
@@ -315,13 +340,15 @@ pub fn calculer(convs: &[Conversation], r: &Reglages, connus: &BTreeMap<String, 
         }
     }
 
-    let nb_groupes = if r.separer { 2 } else { 1 };
-    let mut groupes: Vec<GroupeSuivi> = (0..nb_groupes)
-        .map(|i| GroupeSuivi {
-            nom: nom_du_groupe(r, i),
-            seuils: r.seuils[i],
-            texte_seuils: fmt(Cle::ConvSeuils, &[&r.seuils[i].attention, &r.seuils[i].passation]),
-            lignes: Vec::new(),
+    let mut groupes: Vec<GroupeSuivi> = (0..r.nb_groupes())
+        .map(|i| {
+            let seuils = r.seuils_du_groupe(i);
+            GroupeSuivi {
+                nom: nom_du_groupe(r, i),
+                seuils,
+                texte_seuils: fmt(Cle::ConvSeuils, &[&seuils.attention, &seuils.passation]),
+                lignes: Vec::new(),
+            }
         })
         .collect();
     let mut recentes = Vec::new();
@@ -376,10 +403,12 @@ pub fn calculer(convs: &[Conversation], r: &Reglages, connus: &BTreeMap<String, 
 
 /// Les dossiers que la fenêtre d'accueil propose de cocher, avec leur case : ceux des conversations qu'on
 /// voit (les actives d'abord, puis les récentes), puis ceux déjà rangés dans le groupe 1 qu'on ne voit plus
-/// (pour qu'une réouverture ne les perde pas). Sans doublon ; la case est cochée pour le groupe 1.
+/// (pour qu'une réouverture ne les perde pas). Sans doublon ; la case est cochée pour le groupe 1. Les conversations qu'une
+/// maison écrite à la main a prises (groupe 2 et suivants) ne proposent pas leur dossier : cocher ou décocher ce dossier ne
+/// changerait rien pour elles, la maison passe avant (voir `groupe_de`).
 pub fn dossiers_a_choisir(s: &Suivi, r: &Reglages) -> Vec<(String, bool)> {
     let mut noms: Vec<String> = Vec::new();
-    for l in s.groupes.iter().flat_map(|g| g.lignes.iter()).chain(s.recentes.iter()) {
+    for l in s.groupes.iter().flat_map(|g| g.lignes.iter()).chain(s.recentes.iter()).filter(|l| l.groupe < 2) {
         if !l.dossier.is_empty() && !noms.contains(&l.dossier) {
             noms.push(l.dossier.clone());
         }
@@ -443,7 +472,7 @@ pub fn vus_demo() -> BTreeMap<String, u64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::reglages::{FENETRE_GRANDE, FENETRE_PETITE};
+    use crate::reglages::{FENETRE_GRANDE, FENETRE_PETITE, Maison};
 
     const MAINTENANT: i64 = 1_800_000_000;
 
@@ -752,7 +781,7 @@ mod tests {
 
     #[test]
     fn masquer_eteint_l_alerte_rose_d_une_conversation_archivee() {
-        // la fausse alerte constatée à l'usage : une conversation archivée puis « résumée » allume le rose tant que son dernier message a moins de 30 min
+        // une fausse alerte déjà vue : une conversation archivée puis « résumée » allume le rose tant que son dernier message a moins de 30 min
         let mut archivee = conv("archive", "arch0001", "claude-opus-5-5", 23_000, 5);
         archivee.resumee = true;
         let calme = conv("b", "bbbb2222", "claude-opus-5-5", 100_000, 2);
@@ -960,5 +989,157 @@ mod tests {
         assert_eq!(s.recentes.len(), 4, "trois conversations de 30 min à 24 h, plus la résumée de 6 h 50");
         assert!(s.recentes.iter().any(|l| l.etat == Etat::Resumee));
         assert_eq!(s.alerte, Alerte::Passation);
+    }
+
+    // ------------------------------------------------------------ les maisons écrites à la main (1.3.5)
+
+    /// Deux groupes de l'écran (50 / 55 et 40 / 45) et deux maisons : « Chefs » (50 / 55) prend les titres qui commencent par
+    /// « Chef » ; « Pilotes » (40 / 45) prend deux dossiers. Des noms neutres : rien de propre à un utilisateur dans le code.
+    fn avec_maisons() -> Reglages {
+        let (a, p) = (Seuils { attention: 50, passation: 55 }, Seuils { attention: 40, passation: 45 });
+        Reglages {
+            separer: true,
+            noms: ["Leads".into(), "Fils".into()],
+            seuils: [a, p],
+            groupe1: vec!["projet-a".into()],
+            maisons: vec![
+                Maison { numero: 3, nom: "Chefs".into(), seuils: a, dossiers: Vec::new(), titres: vec!["Chef".into()] },
+                Maison { numero: 4, nom: "Pilotes".into(), seuils: p, dossiers: vec!["equipe".into(), "annexe".into()], titres: Vec::new() },
+            ],
+            ..Reglages::default()
+        }
+    }
+
+    fn pct_52(dossier: &str, session: &str, titre: Option<&str>, age_min: i64) -> Conversation {
+        let c = conv(dossier, session, "claude-opus-5-5", 520_000, age_min);
+        match titre {
+            Some(t) => avec_titre(c, t),
+            None => c,
+        }
+    }
+
+    #[test]
+    fn une_maison_prend_une_conversation_par_son_titre_puis_par_son_dossier() {
+        let r = avec_maisons();
+        // le TITRE l'emporte sur le dossier, même celui d'une autre maison ou celui du groupe 1
+        assert_eq!(groupe_de(&r, "equipe", Some("Chef 3")), 2, "titre « Chef » : la maison 3, pas la maison 4 qui a le dossier");
+        assert_eq!(groupe_de(&r, "projet-a", Some("Chef 1")), 2, "le titre passe avant la liste du groupe 1");
+        assert_eq!(groupe_de(&r, "autre", Some("Chef 3")), 2, "le titre suffit, quel que soit le dossier");
+        // sinon le DOSSIER de la maison
+        assert_eq!(groupe_de(&r, "equipe", Some("Aide 1")), 3);
+        assert_eq!(groupe_de(&r, "equipe", None), 3, "une conversation sans titre : par son dossier");
+        assert_eq!(groupe_de(&r, "annexe", None), 3);
+        // sinon les deux groupes de l'écran, comme avant
+        assert_eq!(groupe_de(&r, "projet-a", Some("Plan")), 0);
+        assert_eq!(groupe_de(&r, "projet-a", None), 0);
+        assert_eq!(groupe_de(&r, "autre", None), 1);
+        assert_eq!(groupe_de(&r, "autre", Some("Chefs 3")), 1, "« Chefs » n'est pas « Chef » : pas la maison 3");
+        // une maison passe avant la liste du groupe 1 : un dossier coché à l'écran ne défait pas le fichier
+        let mut coche = avec_maisons();
+        coche.groupe1.push("equipe".into());
+        assert_eq!(groupe_de(&coche, "equipe", None), 3);
+        // sans séparation : toujours le seul groupe
+        let seul = Reglages { separer: false, ..avec_maisons() };
+        assert_eq!((groupe_de(&seul, "equipe", Some("Chef 3")), groupe_de(&seul, "autre", None)), (0, 0));
+    }
+
+    #[test]
+    fn chaque_maison_a_son_en_tete_ses_seuils_et_ses_lignes() {
+        let r = avec_maisons();
+        // quatre conversations à 52 % de 1 M, une par groupe
+        let convs = [
+            pct_52("equipe", "c1c1", Some("Chef 3"), 3),
+            pct_52("equipe", "p1p1", Some("Aide 1"), 4),
+            pct_52("autre", "a1a1", None, 5),
+            pct_52("projet-a", "l1l1", Some("Plan"), 6),
+        ];
+        let s = calculer(&convs, &r, &vus_1m(), MAINTENANT);
+        assert_eq!(s.groupes.len(), 4, "les deux groupes de l'écran et les deux maisons");
+        assert_eq!(s.groupes.iter().map(|g| g.nom.as_str()).collect::<Vec<_>>(), ["Leads", "Fils", "Chefs", "Pilotes"]);
+        let seuils = |a: u8, p: u8| fmt(Cle::ConvSeuils, &[&a, &p]);
+        assert_eq!(s.groupes.iter().map(|g| g.texte_seuils.clone()).collect::<Vec<_>>(), [seuils(50, 55), seuils(40, 45), seuils(50, 55), seuils(40, 45)]);
+        let ligne = |g: usize| {
+            assert_eq!(s.groupes[g].lignes.len(), 1, "groupe {g}");
+            &s.groupes[g].lignes[0]
+        };
+        // à 52 % : attention chez les groupes 50 / 55, passation chez ceux de 40 / 45
+        assert_eq!(ligne(0).etat, Etat::Attention);
+        assert_eq!(ligne(1).etat, Etat::Passation);
+        let chef = ligne(2);
+        assert_eq!((chef.nom.as_str(), chef.etat, chef.groupe), ("Chef 3 · equipe", Etat::Attention, 2));
+        assert_eq!(chef.seuils, Seuils { attention: 50, passation: 55 });
+        assert_eq!(chef.texte_pct, fmt(Cle::ConvSur, &[&fr::pourcent(52.0), &55u8]), "« sur 55 » : la passation de SA maison");
+        assert_eq!(chef.etiquette, "CHEF");
+        let pilote = ligne(3);
+        assert_eq!((pilote.etat, pilote.groupe, pilote.seuils.passation, pilote.etiquette.as_str()), (Etat::Passation, 3, 45, "PILO"));
+        assert_eq!(pilote.texte_pct, fmt(Cle::ConvSur, &[&fr::pourcent(52.0), &45u8]));
+        // une maison sans conversation garde son en-tête (comme un groupe vide de l'écran)
+        let seule = calculer(&[pct_52("autre", "a1a1", None, 5)], &r, &vus_1m(), MAINTENANT);
+        assert_eq!((seule.groupes.len(), seule.groupes[2].lignes.len(), seule.groupes[3].lignes.len()), (4, 0, 0));
+    }
+
+    #[test]
+    fn le_titre_se_compare_tel_qu_il_est_montre() {
+        // un titre avec des caractères sans largeur ou de sens de lecture : c'est le titre NETTOYÉ qu'on compare
+        let r = avec_maisons();
+        let c = pct_52("autre", "t1t1", Some("\u{200B}Chef\u{202E} 3"), 3);
+        let s = calculer(&[c], &r, &vus_1m(), MAINTENANT);
+        assert_eq!((s.groupes[2].lignes.len(), s.groupes[1].lignes.len()), (1, 0), "{s:?}");
+        // un titre blanc vaut « pas de titre » : le dossier décide
+        let blanc = pct_52("equipe", "t2t2", Some("   "), 3);
+        let s = calculer(&[blanc], &r, &vus_1m(), MAINTENANT);
+        assert_eq!(s.groupes[3].lignes.len(), 1);
+    }
+
+    #[test]
+    fn sans_separation_les_maisons_ne_changent_rien() {
+        let convs = [pct_52("equipe", "c1c1", Some("Chef 3"), 3), pct_52("autre", "a1a1", None, 5)];
+        let avec = Reglages { separer: false, ..avec_maisons() };
+        let sans = Reglages { maisons: Vec::new(), ..avec.clone() };
+        let (a, b) = (calculer(&convs, &avec, &vus_1m(), MAINTENANT), calculer(&convs, &sans, &vus_1m(), MAINTENANT));
+        assert_eq!((a.groupes.len(), b.groupes.len()), (1, 1), "un seul groupe : « Toutes les conversations »");
+        assert_eq!(a.groupes[0].nom, fmt(Cle::GroupeTous, &[]));
+        let vue = |s: &Suivi| s.groupes[0].lignes.iter().map(|l| (l.nom.clone(), l.groupe, l.etat, l.seuils, l.etiquette.clone())).collect::<Vec<_>>();
+        assert_eq!(vue(&a), vue(&b));
+        assert!(a.groupes[0].lignes.iter().all(|l| l.groupe == 0 && l.etiquette.is_empty()));
+    }
+
+    #[test]
+    fn l_alerte_suit_les_seuils_de_la_maison() {
+        let r = avec_maisons();
+        let a_49 = |dossier: &str, titre: Option<&str>| {
+            let c = conv(dossier, "z1z1", "claude-opus-5-5", 490_000, 3);
+            vec![match titre {
+                Some(t) => avec_titre(c, t),
+                None => c,
+            }]
+        };
+        // 49 % : sous l'attention d'une maison 50 / 55 (rien), mais passé la passation d'une maison 40 / 45 (point rose)
+        assert_eq!(calculer(&a_49("equipe", Some("Chef 3")), &r, &vus_1m(), MAINTENANT).alerte, Alerte::Aucune);
+        assert_eq!(calculer(&a_49("equipe", Some("Aide 1")), &r, &vus_1m(), MAINTENANT).alerte, Alerte::Passation);
+        // 52 % chez les chefs : l'attention (ambre), pas la passation
+        assert_eq!(calculer(&[pct_52("equipe", "c1c1", Some("Chef 3"), 3)], &r, &vus_1m(), MAINTENANT).alerte, Alerte::Attention);
+    }
+
+    #[test]
+    fn la_fenetre_des_groupes_ne_propose_pas_les_dossiers_des_maisons() {
+        let r = avec_maisons();
+        let convs = [
+            pct_52("equipe", "p1p1", Some("Aide 1"), 3),  // la maison 4 la prend par son dossier
+            pct_52("lointain", "c1c1", Some("Chef 2"), 4), // la maison 3 la prend par son titre
+            pct_52("projet-b", "b1b1", None, 5),           // le groupe 2 de l'écran
+        ];
+        let s = calculer(&convs, &r, &vus_1m(), MAINTENANT);
+        // seuls les dossiers qu'on peut vraiment choisir : celui du groupe 2, puis ceux déjà rangés dans le groupe 1 (cochés)
+        assert_eq!(dossiers_a_choisir(&s, &r), vec![("projet-b".to_string(), false), ("projet-a".to_string(), true)]);
+    }
+
+    #[test]
+    fn le_nom_par_defaut_d_une_maison_porte_son_numero() {
+        let sans_nom = Maison { numero: 5, nom: String::new(), seuils: Seuils::DEFAUT, dossiers: Vec::new(), titres: Vec::new() };
+        let r = Reglages { separer: true, maisons: vec![sans_nom], ..Reglages::default() };
+        langue::avec(Langue::Fr, || assert_eq!(nom_du_groupe(&r, 2), "Groupe 5", "le numéro écrit dans le fichier, pas la place"));
+        langue::avec(Langue::De, || assert_eq!(nom_du_groupe(&r, 2), "Gruppe 5"));
+        assert_eq!(nom_du_groupe(&avec_maisons(), 3), "Pilotes");
     }
 }

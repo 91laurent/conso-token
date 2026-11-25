@@ -9,8 +9,9 @@ no pide ninguna contraseña.
 
 LO QUE NECESITAS
 - Windows 10 u 11. Nada más que instalar.
-- La aplicación de escritorio de Claude (donde usas Claude Code) con un plan Pro o Max: las cifras
-  del plan no existen para los demás planes.
+- La aplicación de escritorio de Claude (donde usas Claude Code) con un plan de pago de Claude
+  cuyas cifras de uso proporcione la app: algunos planes no las proporcionan. Conso Token solo se
+  ha probado con un plan.
 
 INSTALACIÓN (10 minutos, una sola vez)
 1. Pon la carpeta «Conso Token» que has recibido en un disco de tu ordenador (por ejemplo H:). Si
@@ -28,22 +29,46 @@ INSTALACIÓN (10 minutos, una sola vez)
    desconocido), pulsa «Más información» y luego «Ejecutar de todas formas». No es un virus:
    Conso Token es un programa pequeño hecho a mano, sin firma de un editor de pago, por eso
    Windows lo señala la primera vez. No usa ninguna función de red. Si el paso 2 funcionó, la
-   ventana ya muestra tus cifras. Si no, dice «Aún no se han recibido cifras»: díselo a quien te
+   ventana ya muestra tus cifras. Si no, dice «Aún no se ha recibido ninguna cifra»: díselo a quien te
    dio la aplicación.
 
-NUEVO EN 1.3.0: LA PESTAÑA CONVERSACIONES
+LA PESTAÑA CONVERSACIONES (DESDE LA 1.3.0) Y LO QUE LLEGÓ DESPUÉS
+Versión 1.3.8. Novedades desde la 1.3.4: los grupos 3 a 8 escritos a mano (ver más abajo); el
+registro de envío pasó a la carpeta de datos; palabras más sencillas en algunas pantallas, en los
+ocho idiomas.
 Junto a «Semana», la pestaña «Conversaciones» muestra cada conversación de Claude Code de las
-últimas 24 horas: cuán lleno está su contexto (aproximado, ≈) y cuánto queda antes del relevo, el
+últimas 24 horas: cuán llena está (su contexto; aproximado, ≈) y cuánto queda antes del relevo, el
 momento de seguir en una conversación nueva. En una barra, la marca crema es el relevo y la línea de
-puntos es la atención; «resumida» significa que Claude compactó esa conversación (relevo inmediato).
+puntos es la atención; «resumida» significa que Claude resumió esa conversación para acortarla (relevo inmediato).
 Una conversación inactiva desde hace más de 30 minutos se pliega bajo «+ n más».
 - Al principio: un solo grupo, atención al 70 %, relevo al 80 %. El botón AJUSTES abre una ventana:
   separar en dos grupos (tú escribes sus nombres; un clic en la etiqueta de una línea cambia
-  entonces de grupo toda la carpeta), dos deslizadores de umbral con una barra de prueba, la ventana
-  de contexto por modelo (Auto, 200 000 o 1 000 000), el punto parpadeante, las cifras animadas.
+  entonces de grupo toda la carpeta), dos deslizadores de umbral con una barra de prueba, «Capacidad de una
+  conversación, por modelo» (Auto, 200 000 o 1 000 000), el punto parpadeante, las cifras animadas.
   Todo se aplica al instante y se guarda en conversations.txt, en la carpeta de datos.
   «Restablecer» devuelve los valores iniciales (pide un segundo clic para confirmar).
-- La primera vez que abres la pestaña, una ventana te pregunta si quieres agrupar tus conversaciones: marcas las carpetas del primer grupo y nombras tú los grupos (solo escribes los nombres). El botón «Elegir grupos…» (arriba a la derecha de la pestaña Conversaciones, y en AJUSTES) la vuelve a abrir en cualquier momento, tantas veces como quieras: volver a un solo grupo, renombrar los grupos, desmarcarlo todo. No se pierde nada: la elección se guarda en conversations.txt.
+- La primera vez que estás en la pestaña y hay conversaciones que proponer, una ventana te pregunta si quieres agruparlas (solo se abre sola una vez): marcas las carpetas del primer grupo y nombras tú los grupos (solo escribes los nombres). El botón «Elegir grupos…» (arriba a la derecha de la pestaña Conversaciones, y en AJUSTES) la vuelve a abrir en cualquier momento, tantas veces como quieras: volver a un solo grupo, renombrar los grupos, desmarcarlo todo. No se pierde nada: la elección se guarda en conversations.txt.
+- MÁS DE DOS GRUPOS (desde la 1.3.5), escritos a mano: los grupos 3 a 8, cada uno con sus
+  niveles. Marca primero «Separar en dos grupos» en AJUSTES (estos grupos solo se ven con la
+  casilla marcada). Cierra la ventana de Conso Token (abierta, reescribe el archivo desde su
+  memoria y tu cambio se pierde). Abre conversations.txt, en la carpeta de datos, con el Bloc de
+  notas, añade líneas al final y guarda en UTF-8. El número del grupo termina cada palabra, en
+  minúsculas; por ejemplo:
+      nom3=Reviews
+      attention3=40
+      passation3=55
+      titre3=Review
+  nom3= es el nombre mostrado (24 caracteres como máximo; sin él: «Grupo 3»). attention3= y
+  passation3= son la atención y el relevo (de 10 a 95; 70 y 80 si no escribes nada). titre3= es el
+  comienzo de un título; groupe3= es el nombre de una carpeta de trabajo, escrito exactamente. Una
+  línea por cada comienzo de título o por cada carpeta. Una conversación se coloca primero por su
+  título, luego por su carpeta y solo después en los dos grupos de la pantalla. El comienzo de un
+  título cuenta por palabras enteras, en mayúsculas o minúsculas: debe seguirle un espacio o
+  terminar ahí el título («Review» reconoce «Review of the plan», no «Review: plan» ni «Reviews»).
+  La etiqueta de una línea de estos grupos no admite clic. AJUSTES no los muestra; el programa
+  conserva tus líneas cuando reescribe el archivo. «Restablecer» las borra; «Mantener un solo
+  grupo» las oculta sin borrarlas. Lo que escribes ahí (nombres de grupos, de carpetas, comienzos
+  de título) se queda en ese archivo, en tu PC.
 - Un punto parpadeante en el botón «Conversaciones», visible también en la pantalla Semana: rosa en
   el relevo, ámbar en la atención. Sin sonido ni notificación de Windows.
 - Las tres tarjetas de la pantalla Semana animan sus cifras al abrir y en cada actualización. Para
@@ -53,8 +78,8 @@ Una conversación inactiva desde hace más de 30 minutos se pliega bajo «+ n m�
   tokens, nombre de la carpeta), más el título de cada conversación tal como lo muestra la app de Claude (para nombrarla en la
   lista; leído en los archivos que ya se leen, guardado en la memoria mientras se muestra, nunca
   escrito ni enviado); el texto de un mensaje nunca se guarda, ni se escribe ni se envía. Las ejecuciones programadas y los
-  subagentes se descartan. El tamaño de la ventana no está escrito en ningún archivo: el porcentaje
-  es aproximado (≈); si hace falta, ajusta la ventana correcta por modelo en AJUSTES. Si Claude
+  subagentes se descartan. La capacidad de una conversación no está escrita en ningún archivo: el porcentaje
+  es aproximado (≈); si hace falta, ajusta la capacidad correcta por modelo en AJUSTES. Si Claude
   cambia el formato de sus archivos, la lista lo dice en lugar de mostrar cifras falsas.
   La lista se basa en el último mensaje de Claude, no en el estado de la ventana: una conversación archivada o cerrada sigue apareciendo mientras su último mensaje tenga menos de 24 h (ócultala con ✕); una conversación abierta pero sin mensajes desde hace más de 24 h no aparece (vuelve en cuanto Claude responde en ella).
   Límites: si Claude cambia el tipo de sus líneas, o si sus respuestas ya no se encuentran, la lista
@@ -73,14 +98,40 @@ CONVIENE SABER
   actualicen. La ventana de Conso Token puede cerrarse: vuelve a abrirla con doble clic.
 - Si mueves la carpeta, la tarea ya no encontrará el programa: da a Claude de nuevo la frase del
   paso 2 con la nueva ruta.
-- La tarea «conso-token-feed» (sección «Programadas») gasta un poco de tu plan, como cualquier
-  tarea: está incluido en las cifras. Si la borras, las cifras dejan de actualizarse. Cada
-  ejecución se archiva sola: es normal ver sesiones «Conso Token feed» en los archivos.
-- Para parar todo: borra esa tarea y luego la carpeta Conso Token.
+- La tarea aparece con el título «Conso Token feed» (su identificador es conso-token-feed), en la
+  sección de tareas programadas de la barra izquierda («Scheduled») o en «Routines», en la pestaña
+  «Code», según la versión de tu app de Claude (los nombres pueden aparecer de otra forma en tu
+  idioma). Gasta un poco de tu plan, como cualquier tarea: está incluido en las cifras. Si la
+  borras, las cifras dejan de actualizarse. Cada ejecución se archiva sola: es normal ver sesiones
+  «Conso Token feed» en los archivos.
 - Los datos están en C:\Users\<tu nombre>\AppData\Local\ConsoToken.
 - Puedes cambiar el idioma con el botón de arriba a la derecha de la ventana.
 - Las licencias (fuentes y Slint) están en la carpeta «licences».
+- Para actualizar desde una versión anterior: cierra la ventana, sustituye TODA la carpeta y vuelve
+  a dar a Claude la frase del paso 2. Tu carpeta de datos se conserva.
+
+CÓMO QUITARLO
+1. Cierra la ventana de Conso Token.
+2. Borra la tarea «Conso Token feed» (conso-token-feed) en la app de escritorio de Claude (tareas
+   programadas, o «Routines» en la pestaña «Code»). Borrar solo la carpeta no basta: la tarea
+   seguiría abriendo una sesión corta cada 15 minutos, que no enviaría nada y gastaría igualmente
+   un poco de tu plan.
+3. Solo si se añadió una línea de estado de Claude Code que lanza Conso Token (la instalación del
+   paso 2 nunca añade ninguna): está en el archivo settings.json de C:\Users\<tu nombre>\.claude,
+   en la parte «statusLine» que contiene «conso_token.exe --pont». Haz antes una copia del
+   archivo. Si no hay nada después de «--pont», quita esa parte «statusLine». Si contiene
+   «--suite» seguido de otro comando, es la línea de estado que tenías antes: conserva
+   «statusLine» y deja en su «command» solo el comando que sigue a «--suite». No toques nada más.
+4. Borra la carpeta Conso Token.
+5. Opcional: para borrar también tus ajustes y el historial de tus cifras, borra la carpeta de
+   datos C:\Users\<tu nombre>\AppData\Local\ConsoToken.
+Claude funciona igual sin Conso Token.
 
 SI NO LLEGA NADA
-Abre «outils\dernier_envoi.txt» (en la carpeta Conso Token) con el Bloc de notas y di a quien te
-dio la aplicación lo que contiene (o que no existe), con una captura de la ventana.
+Espera de 15 a 20 minutos después de la instalación, con la app de escritorio de Claude abierta.
+¿Sigue sin llegar nada? En el Explorador de archivos, haz clic en la barra de direcciones, escribe
+%USERPROFILE%\AppData\Local\ConsoToken y pulsa Intro; luego abre dernier_envoi.txt con el Bloc de
+notas (ruta completa: %USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt). Ya no está en la
+carpeta «outils». Un envío correcto lleva «rc=0» en esa línea. Di a quien te dio la aplicación lo
+que contiene (o que no existe), con una captura de la ventana. Si nunca llega nada, puedes quitar
+la aplicación como se explica más arriba.

@@ -9,8 +9,9 @@ pede nenhuma senha.
 
 DO QUE VOCÊ PRECISA
 - Windows 10 ou 11. Nada mais para instalar.
-- O aplicativo de computador do Claude (onde você usa o Claude Code) com um plano Pro ou Max:
-  os números do plano não existem para os outros planos.
+- O aplicativo de computador do Claude (onde você usa o Claude Code) com um plano pago do Claude
+  cujos números de uso o app forneça: alguns planos não os fornecem. O Conso Token só foi testado
+  com um plano.
 
 INSTALAÇÃO (10 minutos, uma única vez)
 1. Coloque a pasta "Conso Token" que você recebeu em uma unidade do seu computador (por exemplo
@@ -31,19 +32,41 @@ INSTALAÇÃO (10 minutos, uma única vez)
    rede. Se o passo 2 funcionou, a janela já mostra os seus números. Se não, ela diz "Nenhum
    número recebido ainda": avise quem lhe deu o aplicativo.
 
-NOVO NA 1.3.0: A ABA CONVERSAS
+A ABA CONVERSAS (DESDE A 1.3.0) E O QUE VEIO DEPOIS
+Versão 1.3.8. Novidades desde a 1.3.4: os grupos 3 a 8 escritos à mão (veja abaixo); o registro de
+envio passou para a pasta de dados; palavras mais simples em algumas telas, nos oito idiomas.
 Ao lado de "Semana", a aba "Conversas" mostra cada conversa do Claude Code das últimas 24 horas: o
-quanto o contexto dela está cheio (aproximado, ≈) e quanto falta para a transferência, o momento de
+quanto ela está cheia (o contexto dela; aproximado, ≈) e quanto falta para a transferência, o momento de
 continuar numa conversa nova. Numa barra, a marca creme é a transferência e o tracejado é a atenção;
-"resumida" quer dizer que o Claude compactou essa conversa (transferência imediata). Uma conversa
+"resumida" quer dizer que o Claude resumiu essa conversa para encurtá-la (transferência imediata). Uma conversa
 parada há mais de 30 minutos fica recolhida em "+ n outras".
 - No início: um só grupo, atenção em 70%, transferência em 80%. O botão AJUSTES abre uma janela:
   separar em dois grupos (você digita os nomes; um clique na etiqueta de uma linha muda então a pasta
-  inteira de grupo), dois controles deslizantes de limite com uma barra de teste, a janela de
-  contexto por modelo (Auto, 200 000 ou 1 000 000), o ponto piscante, os números animados. Tudo vale
+  inteira de grupo), dois controles deslizantes de limite com uma barra de teste, "Capacidade de uma
+  conversa, por modelo" (Auto, 200 000 ou 1 000 000), o ponto piscante, os números animados. Tudo vale
   na hora e fica guardado em conversations.txt, na pasta de dados. "Restaurar" volta aos valores
   iniciais (pede um segundo clique para confirmar).
-- Na primeira vez que você abre a aba, uma janela pergunta se você quer agrupar suas conversas: você marca as pastas do primeiro grupo e dá os nomes aos grupos (só os nomes são digitados). O botão "Escolher grupos…" (no alto, à direita da aba Conversas, e em AJUSTES) a abre de novo a qualquer momento, quantas vezes você quiser: voltar a um só grupo, renomear os grupos, desmarcar tudo. Nada se perde: a escolha fica guardada em conversations.txt.
+- Na primeira vez que você está na aba e há conversas para propor, uma janela pergunta se você quer agrupá-las (ela só abre sozinha uma vez): você marca as pastas do primeiro grupo e dá os nomes aos grupos (só os nomes são digitados). O botão "Escolher grupos…" (no alto, à direita da aba Conversas, e em AJUSTES) a abre de novo a qualquer momento, quantas vezes você quiser: voltar a um só grupo, renomear os grupos, desmarcar tudo. Nada se perde: a escolha fica guardada em conversations.txt.
+- MAIS DE DOIS GRUPOS (desde a 1.3.5), escritos à mão: os grupos 3 a 8, cada um com seus níveis.
+  Primeiro marque "Separar em dois grupos" em AJUSTES (esses grupos só aparecem com a caixa
+  marcada). Feche a janela do Conso Token (aberta, ela reescreve o arquivo a partir da memória, e
+  a sua alteração se perde). Abra conversations.txt, na pasta de dados, com o Bloco de Notas,
+  acrescente linhas no fim e salve em UTF-8. O número do grupo termina cada palavra, em
+  minúsculas; por exemplo:
+      nom3=Reviews
+      attention3=40
+      passation3=55
+      titre3=Review
+  nom3= é o nome mostrado (24 caracteres no máximo; sem ele: "Grupo 3"). attention3= e passation3=
+  são a atenção e a transferência (de 10 a 95; 70 e 80 se você não escrever nada). titre3= é o
+  começo de um título; groupe3= é o nome de uma pasta de trabalho, escrito exatamente. Uma linha
+  por começo de título ou por pasta. A conversa é colocada primeiro pelo título, depois pela pasta
+  e só então nos dois grupos da tela. O começo de um título conta por palavras inteiras, com
+  maiúsculas ou minúsculas: depois dele deve vir um espaço ou o título deve acabar ali ("Review"
+  reconhece "Review of the plan", não "Review: plan" nem "Reviews"). A etiqueta de uma linha
+  desses grupos não aceita clique. AJUSTES não os mostra; o programa mantém as suas linhas quando
+  reescreve o arquivo. "Restaurar" as apaga; "Manter um só grupo" as esconde sem apagar. O que
+  você escreve ali (nomes de grupos, de pastas, começos de título) fica nesse arquivo, no seu PC.
 - Um ponto piscante no botão "Conversas", visível também na tela Semana: rosa na transferência,
   âmbar na atenção. Sem som e sem notificação do Windows.
 - Os três cartões da tela Semana animam seus números ao abrir e a cada atualização. Para parar: a
@@ -51,9 +74,9 @@ parada há mais de 30 minutos fica recolhida em "+ n outras".
 - Um ✕ à direita de cada linha oculta a conversa: a linha some da lista, do "+ n outras" e do ponto piscante, mesmo que chegue uma nova mensagem (útil para uma conversa arquivada ou de teste). Basta um clique. AJUSTES mostra "n conversas ocultas" com um botão "Mostrar novamente" (só se houver alguma); "Restaurar" não mexe nelas. Quando você oculta uma conversa com ✕, o app grava o identificador de sessão dessa conversa (um simples código, nem o título nem o conteúdo) na sua pasta de dados (conversations.txt) para que ela continue oculta; ele é esquecido quando a última mensagem tem mais de 24 h, ou assim que você clica em "Mostrar novamente".
 - Só contadores são guardados dos arquivos do Claude Code deste PC (data, modelo, número de tokens, nome
   da pasta) e o título de cada conversa como o app do Claude o mostra (para nomeá-la na lista; lido nos
-  arquivos que já são lidos, mantido na memória enquanto é exibido, nunca gravado nem enviado); o texto de uma mensagem nunca é guardado, gravado nem enviado. As execuções agendadas e os subagentes ficam de fora. O
-  tamanho da janela não está escrito em nenhum arquivo: a porcentagem é aproximada (≈); se precisar,
-  ajuste a janela certa por modelo em AJUSTES. Se o Claude mudar o formato dos arquivos, a lista avisa
+  arquivos que já são lidos, mantido na memória enquanto é exibido, nunca gravado nem enviado); o texto de uma mensagem nunca é guardado, gravado nem enviado. As execuções agendadas e os subagentes ficam de fora. A
+  capacidade de uma conversa não está escrita em nenhum arquivo: a porcentagem é aproximada (≈); se
+  precisar, ajuste a capacidade certa por modelo em AJUSTES. Se o Claude mudar o formato dos arquivos, a lista avisa
   em vez de mostrar números errados.
   A lista se baseia na última mensagem do Claude, não no estado da janela: uma conversa arquivada ou fechada continua aparecendo enquanto sua última mensagem tiver menos de 24 h (oculte-a com ✕); uma conversa aberta, mas sem mensagem há mais de 24 h, não aparece (ela volta assim que o Claude responde nela).
   Limites: se o Claude mudar o tipo das suas linhas, ou se as respostas dele deixarem de ser
@@ -74,15 +97,40 @@ BOM SABER
   conso_token.exe.
 - Se você mudar a pasta de lugar, a tarefa deixa de encontrar o programa: dê ao Claude de novo a
   frase do passo 2 com o novo caminho.
-- A tarefa "conso-token-feed" (seção "Agendadas" da barra lateral esquerda) gasta ela mesma um
-  pouco do plano, como qualquer tarefa: isso já está incluído nos números. Se você a apagar, os
-  números deixam de ser atualizados. Cada execução se arquiva sozinha no fim: é normal ver sessões
-  "Conso Token feed" nos arquivos.
-- Para parar tudo: apague essa tarefa e depois a pasta Conso Token.
+- A tarefa aparece com o título "Conso Token feed" (o identificador dela é conso-token-feed), na
+  seção de tarefas agendadas da barra lateral esquerda ("Scheduled") ou em "Routines", na aba
+  "Code", conforme a versão do seu app do Claude (os nomes podem aparecer de outra forma no seu
+  idioma). Ela gasta um pouco do plano, como qualquer tarefa: isso já está incluído nos números.
+  Se você a apagar, os números deixam de ser atualizados. Cada execução se arquiva sozinha no fim:
+  é normal ver sessões "Conso Token feed" nos arquivos.
 - Os dados ficam em C:\Users\<seu nome>\AppData\Local\ConsoToken.
 - Você pode trocar o idioma com o botão no canto superior direito da janela.
 - As licenças (fontes e Slint) estão na pasta "licences".
+- Para atualizar de uma versão anterior: feche a janela, substitua a pasta INTEIRA e dê ao Claude
+  de novo a frase do passo 2. A sua pasta de dados é mantida.
+
+COMO REMOVER
+1. Feche a janela do Conso Token.
+2. Apague a tarefa "Conso Token feed" (conso-token-feed) no app do Claude para computador (tarefas
+   agendadas, ou "Routines" na aba "Code"). Apagar só a pasta não basta: a tarefa continuaria
+   abrindo uma sessão curta a cada 15 minutos, que não enviaria nada e mesmo assim gastaria um
+   pouco do seu plano.
+3. Só se foi adicionada uma linha de status do Claude Code que roda o Conso Token (a instalação do
+   passo 2 nunca adiciona uma): ela está no arquivo settings.json de C:\Users\<seu nome>\.claude,
+   no trecho "statusLine" que contém "conso_token.exe --pont". Antes, faça uma cópia do arquivo.
+   Se não houver nada depois de "--pont", remova esse trecho "statusLine". Se ele tiver "--suite"
+   seguido de outro comando, essa é a linha de status que você tinha antes: mantenha "statusLine"
+   e deixe no "command" dele só o comando que vem depois de "--suite". Não mexa em mais nada.
+4. Apague a pasta Conso Token.
+5. Opcional: para apagar também os seus ajustes e o histórico dos seus números, apague a pasta de
+   dados C:\Users\<seu nome>\AppData\Local\ConsoToken.
+O Claude funciona igual sem o Conso Token.
 
 SE NADA CHEGAR
-Abra "outils\dernier_envoi.txt" (na pasta Conso Token) com o Bloco de Notas e diga a quem lhe deu
-o aplicativo o que ele contém (ou que não existe), com uma captura da janela.
+Aguarde de 15 a 20 minutos depois da instalação, com o app do Claude para computador aberto. Ainda
+nada? No Explorador de Arquivos, clique na barra de endereços, digite
+%USERPROFILE%\AppData\Local\ConsoToken e pressione Enter; depois abra dernier_envoi.txt com o Bloco
+de Notas (caminho completo: %USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt). Ele não fica
+mais na pasta "outils". Um envio que deu certo traz "rc=0" nessa linha. Diga a quem lhe deu o
+aplicativo o que o arquivo contém (ou que ele não existe), com uma captura da janela. Se nada
+chegar nunca, você pode remover o aplicativo como explicado acima.

@@ -12,6 +12,11 @@
 //! (`masquee=<identifiant>`, un par ligne) : lui seul, jamais le titre, le nom du dossier ni le contenu. Il est oublié
 //! quand la conversation sort de la fenêtre des 24 h, ou quand on clique « Réafficher ».
 //!
+//! Depuis la 1.3.5, le fichier peut aussi décrire des MAISONS en plus des deux groupes de l'écran (groupes 3 à 8) :
+//! `nom3=`, `attention3=`, `passation3=`, `groupe3=<dossier>` (une ligne par dossier) et `titre3=<début de titre>` (une ligne
+//! par début). Elles se rédigent à la main ; l'appli les relit, les garde et les réécrit telles quelles (voir `Maison`).
+//! Un fichier sans maison se lit et se réécrit exactement comme avant.
+//!
 //! Un second fichier, `contextes_vus.txt`, garde le plus grand contexte vu pour chaque modèle : il
 //! sert à la fenêtre « Auto » (un modèle qui a déjà dépassé 200 000 tokens a une fenêtre d'1 M).
 
@@ -24,6 +29,8 @@ pub const SEUIL_MIN: u8 = 10;
 pub const SEUIL_MAX: u8 = 95;
 /// Longueur maximale d'un nom de groupe tapé à la main (en caractères).
 pub const NOM_MAX: usize = 24;
+/// Le plus grand numéro de groupe qu'on peut écrire dans le fichier : les deux groupes de l'écran, plus les maisons 3 à 8.
+pub const GROUPE_MAX: usize = 8;
 pub const FENETRE_PETITE: u64 = 200_000;
 pub const FENETRE_GRANDE: u64 = 1_000_000;
 
@@ -97,6 +104,45 @@ impl ChoixFenetre {
     }
 }
 
+/// Une MAISON : un groupe de plus que les deux de l'écran (groupe 3 et suivants), écrit à la main dans `conversations.txt`,
+/// avec ses propres seuils. Une conversation y entre par le DÉBUT DE SON TITRE (`titres`) ou, à défaut, par son dossier
+/// (`dossiers`) ; le titre l'emporte sur le dossier (voir `suivi::groupe_de`). Aucune maison n'est écrite dans le programme :
+/// tout vient du fichier. L'écran Config ne les montre pas ; il ne les modifie pas non plus.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Maison {
+    /// Le numéro écrit dans le fichier (3 à `GROUPE_MAX`) : `nom3`, `attention3`, `passation3`, `groupe3`, `titre3`.
+    pub numero: usize,
+    /// Nom tapé à la main ; vide = « Groupe 3 », traduit.
+    pub nom: String,
+    pub seuils: Seuils,
+    /// Les dossiers de travail (dernier segment, comme `groupe1`) qui entrent dans cette maison.
+    pub dossiers: Vec<String>,
+    /// Les débuts de titre qui font entrer une conversation dans cette maison.
+    pub titres: Vec<String>,
+}
+
+impl Maison {
+    fn vide(numero: usize) -> Maison {
+        Maison { numero, nom: String::new(), seuils: Seuils::DEFAUT, dossiers: Vec::new(), titres: Vec::new() }
+    }
+
+    /// Le titre d'une conversation (déjà nettoyé pour l'affichage) commence-t-il par l'un des débuts de cette maison ?
+    /// Sans tenir compte de la casse, et suivi d'une espace ou de la fin du titre : `Pilote` reconnaît « Pilote 3 » et
+    /// « pilote », pas « Pilotes 3 », « Pilote-bis » ni « Le pilote ». Un titre qui se ferait prendre pour une maison à tort
+    /// serait lu avec des seuils trop tardifs : on préfère ne pas le reconnaître.
+    pub fn reclame_titre(&self, titre: &str) -> bool {
+        let titre = titre.trim().to_lowercase();
+        self.titres.iter().any(|debut| {
+            let debut = debut.trim().to_lowercase();
+            !debut.is_empty() && titre.strip_prefix(&debut).is_some_and(|suite| suite.is_empty() || suite.starts_with(char::is_whitespace))
+        })
+    }
+
+    pub fn reclame_dossier(&self, dossier: &str) -> bool {
+        self.dossiers.iter().any(|d| d == dossier)
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Reglages {
     /// Deux groupes (décoché : un seul bloc « Tous », les réglages des deux groupes sont gardés).
@@ -106,6 +152,8 @@ pub struct Reglages {
     pub seuils: [Seuils; 2],
     /// Les dossiers du groupe 1 ; tous les autres sont dans le groupe 2.
     pub groupe1: Vec<String>,
+    /// Les maisons ajoutées à la main (groupes 3 et suivants), dans l'ordre de leur numéro. Vide dans les défauts publics.
+    pub maisons: Vec<Maison>,
     /// Fenêtre choisie par modèle (clé : identifiant du modèle, voir `conversations::cle_modele`).
     pub fenetres: BTreeMap<String, ChoixFenetre>,
     pub alerte: bool,
@@ -127,6 +175,7 @@ impl Default for Reglages {
             noms: [String::new(), String::new()],
             seuils: [Seuils::DEFAUT; 2],
             groupe1: Vec::new(),
+            maisons: Vec::new(),
             fenetres: BTreeMap::new(),
             alerte: true,
             animer: true,
@@ -152,21 +201,63 @@ pub fn nom_propre(texte: &str) -> String {
     sans.trim().chars().take(NOM_MAX).collect::<String>().trim_end().to_string()
 }
 
+/// Une liste de mots rognés, sans vide ni doublon, dans l'ordre où ils se présentent.
+fn liste_propre(liste: Vec<String>) -> Vec<String> {
+    let mut vus: Vec<String> = Vec::new();
+    for d in liste {
+        let d = d.trim().to_string();
+        if !d.is_empty() && !vus.contains(&d) {
+            vus.push(d);
+        }
+    }
+    vus
+}
+
+/// Une clé de maison : `nom3`, `attention4`, `passation5`, `groupe6`, `titre7` → (le champ, le numéro). Seuls les numéros
+/// de 3 à `GROUPE_MAX` comptent (1 et 2 sont les groupes de l'écran), écrits sur un seul chiffre.
+fn cle_de_maison(cle: &str) -> Option<(&str, usize)> {
+    let chiffre = cle.chars().last()?;
+    let numero = chiffre.to_digit(10)? as usize;
+    let champ = &cle[..cle.len() - chiffre.len_utf8()];
+    ((3..=GROUPE_MAX).contains(&numero) && matches!(champ, "nom" | "attention" | "passation" | "groupe" | "titre")).then_some((champ, numero))
+}
+
 impl Reglages {
+    /// Combien de groupes la page Conversations montre : un seul sans séparation ; avec, les deux de l'écran et les maisons.
+    pub fn nb_groupes(&self) -> usize {
+        if self.separer { 2 + self.maisons.len() } else { 1 }
+    }
+
+    /// Les seuils du groupe `i` (0 et 1 : les deux de l'écran ; 2 et plus : les maisons, dans l'ordre). Un numéro trop grand
+    /// donne ceux du groupe 2.
+    pub fn seuils_du_groupe(&self, i: usize) -> Seuils {
+        match i {
+            0 | 1 => self.seuils[i],
+            _ => self.maisons.get(i - 2).map_or(self.seuils[1], |m| m.seuils),
+        }
+    }
+
     /// Ramène toutes les valeurs dans leurs bornes et nettoie les listes.
     pub fn normalise(mut self) -> Reglages {
         for i in 0..2 {
             self.seuils[i] = self.seuils[i].normalise();
             self.noms[i] = nom_propre(&self.noms[i]);
         }
-        let mut vus = Vec::new();
-        for d in self.groupe1.drain(..) {
-            let d = d.trim().to_string();
-            if !d.is_empty() && !vus.contains(&d) {
-                vus.push(d);
+        self.groupe1 = liste_propre(std::mem::take(&mut self.groupe1));
+        // les maisons : numéro entre 3 et GROUPE_MAX, une seule fois, rangées par numéro ; seuils bornés, nom nettoyé
+        let mut maisons: Vec<Maison> = Vec::new();
+        for mut m in self.maisons.drain(..) {
+            if !(3..=GROUPE_MAX).contains(&m.numero) || maisons.iter().any(|x| x.numero == m.numero) {
+                continue;
             }
+            m.seuils = m.seuils.normalise();
+            m.nom = nom_propre(&m.nom);
+            m.dossiers = liste_propre(std::mem::take(&mut m.dossiers));
+            m.titres = liste_propre(std::mem::take(&mut m.titres));
+            maisons.push(m);
         }
-        self.groupe1 = vus;
+        maisons.sort_by_key(|m| m.numero);
+        self.maisons = maisons;
         // les conversations masquées : sans doublon, sans vide, sans identifiant qui ne tiendrait pas sur une ligne
         let mut masquees: Vec<String> = Vec::new();
         for m in self.masquees.drain(..) {
@@ -203,8 +294,9 @@ impl Reglages {
         self.masquees.clear();
     }
 
-    /// « Rétablir » : les réglages de départ, mais l'accueil déjà vu ne revient pas et les conversations masquées RESTENT
-    /// masquées (« Réafficher » est un bouton à part, dans Config).
+    /// « Rétablir » : les réglages de départ (les maisons écrites à la main s'en vont avec le reste, comme la liste du groupe 1),
+    /// mais l'accueil déjà vu ne revient pas et les conversations masquées RESTENT masquées (« Réafficher » est un bouton à
+    /// part, dans Config).
     pub fn retablir(&mut self) {
         let (vu, masquees) = (self.accueil_vu, std::mem::take(&mut self.masquees));
         *self = Reglages::default();
@@ -275,6 +367,19 @@ impl Reglages {
         for d in &self.groupe1 {
             s.push_str(&format!("groupe1={d}\n"));
         }
+        // les maisons ajoutées à la main (rien du tout sans maison : le fichier reste ce qu'il était avant la 1.3.5)
+        for m in &self.maisons {
+            let n = m.numero;
+            s.push_str(&format!("nom{n}={}\n", m.nom));
+            s.push_str(&format!("attention{n}={}\n", m.seuils.attention));
+            s.push_str(&format!("passation{n}={}\n", m.seuils.passation));
+            for d in &m.dossiers {
+                s.push_str(&format!("groupe{n}={d}\n"));
+            }
+            for t in &m.titres {
+                s.push_str(&format!("titre{n}={t}\n"));
+            }
+        }
         for (modele, choix) in &self.fenetres {
             s.push_str(&format!("fenetre.{modele}={}\n", choix.ecrit()));
         }
@@ -292,6 +397,7 @@ impl Reglages {
         let mut r = Reglages::default();
         let mut groupe1 = Vec::new();
         let mut masquees = Vec::new();
+        let mut maisons: BTreeMap<usize, Maison> = BTreeMap::new();
         let booleen = |v: &str| match v.trim().to_lowercase().as_str() {
             "1" | "oui" | "true" | "yes" | "on" => Some(true),
             "0" | "non" | "false" | "no" | "off" => Some(false),
@@ -323,11 +429,21 @@ impl Reglages {
                         if let Some(c) = ChoixFenetre::lu(valeur) {
                             r.fenetres.insert(modele.trim().to_string(), c);
                         }
+                    } else if let Some((champ, numero)) = cle_de_maison(cle) {
+                        let m = maisons.entry(numero).or_insert_with(|| Maison::vide(numero));
+                        match champ {
+                            "nom" => m.nom = valeur.to_string(),
+                            "attention" => m.seuils.attention = seuil(valeur).unwrap_or(m.seuils.attention),
+                            "passation" => m.seuils.passation = seuil(valeur).unwrap_or(m.seuils.passation),
+                            "groupe" => m.dossiers.push(valeur.to_string()),
+                            _ => m.titres.push(valeur.to_string()),
+                        }
                     }
                 }
             }
         }
         r.groupe1 = groupe1;
+        r.maisons = maisons.into_values().collect();
         r.masquees = masquees;
         r.normalise()
     }
@@ -389,6 +505,7 @@ mod tests {
             noms: ["Leads".into(), "Fils".into()],
             seuils: [Seuils { attention: 50, passation: 60 }, Seuils { attention: 40, passation: 50 }],
             groupe1: vec!["projet-a".into(), "projet-b".into()],
+            maisons: Vec::new(),
             fenetres: BTreeMap::from([("claude-opus-5-5".to_string(), ChoixFenetre::Grande), ("claude-haiku-5-5".to_string(), ChoixFenetre::Petite)]),
             alerte: false,
             animer: false,
@@ -648,5 +765,107 @@ mod tests {
         assert_eq!(lire_vus(&d), m);
         std::fs::write(d.join("contextes_vus.txt"), "abc\nclaude-x=oups\n=5\nclaude-y=7\n").unwrap();
         assert_eq!(lire_vus(&d), BTreeMap::from([("claude-y".to_string(), 7)]));
+    }
+
+    // ------------------------------------------------------------ les maisons (1.3.5)
+
+    /// Le fichier d'un utilisateur d'avant la 1.3.5 : lu comme avant (aucune maison), réécrit à l'identique, octet pour octet.
+    #[test]
+    fn un_fichier_d_avant_la_1_3_5_se_relit_et_se_reecrit_a_l_identique() {
+        let ancien = "# Conso Token : réglages de la page Conversations (modifiable à la main)\nseparer=1\nnom1=Leads\nattention1=50\npassation1=55\n\
+nom2=Fils\nattention2=40\npassation2=45\ngroupe1=projet-a\ngroupe1=projet-b\nfenetre.claude-opus-5-5=1000000\nmasquee=aaaa-1111\n\
+masquee=bbbb-2222\nalerte=1\nanimer=1\naccueil=1\n";
+        let r = Reglages::depuis_texte(ancien);
+        assert!(r.maisons.is_empty());
+        assert_eq!(r.nb_groupes(), 2);
+        assert_eq!(r.en_texte(), ancien, "aucune ligne de maison n'apparaît quand il n'y en a pas");
+        // et les défauts publics n'en ont pas non plus
+        assert!(Reglages::default().maisons.is_empty());
+        assert!(!Reglages::default().en_texte().contains("titre"));
+    }
+
+    #[test]
+    fn les_maisons_se_lisent_et_font_l_aller_retour() {
+        // la maison 4 est écrite AVANT la maison 3 : elles sont rangées par numéro
+        let texte = "separer=1\nnom1=Leads\nattention1=50\npassation1=55\nnom2=Fils\nattention2=40\npassation2=45\ngroupe1=d1\n\
+nom4=Quatre\nattention4=40\npassation4=45\ngroupe4=d4\ngroupe4=d5\ntitre4=Fil\n\
+nom3=Trois\nattention3=50\npassation3=55\ntitre3=Chef\ntitre3=Chef adjoint\n";
+        let r = Reglages::depuis_texte(texte);
+        assert_eq!(r.maisons.iter().map(|m| m.numero).collect::<Vec<_>>(), [3, 4]);
+        let (m3, m4) = (&r.maisons[0], &r.maisons[1]);
+        assert_eq!((m3.nom.as_str(), m3.seuils), ("Trois", Seuils { attention: 50, passation: 55 }));
+        assert_eq!((m3.titres.clone(), m3.dossiers.clone()), (vec!["Chef".to_string(), "Chef adjoint".to_string()], Vec::<String>::new()));
+        assert_eq!((m4.nom.as_str(), m4.seuils), ("Quatre", Seuils { attention: 40, passation: 45 }));
+        assert_eq!((m4.titres.clone(), m4.dossiers.clone()), (vec!["Fil".to_string()], vec!["d4".to_string(), "d5".to_string()]));
+        // les groupes de l'écran ne bougent pas
+        assert_eq!((r.groupe1.clone(), r.seuils, r.noms.clone()), (vec!["d1".to_string()], [Seuils { attention: 50, passation: 55 }, Seuils { attention: 40, passation: 45 }], ["Leads".to_string(), "Fils".to_string()]));
+        // le nombre de groupes et les seuils de chacun : 0 et 1 sont ceux de l'écran, 2 et 3 ceux des maisons
+        assert_eq!(r.nb_groupes(), 4);
+        assert_eq!((r.seuils_du_groupe(0), r.seuils_du_groupe(1)), (r.seuils[0], r.seuils[1]));
+        assert_eq!((r.seuils_du_groupe(2), r.seuils_du_groupe(3)), (m3.seuils, m4.seuils));
+        assert_eq!(r.seuils_du_groupe(9), r.seuils[1], "un numéro trop grand : les seuils du groupe 2");
+        // aller-retour par le texte, puis par le fichier : rien ne se perd quand l'appli réécrit le fichier
+        assert_eq!(Reglages::depuis_texte(&r.en_texte()), r);
+        let d = dossier("maisons");
+        assert!(ecrire(&d, &r));
+        assert_eq!(lire(&d), r);
+        let ecrit = std::fs::read_to_string(d.join("conversations.txt")).unwrap();
+        for ligne in ["nom3=Trois\n", "passation3=55\n", "titre3=Chef adjoint\n", "groupe4=d5\n", "titre4=Fil\n"] {
+            assert!(ecrit.contains(ligne), "{ligne} manque : {ecrit}");
+        }
+        // un autre réglage qui change (masquer, fenêtre) réécrit le fichier : les maisons y restent
+        let mut autre = r.clone();
+        autre.masquer("zz");
+        autre.fixer_fenetre("claude-opus-5-5", ChoixFenetre::Grande);
+        assert_eq!(Reglages::depuis_texte(&autre.en_texte()).maisons, r.maisons);
+        // sans séparation : un seul groupe montré, mais les maisons restent rangées (elles reviennent avec « deux groupes »)
+        let mut seul = r.clone();
+        seul.appliquer_choix_groupes(false, Vec::new(), [String::new(), String::new()]);
+        assert_eq!(seul.nb_groupes(), 1);
+        assert_eq!(Reglages::depuis_texte(&seul.en_texte()).maisons, r.maisons);
+        // « Rétablir » remet les réglages de départ : les maisons s'en vont avec le reste
+        let mut rien = r.clone();
+        rien.retablir();
+        assert!(rien.maisons.is_empty());
+    }
+
+    #[test]
+    fn les_cles_de_maison_hors_numero_sont_ignorees_et_les_valeurs_abimees_gardent_le_defaut() {
+        let r = Reglages::depuis_texte(
+            "groupe2=zzz\ntitre1=t\ntitre2=u\nnom9=neuf\nnom0=zero\nnom10=dix\nnom3x=q\nnouveau3=q\ntitre=t\n\
+attention3=5\npassation3=99\nattention5=90\npassation5=30\nattention6=abc\npassation6=999\n\
+groupe7=\ngroupe7= a \ngroupe7=a\ntitre7=\ntitre7= Pilote \ntitre7=Pilote\nnom8=e\u{7}é\n",
+        );
+        // ni les numéros 0, 1, 2, 9 ou 10, ni un champ inconnu, ni une clé sans numéro ne créent de groupe ou ne touchent aux deux de l'écran
+        assert_eq!(r.maisons.iter().map(|m| m.numero).collect::<Vec<_>>(), [3, 5, 6, 7, 8]);
+        assert!(r.groupe1.is_empty() && r.noms == [String::new(), String::new()]);
+        let seuils = |n: usize| r.maisons.iter().find(|m| m.numero == n).unwrap().seuils;
+        assert_eq!(seuils(3), Seuils { attention: 10, passation: 95 }, "bornes 10 à 95");
+        assert_eq!(seuils(5), Seuils { attention: 30, passation: 30 }, "l'attention ne dépasse pas la passation");
+        assert_eq!(seuils(6), Seuils::DEFAUT, "une valeur illisible garde le défaut");
+        let m7 = r.maisons.iter().find(|m| m.numero == 7).unwrap();
+        assert_eq!((m7.dossiers.clone(), m7.titres.clone()), (vec!["a".to_string()], vec!["Pilote".to_string()]), "rognés, sans vide ni doublon");
+        assert_eq!(r.maisons.iter().find(|m| m.numero == 8).unwrap().nom, "eé", "un nom est nettoyé comme les autres");
+        // une maison construite à la main avec un numéro qui ne va pas, ou deux fois le même : écartée à la normalisation
+        let faux = Reglages { maisons: vec![Maison::vide(2), Maison::vide(9), Maison::vide(4), Maison::vide(4)], ..Reglages::default() }.normalise();
+        assert_eq!(faux.maisons.iter().map(|m| m.numero).collect::<Vec<_>>(), [4]);
+    }
+
+    #[test]
+    fn un_debut_de_titre_est_un_mot_entier_sans_tenir_compte_de_la_casse() {
+        let m = Maison { titres: vec!["Pilote".into(), "Chef adjoint".into()], ..Maison::vide(3) };
+        for oui in ["Pilote 3", "pilote", "PILOTE 12 : suite", "Pilote\t4", " Pilote 3 ", "chef adjoint 2", "Chef adjoint"] {
+            assert!(m.reclame_titre(oui), "« {oui} » devrait entrer");
+        }
+        // pas un autre mot qui commence pareil, pas un titre qui contient le début ailleurs, pas un titre voisin
+        for non in ["Pilotes 3", "Pilote-bis", "Pilote3", "Le pilote 3", "", "Chef 2", "Chef adjointe", "Pilot"] {
+            assert!(!m.reclame_titre(non), "« {non} » ne devrait PAS entrer");
+        }
+        // un début vide ne reconnaît rien (surtout pas tous les titres)
+        let vide = Maison { titres: vec![String::new(), "  ".into()], ..Maison::vide(3) };
+        assert!(!vide.reclame_titre("n'importe quoi") && !vide.reclame_titre(""));
+        // un dossier se reconnaît par son nom exact, comme ceux du groupe 1
+        let d = Maison { dossiers: vec!["projet-a".into()], ..Maison::vide(3) };
+        assert!(d.reclame_dossier("projet-a") && !d.reclame_dossier("projet-b") && !d.reclame_dossier("Projet-a"));
     }
 }

@@ -552,3 +552,69 @@ fn masquer_une_conversation_de_bout_en_bout() {
     assert!(reglages::ecrire(&donnees, &r));
     assert!(!fs::read_to_string(donnees.join("conversations.txt")).unwrap().contains("masquee"), "le fichier a perdu l'identifiant");
 }
+
+/// Les maisons de bout en bout, sur de FAUX fichiers : un fichier de réglages écrit à la main (deux groupes et deux maisons),
+/// des conversations titrées lues dans de fausses transcriptions ; chacune va dans la maison que le fichier désigne (le titre
+/// avant le dossier) et se lit avec les seuils de cette maison ; le premier ✕ (l'appli réécrit tout le fichier) ne défait
+/// pas les maisons. Noms neutres : rien de propre à un utilisateur.
+#[test]
+fn des_maisons_de_bout_en_bout() {
+    use noyau::reglages;
+    use noyau::suivi::{self, Etat};
+    use std::collections::BTreeMap;
+
+    let racine = dossier("maisons");
+    let donnees = dossier("maisons_donnees");
+    let t = maintenant();
+    // cinq conversations à 52 % de 1 M (1 + 1 + 519 998 = 520 000)
+    let faire = |dossier: &str, session: &str, titre: Option<&str>| {
+        let cwd = format!(r"D:\travail\{dossier}");
+        let mut lignes = vec![utilisateur(t - 400, session, Some("human"))];
+        if let Some(titre) = titre {
+            lignes.push(titre_ligne(session, titre));
+        }
+        lignes.push(assistant(t - 100, session, &cwd, 1, 1, 519_998));
+        ecrire(&racine.join(dossier).join(format!("{session}.jsonl")), &lignes);
+    };
+    faire("equipe", "chef3", Some("Chef 3"));
+    faire("equipe", "aide1", Some("Aide 1"));
+    faire("equipe", "sans1", None);
+    faire("ailleurs", "chef9", Some("chef 9 : suite"));
+    faire("libre", "libre1", Some("Chefs 2"));
+
+    fs::write(
+        donnees.join("conversations.txt"),
+        "separer=1\nnom1=Leads\nattention1=50\npassation1=55\nnom2=Fils\nattention2=40\npassation2=45\ngroupe1=lead\n\
+nom3=Chefs\nattention3=50\npassation3=55\ntitre3=Chef\nnom4=Pilotes\nattention4=40\npassation4=45\ngroupe4=equipe\n",
+    )
+    .unwrap();
+    let mut r = reglages::lire(&donnees);
+    assert_eq!(r.nb_groupes(), 4);
+
+    let convs = lire(&racine);
+    let s = suivi::calculer(&convs, &r, &BTreeMap::new(), maintenant());
+    let sessions = |g: usize| s.groupes[g].lignes.iter().map(|l| l.session.clone()).collect::<Vec<_>>();
+    let mut chefs = sessions(2);
+    chefs.sort();
+    let mut pilotes = sessions(3);
+    pilotes.sort();
+    assert_eq!(chefs, ["chef3", "chef9"], "le titre « Chef » : quel que soit le dossier, et sans tenir compte de la casse");
+    assert_eq!(pilotes, ["aide1", "sans1"], "le dossier « equipe » : la maison 4, avec ou sans titre");
+    assert_eq!(sessions(1), ["libre1"], "« Chefs 2 » n'est pas « Chef » : le groupe 2 de l'écran");
+    assert!(sessions(0).is_empty());
+    // 52 % : attention chez les chefs (50 / 55), passation chez les pilotes et les fils (40 / 45)
+    assert!(s.groupes[2].lignes.iter().all(|l| l.etat == Etat::Attention));
+    assert!(s.groupes[3].lignes.iter().all(|l| l.etat == Etat::Passation));
+    assert_eq!(s.groupes[1].lignes[0].etat, Etat::Passation);
+
+    // l'appli réécrit tout le fichier au premier ✕ : les maisons doivent y rester, et se relire à l'identique
+    assert!(r.masquer("sans1"));
+    assert!(reglages::ecrire(&donnees, &r));
+    let texte = fs::read_to_string(donnees.join("conversations.txt")).unwrap();
+    for ligne in ["nom3=Chefs\n", "titre3=Chef\n", "passation3=55\n", "nom4=Pilotes\n", "groupe4=equipe\n", "masquee=sans1\n"] {
+        assert!(texte.contains(ligne), "{ligne} manque : {texte}");
+    }
+    assert_eq!(reglages::lire(&donnees), r);
+    let s = suivi::calculer(&convs, &reglages::lire(&donnees), &BTreeMap::new(), maintenant());
+    assert_eq!(s.groupes[3].lignes.len(), 1, "la masquée a disparu, les maisons sont restées");
+}

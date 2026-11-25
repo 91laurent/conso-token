@@ -66,7 +66,9 @@ export struct Glyphe {
 // Une ligne de la page « Conversations », déjà mise en forme par le programme (voir noyau/src/suivi.rs).
 // genre : 0 = titre de groupe, 1 = conversation, 2 = message (aucune conversation, lecture impossible),
 // 3 = « + N autres » (conversations repliées). `y` et `h` : place et hauteur de la ligne dans la liste.
-// camp : 0 = premier groupe, 1 = second. etat : 0 = ok, 1 = attention, 2 = passation, 3 = résumée.
+// camp : 0 = premier groupe, 1 = second, 2 et plus = une maison écrite à la main dans conversations.txt (sa place dans la liste
+// des groupes ; son étiquette n'est pas cliquable : le clic ne déplace qu'entre les deux groupes de l'écran).
+// etat : 0 = ok, 1 = attention, 2 = passation, 3 = résumée.
 export struct LigneConv {
     genre: int,
     y: length,
@@ -1083,7 +1085,10 @@ component LigneConversation inherits Rectangle {
                 vertical-alignment: center;
             }
             ta-tag := TouchArea {
-                mouse-cursor: pointer;
+                // une ligne d'une maison (camp 2 et plus) : l'étiquette ne se clique pas (un clic rangerait son dossier dans le
+                // groupe 1 sans que la maison, qui passe avant, en tienne compte)
+                enabled: root.l.camp < 2;
+                mouse-cursor: root.l.camp < 2 ? MouseCursor.pointer : MouseCursor.default;
                 clicked => { root.etiquette-cliquee(root.l.dossier); }
             }
         }

@@ -559,14 +559,14 @@ textes! {
         "データは届きましたが、数値が含まれていません"
     ],
     AccueilSansMessage => [
-        "Conso Token did receive a delivery from the Claude app, but it does not contain your plan’s figures. These figures only exist for Pro and Max plans. Wait for the next delivery (15 minutes): if they never arrive, your plan does not provide them.",
-        "Conso Token a bien reçu un envoi de l’appli Claude, mais il ne contient pas les chiffres de ton forfait. Ces chiffres n’existent que pour les forfaits Pro et Max. Attends le prochain envoi (15 minutes) : s’ils n’arrivent jamais, ton forfait ne les fournit pas.",
-        "Conso Token ha recibido un envío de la app de Claude, pero no contiene las cifras de tu plan. Estas cifras solo existen para los planes Pro y Max. Espera al próximo envío (15 minutos): si nunca llegan, tu plan no las proporciona.",
-        "Conso Token hat zwar eine Sendung der Claude-App erhalten, aber sie enthält nicht die Zahlen deines Abos. Diese Zahlen gibt es nur für die Abos Pro und Max. Warte auf die nächste Sendung (15 Minuten): Kommen sie nie an, liefert dein Abo sie nicht.",
-        "O Conso Token recebeu um envio do app do Claude, mas ele não contém os números do seu plano. Esses números só existem para os planos Pro e Max. Aguarde o próximo envio (15 minutos): se nunca chegarem, o seu plano não os fornece.",
-        "Conso Token ha ricevuto un invio dall’app Claude, ma non contiene i dati del tuo piano. Questi dati esistono solo per i piani Pro e Max. Attendi il prossimo invio (15 minuti): se non arrivano mai, il tuo piano non li fornisce.",
-        "Conso Token 已收到 Claude 应用的一次发送，但其中没有你的套餐数字。这些数字只有 Pro 和 Max 套餐才有。请等待下一次发送（15 分钟）：如果一直没有，说明你的套餐不提供这些数字。",
-        "Conso Token は Claude アプリからのデータを受信しましたが、プランの数値が含まれていません。この数値は Pro と Max プランにのみあります。次の送信（15分後）をお待ちください。いつまでも届かない場合、お使いのプランでは提供されません。"
+        "Conso Token did receive a delivery from the Claude app, but it does not contain your plan’s figures. Some plans do not provide them. Wait for the next delivery (15 minutes): if they never arrive, your plan does not provide them.",
+        "Conso Token a bien reçu un envoi de l’appli Claude, mais il ne contient pas les chiffres de ton forfait. Certains forfaits ne les donnent pas. Attends le prochain envoi (15 minutes) : s’ils n’arrivent jamais, ton forfait ne les fournit pas.",
+        "Conso Token ha recibido un envío de la app de Claude, pero no contiene las cifras de tu plan. Algunos planes no las proporcionan. Espera al próximo envío (15 minutos): si nunca llegan, tu plan no las proporciona.",
+        "Conso Token hat zwar eine Sendung der Claude-App erhalten, aber sie enthält nicht die Zahlen deines Abos. Manche Abos liefern sie nicht. Warte auf die nächste Sendung (15 Minuten): Kommen sie nie an, liefert dein Abo sie nicht.",
+        "O Conso Token recebeu um envio do app do Claude, mas ele não contém os números do seu plano. Alguns planos não os fornecem. Aguarde o próximo envio (15 minutos): se nunca chegarem, o seu plano não os fornece.",
+        "Conso Token ha ricevuto un invio dall’app Claude, ma non contiene i dati del tuo piano. Alcuni piani non li forniscono. Attendi il prossimo invio (15 minuti): se non arrivano mai, il tuo piano non li fornisce.",
+        "Conso Token 已收到 Claude 应用的一次发送，但其中没有你的套餐数字。有些套餐不提供这些数字。请等待下一次发送（15 分钟）：如果一直没有，说明你的套餐不提供这些数字。",
+        "Conso Token は Claude アプリからのデータを受信しましたが、プランの数値が含まれていません。プランによっては、この数値が提供されないことがあります。次の送信（15分後）をお待ちください。いつまでも届かない場合、お使いのプランでは提供されません。"
     ],
     AccueilPremiereTitre => [
         "Conso Token is waiting for its first figures",
@@ -579,14 +579,14 @@ textes! {
         "Conso Token は最初の数値を待っています"
     ],
     AccueilPremiereMessage => [
-        "So far, Conso Token has not received any figures. They arrive on their own, every 15 minutes, as soon as the scheduled task “conso-token-feed” is set up in the Claude desktop app (see the user guide). If it was just created, wait 15 to 20 minutes; the Claude app must stay open.",
-        "Pour l’instant, Conso Token n’a reçu aucun chiffre. Ils arrivent tout seuls, toutes les 15 minutes, dès que la tâche planifiée « conso-token-feed » est en place dans l’appli Claude de bureau (voir le mode d’emploi). Si elle vient d’être créée, patiente 15 à 20 minutes ; l’appli Claude doit rester ouverte.",
-        "Por ahora, Conso Token no ha recibido ninguna cifra. Llegan solas, cada 15 minutos, en cuanto la tarea programada «conso-token-feed» está activa en la app de escritorio de Claude (consulta el manual). Si acaba de crearse, espera de 15 a 20 minutos; la app de Claude debe seguir abierta.",
-        "Bisher hat Conso Token noch keine Zahlen erhalten. Sie kommen von selbst alle 15 Minuten, sobald die geplante Aufgabe „conso-token-feed“ in der Claude-Desktop-App eingerichtet ist (siehe Anleitung). Wurde sie gerade erst erstellt, warte 15 bis 20 Minuten; die Claude-App muss geöffnet bleiben.",
-        "Por enquanto, o Conso Token não recebeu nenhum número. Eles chegam sozinhos, a cada 15 minutos, assim que a tarefa agendada “conso-token-feed” estiver ativa no app do Claude para computador (veja o guia de uso). Se ela acabou de ser criada, aguarde de 15 a 20 minutos; o app do Claude precisa ficar aberto.",
-        "Per ora Conso Token non ha ricevuto alcun dato. Arrivano da soli, ogni 15 minuti, appena l’attività pianificata «conso-token-feed» è attiva nell’app desktop di Claude (vedi le istruzioni). Se è stata appena creata, attendi 15–20 minuti; l’app di Claude deve restare aperta.",
-        "目前 Conso Token 还没有收到任何数字。只要 Claude 桌面应用中设置好计划任务“conso-token-feed”，数字就会每 15 分钟自动送达（见使用说明）。如果任务刚创建，请等待 15 到 20 分钟；Claude 应用必须保持打开。",
-        "現在、Conso Token はまだ数値を受信していません。Claude デスクトップアプリにスケジュールタスク「conso-token-feed」が設定されると、15分ごとに自動で届きます（使い方を参照）。作成したばかりの場合は、15〜20分お待ちください。Claude アプリは開いたままにしておいてください。"
+        "So far, Conso Token has not received any figures. They arrive on their own, every 15 minutes, as long as the Claude desktop app stays open. If the setup has just finished, wait 15 to 20 minutes. Nothing after an hour? Close Conso Token, open the Claude desktop app, wait 20 minutes, then reopen Conso Token. If nothing comes, you can remove it without losing anything: Claude works the same without it (details in README.en.txt).",
+        "Pour l’instant, Conso Token n’a reçu aucun chiffre. Ils arrivent tout seuls, toutes les 15 minutes, tant que l’appli Claude de bureau reste ouverte. Si l’installation vient de se terminer, patiente 15 à 20 minutes. Rien au bout d’une heure ? Ferme Conso Token, ouvre l’appli Claude de bureau, attends 20 minutes, puis rouvre Conso Token. Si rien ne vient, tu peux l’enlever sans rien perdre : Claude marche pareil sans lui (détails dans LISEZ-MOI.fr.txt).",
+        "Por ahora, Conso Token no ha recibido ninguna cifra. Llegan solas, cada 15 minutos, mientras la app de escritorio de Claude siga abierta. Si la instalación acaba de terminar, espera de 15 a 20 minutos. ¿Nada al cabo de una hora? Cierra Conso Token, abre la app de escritorio de Claude, espera 20 minutos y vuelve a abrir Conso Token. Si no llega nada, puedes quitarlo sin perder nada: Claude funciona igual sin él (detalles en LEEME.es.txt).",
+        "Bisher hat Conso Token noch keine Zahlen erhalten. Sie kommen von selbst alle 15 Minuten, solange die Claude-Desktop-App geöffnet bleibt. Wurde die Einrichtung gerade erst abgeschlossen, warte 15 bis 20 Minuten. Nach einer Stunde noch nichts? Schließe Conso Token, öffne die Claude-Desktop-App, warte 20 Minuten und öffne Conso Token dann erneut. Kommt nichts, kannst du es entfernen, ohne etwas zu verlieren: Claude funktioniert ohne es genauso (Näheres in LIESMICH.de.txt).",
+        "Por enquanto, o Conso Token não recebeu nenhum número. Eles chegam sozinhos, a cada 15 minutos, enquanto o app do Claude para computador ficar aberto. Se a instalação acabou de terminar, aguarde de 15 a 20 minutos. Nada depois de uma hora? Feche o Conso Token, abra o app do Claude para computador, aguarde 20 minutos e abra o Conso Token de novo. Se nada chegar, você pode removê-lo sem perder nada: o Claude funciona igual sem ele (detalhes em LEIAME.pt.txt).",
+        "Per ora Conso Token non ha ricevuto alcun dato. Arrivano da soli, ogni 15 minuti, finché l’app desktop di Claude resta aperta. Se l’installazione è appena terminata, attendi 15–20 minuti. Ancora niente dopo un’ora? Chiudi Conso Token, apri l’app desktop di Claude, attendi 20 minuti, poi riapri Conso Token. Se non arriva nulla, puoi rimuoverlo senza perdere niente: Claude funziona allo stesso modo anche senza (dettagli in LEGGIMI.it.txt).",
+        "目前 Conso Token 还没有收到任何数字。只要 Claude 桌面应用保持打开，数字就会每 15 分钟自动送达。如果安装刚刚完成，请等待 15 到 20 分钟。一小时后仍然什么都没有？请关闭 Conso Token，打开 Claude 桌面应用，等待 20 分钟，然后重新打开 Conso Token。如果还是没有，你可以将它删除，不会有任何损失：没有它，Claude 照常工作（详见 说明.zh.txt）。",
+        "現在、Conso Token はまだ数値を受信していません。Claude デスクトップアプリを開いている間は、15分ごとに自動で届きます。インストールが終わったばかりの場合は、15〜20分お待ちください。1時間たっても何も届かない場合は、Conso Token を閉じ、Claude デスクトップアプリを開いて20分待ってから、Conso Token をもう一度開いてください。それでも届かなければ、削除しても何も失われません。Conso Token がなくても Claude は同じように動きます（詳しくは 使い方.ja.txt）。"
     ],
     AccueilNouvelleTitre => [
         "A new week begins",
@@ -656,24 +656,24 @@ textes! {
         "開いている会話"
     ],
     ConvSousTitre => [
-        "context at the last exchange · window ≈ set by model (adjustable in Settings) · hover a long name to scroll it · click a tag to move the whole folder to the other group",
-        "contexte au dernier échange · fenêtre ≈ selon le modèle (réglable dans Config) · le survol d’un nom long le fait défiler · un clic sur l’étiquette change le camp du dossier",
-        "contexto en el último intercambio · ventana ≈ según el modelo (ajustable en Ajustes) · pasa el cursor sobre un nombre largo para verlo entero · un clic en la etiqueta cambia de grupo toda la carpeta",
-        "Kontext beim letzten Austausch · Fenster ≈ je nach Modell (einstellbar unter Optionen) · über einem langen Namen mit der Maus verweilen lässt ihn laufen · ein Klick auf das Kürzel verschiebt den ganzen Ordner in die andere Gruppe",
-        "contexto na última troca · janela ≈ conforme o modelo (ajustável em Ajustes) · passe o mouse sobre um nome longo para vê-lo inteiro · um clique na etiqueta muda a pasta inteira de grupo",
-        "contesto all’ultimo scambio · finestra ≈ secondo il modello (regolabile in Opzioni) · passa il mouse su un nome lungo per farlo scorrere · un clic sull’etichetta sposta tutta la cartella nell’altro gruppo",
-        "上一次交流时的上下文 · 窗口 ≈ 按模型而定（可在“设置”中调整）· 鼠标悬停在长名称上会滚动显示 · 点击标签可将整个文件夹移到另一组",
-        "直近のやり取り時点のコンテキスト · ウィンドウ ≈ モデルごと（「設定」で変更可）· 長い名前にカーソルを乗せるとスクロール · ラベルをクリックするとフォルダごと別のグループへ"
+        "how full each conversation is at the last exchange · capacity ≈ set by model (adjustable in Settings) · hover a long name to scroll it · click a tag to send the whole folder to the other group (not for a hand-written group)",
+        "remplissage de chaque conversation au dernier échange · capacité ≈ selon le modèle (réglable dans Config) · le survol d’un nom long le fait défiler · un clic sur l’étiquette envoie tout le dossier dans l’autre groupe (pas pour un groupe écrit à la main)",
+        "lo llena que está cada conversación en el último intercambio · capacidad ≈ según el modelo (ajustable en Ajustes) · pasa el cursor sobre un nombre largo para verlo entero · un clic en la etiqueta envía toda la carpeta al otro grupo (no para un grupo escrito a mano)",
+        "Füllstand jeder Unterhaltung beim letzten Austausch · Kapazität ≈ je nach Modell (einstellbar unter Optionen) · über einem langen Namen mit der Maus verweilen lässt ihn laufen · ein Klick auf das Kürzel schickt den ganzen Ordner in die andere Gruppe (nicht bei einer von Hand geschriebenen Gruppe)",
+        "quanto cada conversa está cheia na última troca · capacidade ≈ conforme o modelo (ajustável em Ajustes) · passe o mouse sobre um nome longo para vê-lo inteiro · um clique na etiqueta envia a pasta inteira para o outro grupo (não para um grupo escrito à mão)",
+        "quanto è piena ogni conversazione all’ultimo scambio · capacità ≈ secondo il modello (regolabile in Opzioni) · passa il mouse su un nome lungo per farlo scorrere · un clic sull’etichetta manda tutta la cartella nell’altro gruppo (non per un gruppo scritto a mano)",
+        "每个对话在上一次交流时的占用程度 · 容量 ≈ 按模型而定（可在“设置”中调整）· 鼠标悬停在长名称上会滚动显示 · 点击标签可将整个文件夹移到另一组（手写的分组除外）",
+        "直近のやり取り時点での各会話の埋まり具合 · 容量 ≈ モデルごと（「設定」で変更可）· 長い名前にカーソルを乗せるとスクロール · ラベルをクリックするとフォルダごともう一方のグループへ（手書きのグループは除く）"
     ],
     ConvLegende => [
-        "cream mark: hand-off · dotted mark: warning · the bar goes from 0 to 100% of the window · “summarized”: the conversation was compacted (hand-off now)",
-        "trait crème : passation · pointillé : attention · barre de 0 à 100 % de la fenêtre · « résumée » : la conversation a été compactée (passation tout de suite)",
-        "marca crema: relevo · línea de puntos: atención · la barra va del 0 al 100 % de la ventana · «resumida»: la conversación se compactó (relevo inmediato)",
-        "cremefarbene Marke: Übergabe · gepunktete Marke: Achtung · Balken von 0 bis 100 % des Fensters · „zusammengefasst“: die Unterhaltung wurde komprimiert (sofort übergeben)",
-        "marca creme: transferência · tracejado: atenção · a barra vai de 0 a 100% da janela · «resumida»: a conversa foi compactada (transferência imediata)",
-        "segno crema: consegna · tratteggio: attenzione · la barra va da 0 a 100% della finestra · «riassunta»: la conversazione è stata compattata (consegna subito)",
-        "奶油色标记：交接 · 虚线：注意 · 进度条为窗口的 0 到 100% · “已摘要”：对话已被压缩（立即交接）",
-        "クリーム色の線：引き継ぎ · 点線：注意 · バーはウィンドウの0〜100% · 「要約済み」：会話が圧縮されました（すぐに引き継ぎ）"
+        "cream mark: hand-off · dotted mark: warning · the bar goes from empty (0%) to full (100%) · “summarized”: Claude summarized the conversation to shorten it (hand-off now)",
+        "trait crème : passation · pointillé : attention · la barre va de vide (0 %) à pleine (100 %) · « résumée » : Claude a résumé la conversation pour la raccourcir (passation tout de suite)",
+        "marca crema: relevo · línea de puntos: atención · la barra va de vacía (0 %) a llena (100 %) · «resumida»: Claude ha resumido la conversación para acortarla (relevo inmediato)",
+        "cremefarbene Marke: Übergabe · gepunktete Marke: Achtung · der Balken reicht von leer (0 %) bis voll (100 %) · „zusammengefasst“: Claude hat die Unterhaltung zusammengefasst, um sie zu kürzen (sofort übergeben)",
+        "marca creme: transferência · tracejado: atenção · a barra vai de vazia (0%) a cheia (100%) · «resumida»: o Claude resumiu a conversa para encurtá-la (transferência imediata)",
+        "segno crema: consegna · tratteggio: attenzione · la barra va da vuota (0%) a piena (100%) · «riassunta»: Claude ha riassunto la conversazione per accorciarla (consegna subito)",
+        "奶油色标记：交接 · 虚线：注意 · 进度条从空（0%）到满（100%）· “已摘要”：Claude 为缩短对话而做了摘要（立即交接）",
+        "クリーム色の線：引き継ぎ · 点線：注意 · バーは空（0%）から満杯（100%）まで · 「要約済み」：Claude が会話を短くするために要約しました（すぐに引き継ぎ）"
     ],
     // {0} = seuil d'attention, {1} = seuil de passation (en % de la fenêtre)
     ConvSeuils => [
@@ -714,14 +714,14 @@ textes! {
         "このグループにアクティブな会話はありません。"
     ],
     ConvIndispo => [
-        "Conversations cannot be read: the format of Claude’s transcripts may have changed. Nothing is shown rather than wrong figures.",
-        "Les conversations ne peuvent pas être lues : le format des transcriptions de Claude a peut-être changé. Rien n’est affiché plutôt que de faux chiffres.",
-        "No se pueden leer las conversaciones: puede que haya cambiado el formato de las transcripciones de Claude. Es mejor no mostrar nada que mostrar cifras falsas.",
-        "Die Unterhaltungen lassen sich nicht lesen: Das Format der Claude-Protokolle hat sich möglicherweise geändert. Lieber nichts anzeigen als falsche Zahlen.",
-        "Não foi possível ler as conversas: o formato das transcrições do Claude pode ter mudado. Melhor não mostrar nada do que números errados.",
-        "Impossibile leggere le conversazioni: il formato delle trascrizioni di Claude potrebbe essere cambiato. Meglio non mostrare nulla che dati sbagliati.",
-        "无法读取对话：Claude 记录文件的格式可能已更改。宁可不显示，也不显示错误的数字。",
-        "会話を読み取れません。Claude の記録ファイルの形式が変わった可能性があります。誤った数値を表示するより、何も表示しません。"
+        "Conversations cannot be read: Claude may have changed the way it saves them. Nothing is shown rather than wrong figures.",
+        "Les conversations ne peuvent pas être lues : Claude a peut-être changé la façon dont il les enregistre. Rien n’est affiché plutôt que de faux chiffres.",
+        "No se pueden leer las conversaciones: puede que Claude haya cambiado la forma de guardarlas. Es mejor no mostrar nada que mostrar cifras falsas.",
+        "Die Unterhaltungen lassen sich nicht lesen: Claude hat möglicherweise geändert, wie es sie speichert. Lieber nichts anzeigen als falsche Zahlen.",
+        "Não foi possível ler as conversas: o Claude pode ter mudado a forma de salvá-las. Melhor não mostrar nada do que números errados.",
+        "Impossibile leggere le conversazioni: Claude potrebbe aver cambiato il modo in cui le salva. Meglio non mostrare nulla che dati sbagliati.",
+        "无法读取对话：Claude 保存对话的方式可能已更改。宁可不显示，也不显示错误的数字。",
+        "会話を読み取れません。Claude の会話の保存方法が変わった可能性があります。誤った数値を表示するより、何も表示しません。"
     ],
     // {0} = 1 ou 2
     GroupeN => ["Group {0}", "Groupe {0}", "Grupo {0}", "Gruppe {0}", "Grupo {0}", "Gruppo {0}", "第 {0} 组", "グループ{0}"],
@@ -783,14 +783,14 @@ textes! {
         "例：{0} のとき、引き継ぎ"
     ],
     ConfigFenetre => [
-        "Context window, by model",
-        "Fenêtre de contexte, par modèle",
-        "Ventana de contexto, por modelo",
-        "Kontextfenster je Modell",
-        "Janela de contexto, por modelo",
-        "Finestra di contesto, per modello",
-        "各模型的上下文窗口",
-        "モデルごとのコンテキストウィンドウ"
+        "Conversation capacity, by model",
+        "Capacité d’une conversation, par modèle",
+        "Capacidad de una conversación, por modelo",
+        "Kapazität einer Unterhaltung je Modell",
+        "Capacidade de uma conversa, por modelo",
+        "Capacità di una conversazione, per modello",
+        "各模型的对话容量",
+        "モデルごとの会話の容量"
     ],
     // {0} = le plus grand contexte déjà vu pour ce modèle
     ConfigVu => [
@@ -807,14 +807,14 @@ textes! {
     ConfigAutoVaut => ["Auto: {0}", "Auto : {0}", "Auto: {0}", "Auto: {0}", "Auto: {0}", "Auto: {0}", "自动：{0}", "自動：{0}"],
     ConfigAuto => ["Auto", "Auto", "Auto", "Auto", "Auto", "Auto", "自动", "自動"],
     ConfigFenetreNote => [
-        "The window is not written in any file: “Auto” takes 1,000,000 if this model has ever gone past 200,000 tokens, otherwise 200,000. The percentage always stays approximate (≈).",
-        "La fenêtre n’est écrite dans aucun fichier : « Auto » prend 1 000 000 si ce modèle a déjà dépassé 200 000 tokens, sinon 200 000. Le pourcentage reste toujours un « ≈ ».",
-        "La ventana no está escrita en ningún archivo: «Auto» toma 1 000 000 si este modelo ya ha superado los 200 000 tokens, y si no, 200 000. El porcentaje siempre es aproximado (≈).",
-        "Das Fenster steht in keiner Datei: „Auto“ nimmt 1 000 000, wenn dieses Modell schon über 200 000 Tokens hinausgekommen ist, sonst 200 000. Der Prozentwert bleibt immer ein Näherungswert (≈).",
-        "A janela não está escrita em nenhum arquivo: «Auto» usa 1 000 000 se este modelo já passou de 200 000 tokens, senão 200 000. A porcentagem é sempre aproximada (≈).",
-        "La finestra non è scritta in nessun file: «Auto» usa 1 000 000 se questo modello ha già superato i 200 000 token, altrimenti 200 000. La percentuale resta sempre approssimativa (≈).",
-        "窗口大小没有写在任何文件里：如果该模型曾超过 200 000 个 token，“自动”取 1 000 000，否则取 200 000。百分比始终是近似值（≈）。",
-        "ウィンドウの大きさはどのファイルにも書かれていません。「自動」は、そのモデルが200 000トークンを超えたことがあれば1 000 000、なければ200 000とします。パーセンテージは常に概算（≈）です。"
+        "This capacity is not written in any file: “Auto” takes 1,000,000 if this model has ever gone past 200,000 tokens, otherwise 200,000. The percentage always stays approximate (≈).",
+        "Cette capacité n’est écrite dans aucun fichier : « Auto » prend 1 000 000 si ce modèle a déjà dépassé 200 000 tokens, sinon 200 000. Le pourcentage reste toujours approximatif (≈).",
+        "Esta capacidad no está escrita en ningún archivo: «Auto» toma 1 000 000 si este modelo ya ha superado los 200 000 tokens, y si no, 200 000. El porcentaje siempre es aproximado (≈).",
+        "Diese Kapazität steht in keiner Datei: „Auto“ nimmt 1 000 000, wenn dieses Modell schon über 200 000 Tokens hinausgekommen ist, sonst 200 000. Der Prozentwert bleibt immer ein Näherungswert (≈).",
+        "Essa capacidade não está escrita em nenhum arquivo: «Auto» usa 1 000 000 se este modelo já passou de 200 000 tokens, senão 200 000. A porcentagem é sempre aproximada (≈).",
+        "Questa capacità non è scritta in nessun file: «Auto» usa 1 000 000 se questo modello ha già superato i 200 000 token, altrimenti 200 000. La percentuale resta sempre approssimativa (≈).",
+        "该容量没有写在任何文件里：如果该模型曾超过 200 000 个 token，“自动”取 1 000 000，否则取 200 000。百分比始终是近似值（≈）。",
+        "この容量はどのファイルにも書かれていません。「自動」は、そのモデルが200 000トークンを超えたことがあれば1 000 000、なければ200 000とします。パーセンテージは常に概算（≈）です。"
     ],
     ConfigAlerte => [
         "Blinking dot on the Conversations tab",
@@ -865,14 +865,14 @@ textes! {
         "会話をグループに分けますか？"
     ],
     AccueilTexte => [
-        "Conso Token cannot know which conversation plays which role (for example one that directs the others). You decide: tick the folders that form the first group and name each group. Each group has its own thresholds. You can change everything at any time with “Choose groups…”.",
-        "Conso Token ne peut pas savoir quel rôle joue chaque conversation (par exemple celle qui pilote les autres). C’est toi qui le dis : coche les dossiers qui forment le premier groupe et donne un nom à chaque groupe. Chaque groupe a ses propres seuils. Tu pourras tout changer à tout moment avec « Choisir les groupes… ».",
-        "Conso Token no puede saber qué papel tiene cada conversación (por ejemplo, una que dirige a las demás). Lo decides tú: marca las carpetas que forman el primer grupo y ponle nombre a cada grupo. Cada grupo tiene sus propios umbrales. Podrás cambiarlo todo en cualquier momento con «Elegir grupos…».",
-        "Conso Token kann nicht wissen, welche Unterhaltung welche Rolle hat (zum Beispiel eine, die die anderen steuert). Das legst du fest: Hake die Ordner an, die die erste Gruppe bilden, und gib jeder Gruppe einen Namen. Jede Gruppe hat eigene Schwellen. Alles lässt sich jederzeit mit „Gruppen wählen…“ ändern.",
-        "O Conso Token não consegue saber que papel cada conversa tem (por exemplo, uma que dirige as outras). Quem decide é você: marque as pastas que formam o primeiro grupo e dê um nome a cada grupo. Cada grupo tem seus próprios limites. Você pode mudar tudo a qualquer momento com «Escolher grupos…».",
-        "Conso Token non può sapere che ruolo abbia ogni conversazione (per esempio una che dirige le altre). Decidi tu: spunta le cartelle che formano il primo gruppo e dai un nome a ciascun gruppo. Ogni gruppo ha le sue soglie. Potrai cambiare tutto in qualsiasi momento con «Scegli i gruppi…».",
-        "Conso Token 无法知道每个对话扮演什么角色（例如负责指挥其他对话的那个）。由你来决定：勾选属于第一组的文件夹，并给每组起个名字。每组有各自的阈值。之后可随时通过“选择分组…”按钮更改。",
-        "Conso Token は、どの会話がどんな役割か（たとえば他の会話を取りまとめるもの）を判断できません。あなたが決めます。最初のグループに入れるフォルダーにチェックを入れ、各グループに名前を付けてください。グループごとにしきい値があります。「グループを選ぶ…」ボタンから、いつでも変更できます。"
+        "You can sort your conversations into two groups, each with its own alert levels. Not sure? Click “Keep one group”: everything stays together and nothing else changes. For two groups: tick the folders of the first one, name each group, then click “Split into two groups”. You can change this later with “Choose groups…”.",
+        "Tu peux ranger tes conversations en deux groupes, chacun avec ses propres niveaux d’alerte. Pas sûr ? Clique sur « Garder un seul groupe » : tout reste ensemble et rien d’autre ne change. Pour deux groupes : coche les dossiers du premier, donne un nom à chaque groupe, puis clique sur « Séparer en deux groupes ». Tu pourras changer plus tard avec « Choisir les groupes… ».",
+        "Puedes ordenar tus conversaciones en dos grupos, cada uno con sus propios niveles de alerta. ¿No lo tienes claro? Haz clic en «Mantener un solo grupo»: todo sigue junto y no cambia nada más. Para dos grupos: marca las carpetas del primero, ponle nombre a cada grupo y haz clic en «Separar en dos grupos». Podrás cambiarlo más tarde con «Elegir grupos…».",
+        "Du kannst deine Unterhaltungen in zwei Gruppen einteilen, jede mit eigenen Warnstufen. Nicht sicher? Klicke auf „Bei einer Gruppe bleiben“: Alles bleibt zusammen und sonst ändert sich nichts. Für zwei Gruppen: Hake die Ordner der ersten an, gib jeder Gruppe einen Namen und klicke dann auf „In zwei Gruppen aufteilen“. Du kannst das später mit „Gruppen wählen…“ ändern.",
+        "Você pode organizar suas conversas em dois grupos, cada um com os próprios níveis de alerta. Em dúvida? Clique em «Manter um só grupo»: tudo continua junto e nada mais muda. Para dois grupos: marque as pastas do primeiro, dê um nome a cada grupo e clique em «Separar em dois grupos». Você pode mudar isso depois com «Escolher grupos…».",
+        "Puoi ordinare le tue conversazioni in due gruppi, ciascuno con i propri livelli di allerta. Non sai cosa scegliere? Fai clic su «Tenere un solo gruppo»: tutto resta insieme e non cambia altro. Per due gruppi: spunta le cartelle del primo, dai un nome a ciascun gruppo, poi fai clic su «Dividere in due gruppi». Potrai cambiare più tardi con «Scegli i gruppi…».",
+        "你可以把对话分成两组，每组有各自的提醒级别。拿不准？点击“只保留一组”：所有对话仍在一起，其他什么都不会改变。要分两组：勾选第一组的文件夹，给每组起个名字，然后点击“分为两组”。之后可随时通过“选择分组…”更改。",
+        "会話を2つのグループに分けられます。グループごとに通知のレベルがあります。迷ったら「グループは1つのまま」をクリックしてください。すべてまとめたままで、他は何も変わりません。2つに分けるには、1つ目のグループのフォルダーにチェックを入れ、各グループに名前を付けて、「2つのグループに分ける」をクリックします。後から「グループを選ぶ…」で変更できます。"
     ],
     AccueilDossiers => [
         "Folders of the first group",
@@ -967,14 +967,14 @@ textes! {
         "Slint（slint.dev）で構築。ライセンス：「Slint Royalty-free 2.0」"
     ],
     AproposPolices => [
-        "Fonts: Cormorant Garamond (© 2015 The Cormorant Project Authors) and Jost (© 2020 The Jost Project Authors), under the SIL Open Font License 1.1.\nThe full license texts are in the “licences” folder shipped with the program.",
-        "Polices : Cormorant Garamond (© 2015 The Cormorant Project Authors) et Jost (© 2020 The Jost Project Authors), sous la licence SIL Open Font License 1.1.\nLes textes complets des licences se trouvent dans le dossier « licences » livré avec le programme.",
-        "Fuentes: Cormorant Garamond (© 2015 The Cormorant Project Authors) y Jost (© 2020 The Jost Project Authors), bajo la licencia SIL Open Font License 1.1.\nLos textos completos de las licencias están en la carpeta «licences» incluida con el programa.",
-        "Schriften: Cormorant Garamond (© 2015 The Cormorant Project Authors) und Jost (© 2020 The Jost Project Authors) unter der SIL Open Font License 1.1.\nDie vollständigen Lizenztexte befinden sich im Ordner „licences“, der dem Programm beiliegt.",
-        "Fontes: Cormorant Garamond (© 2015 The Cormorant Project Authors) e Jost (© 2020 The Jost Project Authors), sob a licença SIL Open Font License 1.1.\nOs textos completos das licenças estão na pasta “licences” que acompanha o programa.",
-        "Caratteri: Cormorant Garamond (© 2015 The Cormorant Project Authors) e Jost (© 2020 The Jost Project Authors), con licenza SIL Open Font License 1.1.\nI testi completi delle licenze si trovano nella cartella «licences» fornita con il programma.",
-        "字体：Cormorant Garamond（© 2015 The Cormorant Project Authors）和 Jost（© 2020 The Jost Project Authors），许可证为 SIL Open Font License 1.1。\n完整的许可证文本位于随程序提供的“licences”文件夹中。",
-        "フォント：Cormorant Garamond（© 2015 The Cormorant Project Authors）と Jost（© 2020 The Jost Project Authors）、ライセンスは SIL Open Font License 1.1。\nライセンスの全文は、プログラムに同梱の「licences」フォルダーにあります。"
+        "Fonts: Cormorant Garamond (© 2015 The Cormorant Project Authors) and Jost (© 2020 The Jost Project Authors), under the SIL Open Font License 1.1.\nThe full license texts are in the files OFL_Jost.txt and OFL_CormorantGaramond.txt, shipped with the program.",
+        "Polices : Cormorant Garamond (© 2015 The Cormorant Project Authors) et Jost (© 2020 The Jost Project Authors), sous la licence SIL Open Font License 1.1.\nLes textes complets des licences sont dans les fichiers OFL_Jost.txt et OFL_CormorantGaramond.txt, livrés avec le programme.",
+        "Fuentes: Cormorant Garamond (© 2015 The Cormorant Project Authors) y Jost (© 2020 The Jost Project Authors), bajo la licencia SIL Open Font License 1.1.\nLos textos completos de las licencias están en los archivos OFL_Jost.txt y OFL_CormorantGaramond.txt, incluidos con el programa.",
+        "Schriften: Cormorant Garamond (© 2015 The Cormorant Project Authors) und Jost (© 2020 The Jost Project Authors) unter der SIL Open Font License 1.1.\nDie vollständigen Lizenztexte stehen in den Dateien OFL_Jost.txt und OFL_CormorantGaramond.txt, die dem Programm beiliegen.",
+        "Fontes: Cormorant Garamond (© 2015 The Cormorant Project Authors) e Jost (© 2020 The Jost Project Authors), sob a licença SIL Open Font License 1.1.\nOs textos completos das licenças estão nos arquivos OFL_Jost.txt e OFL_CormorantGaramond.txt, que acompanham o programa.",
+        "Caratteri: Cormorant Garamond (© 2015 The Cormorant Project Authors) e Jost (© 2020 The Jost Project Authors), con licenza SIL Open Font License 1.1.\nI testi completi delle licenze si trovano nei file OFL_Jost.txt e OFL_CormorantGaramond.txt, forniti con il programma.",
+        "字体：Cormorant Garamond（© 2015 The Cormorant Project Authors）和 Jost（© 2020 The Jost Project Authors），许可证为 SIL Open Font License 1.1。\n完整的许可证文本位于随程序提供的 OFL_Jost.txt 和 OFL_CormorantGaramond.txt 文件中。",
+        "フォント：Cormorant Garamond（© 2015 The Cormorant Project Authors）と Jost（© 2020 The Jost Project Authors）、ライセンスは SIL Open Font License 1.1。\nライセンスの全文は、プログラムに同梱の OFL_Jost.txt と OFL_CormorantGaramond.txt にあります。"
     ],
     BoutonRetour => ["BACK", "RETOUR", "VOLVER", "ZURÜCK", "VOLTAR", "INDIETRO", "返回", "戻る"],
 

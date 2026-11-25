@@ -2,6 +2,64 @@
 
 All notable changes to Conso Token are listed here, newest first. Versions follow the number shown on the **About** screen of the program. Dates are 2026.
 
+## 1.3.8 — 25 November — The screen texts of the eight languages brought into line, and the setup texts fixed
+
+In the program, only screen texts change: no calculation changes. (1.3.5 and 1.3.7 were not published here, and 1.3.6 was never put into service nor published: this release brings the repository from 1.3.4 to 1.3.8. See their entries below.)
+
+### Changed (screens)
+- **The seven other languages now say what the French says** on the nine texts reworded in French in 1.3.6 and 1.3.7: the “Group your conversations?” window; the subtitle and the legend of the Conversations tab; the message shown when the conversations cannot be read; “Conversation capacity, by model” in SETTINGS and its note; the two first screens (no figures yet, and a delivery without figures); and the fonts line of the About screen. So the “delivery without figures” screen no longer says that only Pro and Max plans give the figures, and the subtitle says that the tag of a row of a hand-written group cannot be clicked.
+- **The first screen names the guide of its language**, the one that is in the zip: `README.en.txt`, `LISEZ-MOI.fr.txt`, `LEEME.es.txt`, `LIESMICH.de.txt`, `LEIAME.pt.txt`, `LEGGIMI.it.txt`, `说明.zh.txt`, `使い方.ja.txt`.
+
+### Fixed (setup text and guides)
+- **A send that worked could be reported as failed.** Since 1.3.6 the script `envoyer_pont.cmd` writes the send log in the data folder, `%USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt`, but the setup text (`PASTE_INTO_CLAUDE.txt`, steps D and E), the eight guides, `CONTRIBUTING.md` and the bug report form still looked for it in `outils\`. They now give the new place. The task prompt itself, the text of the scheduled task, has not changed. (This was found by reading the files; the new setup check has not been replayed here on a fresh installation.)
+
+### Changed (texts)
+- **Plan needed:** the guides, the README and the web pages no longer say “Pro or Max”: a paid Claude plan whose usage figures the app provides is needed; some plans do not provide them, and the program has been tried with one plan only.
+- The eight guides: the Conversations tab and what came since 1.3.0, the groups written by hand, where the scheduled task shows (title “Conso Token feed”, identifier `conso-token-feed`, among the scheduled tasks or under “Routines” in the “Code” tab, depending on the version of the Claude app), how to remove everything (the task, a status line if one was added, the folders), and the fact that the window that proposes groups opens by itself only once, when there are conversations to propose.
+- The README and `CONTRIBUTING.md` say how to build with `construire.ps1`, and say more exactly what the program keeps and what it writes (folder names that you choose for a group, and what you type by hand in `conversations.txt`).
+- The web pages show the screens of this version and have a new part on the Conversations tab; the presentation says that the program also reads the title of each conversation.
+
+### Known limits
+- The translations have not been reviewed by native speakers, Chinese and Japanese above all.
+- No automatic test covers the Slint screens.
+- The build is not reproducible to the byte (replaced paths, link time stamp, identifier of the `.pdb`): the SHA-256 of the released program is in the release notes.
+- The limits listed under 1.3.5 and 1.3.4 still apply.
+
+## 1.3.7 — 19 November — Plainer French screen texts (not published here)
+
+Put into service on the author's computer, never published here; its changes are part of the 1.3.8 release.
+
+### Changed
+- **French only:** the “Group your conversations?” window now says what each button does; the subtitle and the legend of the Conversations tab, and the title and the note of the capacity by model in SETTINGS, use everyday words; the first screen without figures says what to do if nothing arrives; the “delivery without figures” screen no longer says that only Pro and Max plans give them; the fonts line of the About screen no longer names a “licences” folder. No calculation changed. The seven other languages kept their texts (brought into line in 1.3.8).
+- `envoyer_pont_cache.vbs`: CRLF line endings and a comment without accented characters; the version number in a comment of `envoyer_pont.cmd`. The setup text and the guides were not updated at the time (see 1.3.8).
+- The tests are those of 1.3.5 (175).
+
+## 1.3.6 — 19 November — Getting ready to hand the program to someone else (never put into service, never published)
+
+Its changes are part of the 1.3.8 release. Nothing changes in the calculations.
+
+### Changed
+- **No path of a computer in the sources.** `.cargo/config.toml` holds no path any more; a new script at the root, `construire.ps1`, works out the paths of the computer that builds and replaces them in the program.
+- **`envoyer_pont.cmd`** looks for `conso_token.exe` next to itself, then in the parent folder, and writes `dernier_envoi.txt` and `entree.json` in the data folder (`%USERPROFILE%\AppData\Local\ConsoToken`), no longer in `outils\`, so that the program can sit in a folder where the user cannot write.
+- Two French screen texts use plainer words (the first screen without figures no longer names the task; “format of the transcripts” became the way Claude saves the conversations).
+
+## 1.3.5 — 16 November — More than two groups of conversations, written by hand (not published here)
+
+Never published here; its changes are part of the 1.3.8 release.
+
+### Added
+- **Groups 3 to 8.** Beyond the two groups of SETTINGS, `conversations.txt` can describe up to six more, written by hand with the program closed: `nom3=` (name, 24 characters at most), `attention3=` and `passation3=` (10 to 95, default 70 and 80), `titre3=` (the beginning of a title) and `groupe3=` (a work folder), one line per title beginning or per folder. A conversation is placed by its title first, then by its folder, then in the two groups of SETTINGS. A title beginning is a whole word, upper or lower case alike: it must be followed by a space or end the title. Each such group has its own heading and its rows use its own thresholds; the tag of those rows cannot be clicked. SETTINGS does not show these groups; the program writes their lines back each time it rewrites the file; “Reset” erases them; “Keep one group” hides them without erasing them. No new text on screen. A `conversations.txt` without them is read and rewritten as before. Folders taken by such a group are no longer proposed in the “Choose groups…” window. See the README.
+
+### Tested
+- 175 tests, 0 failures, 0 warnings (12 more than in 1.3.4).
+
+### Known limits
+- The short tag of a row is made of 4 characters at most of the group name: two names that start alike give the same tag.
+- Six hand-written groups at most.
+- No automatic test covers the screen (including the tag that cannot be clicked).
+- No test pins down “all the titles before all the folders” in the case where the group that takes the folder has the smaller number.
+- A conversation placed by its title falls back to its folder if its title is no longer in the last 64 KB of its file when the program restarts.
+
 ## 1.3.4 — 9 November — Hide a conversation, regroup your conversations at any time, follow-ups of an independent review of 1.3.0, and the title of each conversation
 
 A correction release with two new controls. Five things are added to the screens: a ✕ on each row of the Conversations tab that hides the conversation, a “Show again” button in SETTINGS, a “Choose groups…” button on the Conversations tab, the second click on “Reset”, and the title of each conversation in the list. (Test builds numbered 1.3.1, 1.3.2 and 1.3.3 were made on 8–9 November; none was ever put into service nor published, and their changes are part of this entry.)

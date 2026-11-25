@@ -9,8 +9,9 @@ sich mit keiner Website und fragt nach keinem Passwort.
 
 WAS DU BRAUCHST
 - Windows 10 oder 11. Nichts weiter zu installieren.
-- Die Claude-Desktop-App (in der du Claude Code nutzt) mit einem Pro- oder Max-Abo: für andere
-  Abos gibt es die Zahlen nicht.
+- Die Claude-Desktop-App (in der du Claude Code nutzt) mit einem kostenpflichtigen Claude-Abo,
+  dessen Nutzungszahlen die App liefert: manche Abos liefern sie nicht. Conso Token wurde nur mit
+  einem einzigen Abo ausprobiert.
 
 EINRICHTUNG (10 Minuten, einmalig)
 1. Lege den erhaltenen Ordner „Conso Token“ auf ein Laufwerk deines Computers (zum Beispiel H:).
@@ -30,22 +31,46 @@ EINRICHTUNG (10 Minuten, einmalig)
    Das ist kein Virus: Conso Token ist ein kleines selbstgemachtes Programm ohne Signatur eines
    kostenpflichtigen Herausgebers, daher meldet Windows es beim ersten Mal. Es nutzt keine
    Netzwerkfunktion. Hat Schritt 2 geklappt, zeigt das Fenster schon deine Zahlen. Sonst steht
-   dort „Noch keine Zahlen erhalten“: sag es der Person, die dir die App gegeben hat.
+   dort „Noch keine Zahlen empfangen“: sag es der Person, die dir die App gegeben hat.
 
-NEU IN 1.3.0: DER REITER UNTERHALTUNGEN
+DER REITER UNTERHALTUNGEN (SEIT 1.3.0) UND WAS SEITHER DAZUKAM
+Version 1.3.8. Neu seit 1.3.4: von Hand geschriebene Gruppen 3 bis 8 (siehe unten); das
+Sendeprotokoll liegt jetzt im Datenordner; einfachere Formulierungen auf einigen Bildschirmen, in
+allen acht Sprachen.
 Neben „Woche“ zeigt der Reiter „Unterhaltungen“ jede Claude-Code-Unterhaltung der letzten 24 Stunden:
-wie voll ihr Kontext ist (ungefähr, ≈) und wie viel bis zur Übergabe bleibt, dem Moment, in einer
+wie voll sie ist (ihr Kontext; ungefähr, ≈) und wie viel bis zur Übergabe bleibt, dem Moment, in einer
 frischen Unterhaltung weiterzumachen. Auf einem Balken ist die cremefarbene Marke die Übergabe und
-die gepunktete Marke „Achtung“; „zusammengefasst“ heißt, dass Claude diese Unterhaltung komprimiert
-hat (sofort übergeben). Eine Unterhaltung, die länger als 30 Minuten ruht, wird unter „+ n weitere“
+die gepunktete Marke „Achtung“; „zusammengefasst“ heißt, dass Claude diese Unterhaltung zusammengefasst
+hat, um sie zu kürzen (sofort übergeben). Eine Unterhaltung, die länger als 30 Minuten ruht, wird unter „+ n weitere“
 eingeklappt.
 - Am Anfang: eine Gruppe, Achtung bei 70 %, Übergabe bei 80 %. Die Schaltfläche OPTIONEN öffnet ein
   Fenster: in zwei Gruppen aufteilen (du tippst die Namen selbst; ein Klick auf das Kürzel einer
   Zeile verschiebt dann den ganzen Ordner in die andere Gruppe), zwei Regler für die Schwellen mit
-  Probebalken, das Kontextfenster je Modell (Auto, 200 000 oder 1 000 000), der blinkende Punkt, die
+  Probebalken, „Kapazität einer Unterhaltung je Modell“ (Auto, 200 000 oder 1 000 000), der blinkende Punkt, die
   animierten Zahlen. Alles gilt sofort und wird in conversations.txt im Datenordner gespeichert.
   „Zurücksetzen“ stellt die Anfangswerte wieder her (es verlangt einen zweiten Klick zur Bestätigung).
-- Beim ersten Öffnen des Reiters fragt ein Fenster, ob du deine Unterhaltungen gruppieren willst: Du hakst die Ordner der ersten Gruppe an und benennst die Gruppen selbst (getippt werden nur die Namen). Die Schaltfläche „Gruppen wählen…“ (oben rechts im Reiter Unterhaltungen und unter OPTIONEN) öffnet es jederzeit erneut, so oft du willst: zurück zu einer Gruppe, Gruppen umbenennen, alles abwählen. Nichts geht verloren: Die Wahl bleibt in conversations.txt gespeichert.
+- Bist du zum ersten Mal auf dem Reiter und gibt es Unterhaltungen vorzuschlagen, fragt ein Fenster, ob du sie gruppieren willst (von selbst öffnet es sich nur einmal): Du hakst die Ordner der ersten Gruppe an und benennst die Gruppen selbst (getippt werden nur die Namen). Die Schaltfläche „Gruppen wählen…“ (oben rechts im Reiter Unterhaltungen und unter OPTIONEN) öffnet es jederzeit erneut, so oft du willst: zurück zu einer Gruppe, Gruppen umbenennen, alles abwählen. Nichts geht verloren: Die Wahl bleibt in conversations.txt gespeichert.
+- MEHR ALS ZWEI GRUPPEN (seit 1.3.5), von Hand geschrieben: Gruppen 3 bis 8, jede mit eigenen
+  Stufen. Hake zuerst unter OPTIONEN „In zwei Gruppen aufteilen“ an (nur dann werden diese Gruppen
+  angezeigt). Schließe das Conso-Token-Fenster (ist es offen, schreibt es die Datei aus seinem
+  Speicher neu, und deine Änderung geht verloren). Öffne conversations.txt im Datenordner mit dem
+  Editor, füge am Ende Zeilen hinzu und speichere als UTF-8. Die Gruppennummer steht am Ende jedes
+  Wortes, alles klein geschrieben; zum Beispiel:
+      nom3=Reviews
+      attention3=40
+      passation3=55
+      titre3=Review
+  nom3= ist der angezeigte Name (höchstens 24 Zeichen; ohne ihn: „Gruppe 3“). attention3= und
+  passation3= sind Achtung und Übergabe (10 bis 95; 70 und 80, wenn du nichts schreibst). titre3=
+  ist der Anfang eines Titels; groupe3= ist der genau geschriebene Name eines Arbeitsordners. Eine
+  Zeile je Titelanfang oder je Ordner. Eine Unterhaltung wird zuerst nach ihrem Titel eingeordnet,
+  dann nach ihrem Ordner und erst danach in die beiden Gruppen des Bildschirms. Ein Titelanfang
+  zählt in ganzen Wörtern, Groß- und Kleinschreibung egal: Danach muss ein Leerzeichen stehen oder
+  der Titel dort enden („Review“ erfasst „Review of the plan“, nicht „Review: plan“ und nicht
+  „Reviews“). Das Kürzel einer Zeile in einer solchen Gruppe lässt sich nicht anklicken. OPTIONEN
+  zeigt diese Gruppen nicht; das Programm behält deine Zeilen, wenn es die Datei neu schreibt.
+  „Zurücksetzen“ löscht sie; „Bei einer Gruppe bleiben“ blendet sie aus, ohne sie zu löschen. Was
+  du dort schreibst (Gruppennamen, Ordnernamen, Titelanfänge), bleibt in dieser Datei auf deinem PC.
 - Ein blinkender Punkt auf dem Reiter „Unterhaltungen“, auch auf dem Bildschirm Woche sichtbar: rosa
   bei Übergabe, bernsteinfarben bei Achtung. Kein Ton, keine Windows-Benachrichtigung.
 - Die drei Karten des Bildschirms Woche animieren ihre Zahlen beim Öffnen und bei jeder
@@ -55,9 +80,9 @@ eingeklappt.
 - Behalten werden nur Zähler aus den Claude-Code-Dateien dieses PCs (Datum, Modell, Tokenanzahl,
   Ordnername) und der Titel jeder Unterhaltung, so wie ihn die Claude-App anzeigt (damit sie in der Liste einen
   Namen hat; er wird in den ohnehin gelesenen Dateien gelesen, bleibt nur für die Anzeige im Speicher
-  und wird nie geschrieben oder gesendet); der Text einer Nachricht wird nie behalten, geschrieben oder gesendet. Geplante Läufe und Unteragenten bleiben außen vor. Die
-  Fenstergröße steht in keiner Datei: Der Prozentwert bleibt ein Näherungswert (≈); stelle bei Bedarf
-  unter OPTIONEN das richtige Fenster je Modell ein. Ändert Claude das Dateiformat, sagt die Liste
+  und wird nie geschrieben oder gesendet); der Text einer Nachricht wird nie behalten, geschrieben oder gesendet. Geplante Läufe und Unteragenten bleiben außen vor. Wie viel eine
+  Unterhaltung fasst, steht in keiner Datei: Der Prozentwert bleibt ein Näherungswert (≈); stelle bei
+  Bedarf unter OPTIONEN die richtige Kapazität je Modell ein. Ändert Claude das Dateiformat, sagt die Liste
   das, statt falsche Zahlen zu zeigen.
   Die Liste beruht auf der letzten Nachricht von Claude, nicht auf dem Zustand des Fensters: Eine archivierte oder geschlossene Unterhaltung bleibt angezeigt, solange ihre letzte Nachricht jünger als 24 Stunden ist (blende sie mit ✕ aus); eine geöffnete Unterhaltung ohne Nachricht seit mehr als 24 Stunden erscheint nicht (sie kommt zurück, sobald Claude darin antwortet).
   Grenzen: Ändert Claude den Typ seiner Zeilen oder sind seine Antworten nicht mehr zu finden, bleibt
@@ -77,14 +102,41 @@ GUT ZU WISSEN
   aktualisieren. Das Conso-Token-Fenster darf geschlossen sein: per Doppelklick wieder öffnen.
 - Verschiebst du den Ordner später, findet die Aufgabe das Programm nicht mehr: gib Claude den Satz
   aus Schritt 2 erneut mit dem neuen Pfad.
-- Die Aufgabe „conso-token-feed“ (Bereich „Geplant“) verbraucht selbst etwas von deinem Abo, wie
-  jede Aufgabe: das ist in den Zahlen enthalten. Löschst du sie, werden die Zahlen nicht mehr
-  aktualisiert. Jeder Lauf archiviert sich selbst: „Conso Token feed“-Sitzungen im Archiv sind normal.
-- Zum Beenden: diese Aufgabe löschen, dann den Ordner Conso Token.
+- Die Aufgabe erscheint unter dem Titel „Conso Token feed“ (ihre Kennung ist conso-token-feed),
+  im Bereich der geplanten Aufgaben in der linken Leiste („Scheduled“) oder unter „Routines“ im
+  Reiter „Code“, je nach Version deiner Claude-App (die Namen können in deiner Sprache anders
+  lauten). Sie verbraucht selbst etwas von deinem Abo, wie jede Aufgabe: das ist in den Zahlen
+  enthalten. Löschst du sie, werden die Zahlen nicht mehr aktualisiert. Jeder Lauf archiviert sich
+  selbst: „Conso Token feed“-Sitzungen im Archiv sind normal.
 - Die Daten liegen in C:\Users\<dein Name>\AppData\Local\ConsoToken.
 - Die Sprache änderst du mit der Schaltfläche oben rechts im Fenster.
 - Die Lizenzen (Schriften und Slint) liegen im Ordner „licences“.
+- Von einer älteren Version aktualisieren: Fenster schließen, den GANZEN Ordner ersetzen und Claude
+  den Satz aus Schritt 2 erneut geben. Dein Datenordner bleibt erhalten.
+
+SO ENTFERNST DU ES
+1. Schließe das Conso-Token-Fenster.
+2. Lösche die Aufgabe „Conso Token feed“ (conso-token-feed) in der Claude-Desktop-App (geplante
+   Aufgaben oder „Routines“ im Reiter „Code“). Nur den Ordner zu löschen reicht nicht: Die Aufgabe
+   würde weiter alle 15 Minuten eine kurze Sitzung öffnen, die nichts senden und trotzdem etwas
+   von deinem Abo verbrauchen würde.
+3. Nur falls eine Claude-Code-Statuszeile hinzugefügt wurde, die Conso Token startet (die
+   Einrichtung aus Schritt 2 fügt nie eine hinzu): Sie steht in der Datei settings.json in
+   C:\Users\<dein Name>\.claude, im Abschnitt „statusLine“, der „conso_token.exe --pont“ enthält.
+   Kopiere zuerst die Datei. Folgt nach „--pont“ nichts, entferne diesen Abschnitt „statusLine“.
+   Enthält er „--suite“ mit einem weiteren Befehl dahinter, ist das deine frühere Statuszeile:
+   Behalte „statusLine“ und lass in seinem „command“ nur den Befehl stehen, der auf „--suite“
+   folgt. Ändere sonst nichts.
+4. Lösche den Ordner Conso Token.
+5. Freiwillig: Um auch deine Einstellungen und den Verlauf deiner Zahlen zu löschen, lösche den
+   Datenordner C:\Users\<dein Name>\AppData\Local\ConsoToken.
+Claude funktioniert ohne Conso Token genauso.
 
 WENN NICHTS ANKOMMT
-Öffne „outils\dernier_envoi.txt“ (im Ordner Conso Token) mit dem Editor und sag der Person, die dir
-die App gegeben hat, was darin steht (oder dass es fehlt), mit einem Screenshot des Fensters.
+Warte nach der Einrichtung 15 bis 20 Minuten, bei geöffneter Claude-Desktop-App. Immer noch
+nichts? Klicke im Datei-Explorer in die Adressleiste, tippe
+%USERPROFILE%\AppData\Local\ConsoToken ein, drücke die Eingabetaste und öffne dernier_envoi.txt
+mit dem Editor (vollständiger Pfad: %USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt). Die
+Datei liegt nicht mehr im Ordner „outils“. Nach einer gelungenen Sendung steht „rc=0“ in dieser
+Zeile. Sag der Person, die dir die App gegeben hat, was darin steht (oder dass die Datei fehlt),
+mit einem Screenshot des Fensters. Kommt nie etwas an, kannst du die App wie oben entfernen.

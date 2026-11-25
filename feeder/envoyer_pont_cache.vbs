@@ -1,5 +1,5 @@
 ' envoyer_pont_cache.vbs -- lanceur sans fenetre (15/10/2026).
-' La tache « Conso Token feed » lancait envoyer_pont.cmd par cmd.exe (via WMI) : une console visible s'ouvrait
+' La tache "Conso Token feed" lancait envoyer_pont.cmd par cmd.exe (via WMI) : une console visible s'ouvrait
 ' (Windows Terminal) a chaque passage, toutes les 15 minutes. Ce lanceur fait la meme chose SANS fenetre :
 ' WScript.Shell.Run(..., 0, True) cache la console des le depart.
 ' Usage : wscript.exe //B //Nologo envoyer_pont_cache.vbs <pct5h> <reset5h_unix> <pct7j> <reset7j_unix>

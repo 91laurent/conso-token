@@ -1,5 +1,12 @@
 # Bibliothèque C d'exécution liée dans le programme : le .exe n'a pas besoin du
 # redistribuable Visual C++ sur le PC de l'utilisateur.
+#
+# Ce fichier ne contient AUCUN chemin d'un poste : il est le même chez tout le monde.
+# Les chemins du poste de construction (profil de l'utilisateur, dossier du projet, dossier de
+# compilation) ne doivent pas se retrouver écrits dans le programme : le script `construire.ps1`
+# (à la racine) les remplace par « utilisateur », « projet » et « cible » au moment de compiler.
+# Compiler avec `cargo` seul fonctionne aussi, mais laisse ces chemins dans le programme : toujours
+# passer par `construire.ps1`, puis chercher dans le programme les noms et les chemins à ne pas livrer.
 [target.x86_64-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
 

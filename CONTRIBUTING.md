@@ -10,7 +10,7 @@ Open an issue and give:
 - the day and hour your plan resets (the “Your plan resets to 100% in” card shows it);
 - what you expected, what you saw, and a screenshot of the window if you can (the figures are only percentages).
 
-If nothing arrives in the window, open `outils\dernier_envoi.txt` in the Conso Token folder and paste its last line.
+If nothing arrives in the window, open `%USERPROFILE%\AppData\Local\ConsoToken\dernier_envoi.txt` (type that path in the address bar of File Explorer) and paste its last line. That line can end with the path of your data folder, which contains your Windows user name: replace the name before you post it.
 
 ## Fix a translation
 
@@ -20,12 +20,14 @@ The translations have not been reviewed by native speakers yet, so a native read
 
 ## Change the code
 
-Windows only. Rust 1.99, Slint 1.18.1. See “Build and test” in the [README](README.md): keep the build folder short (a path of more than 260 characters makes `link.exe` fail), and run the whole test suite before you open a pull request.
+Windows only. Rust 1.99, Slint 1.18.1, PowerShell 7. See “Build and test” in the [README](README.md): build through `construire.ps1` (plain `cargo` leaves the paths of your computer in the program), keep the build folder short (a path of more than 260 characters makes `link.exe` fail), and run both sets of tests before you open a pull request.
 
 ```
-cargo test --workspace --target-dir C:\ct
+cargo fetch --locked
+pwsh -File construire.ps1 -Cible C:\ct -Action test
+pwsh -File construire.ps1 -Cible C:\ct -Action test-release
 ```
 
 - The calculation lives in `noyau/` and has no user interface, so it can be tested alone. Add a test with every change of rule.
 - A change in the package files (feeder scripts, setup text, guides) needs a new version number: two different packages must never carry the same one. Add a line to [CHANGELOG.md](CHANGELOG.md).
-- No network code, no secrets, nothing kept from the text of the messages: the program only reads counters and, to name the rows of the Conversations tab, the title of each conversation (kept in memory, never written or sent). The only thing it writes about a conversation is the session identifier of a conversation hidden with ✕ (`conversations.txt`). Any change that reads, keeps, writes or sends more than that changes this promise and must be said in the README, the changelog and the About screen.
+- No network code, no secrets, nothing kept from the text of the messages: the program only reads counters and, to name the rows of the Conversations tab, the title of each conversation (kept in memory, never written or sent). The only thing it writes to name one particular conversation is the session identifier of a conversation hidden with ✕ (`conversations.txt`). That file also holds the user’s settings: the names of the folders chosen for a group, and what the user types in it by hand (group names, folder names and, for groups 3 to 8, title beginnings). Any change that reads, keeps, writes or sends more than that changes this promise and must be said in the README, the changelog and the About screen.
